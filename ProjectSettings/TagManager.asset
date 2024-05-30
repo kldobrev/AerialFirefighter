@@ -7,9 +7,8 @@ TagManager:
   - Trackable
   - RadarPointAlly
   - RadarPointEnemy
-  - GearsRetractor
-  - HeatSource
   - Enemy
+  - Ground
   layers:
   - Default
   - TransparentFX

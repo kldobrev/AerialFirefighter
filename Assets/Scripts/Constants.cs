@@ -23,9 +23,11 @@ public static class Constants {
 
     public const string RetractGearsAnimParamName = "RetractLandingGears";
     public const float PlDefaultDrag = 0.05f;
+    public const float PlDefaultAngularDrag = 0.05f;
     public const float PlBrakeDrag = 0.01f;
-    public const float PlTurnDrag = 0.003f;
+    public const float PlTurnDrag = 0.0015f;
     public const float PlMinSpeedAir = 100f;
+    public const float PlaneLiftForce = 0.9f;
     public const int SendHeightFramerule = 2;
     public const int SendCoordsFramerule = 1;
     public const int SendSpeedFramerule = 5;
@@ -54,6 +56,7 @@ public static class Constants {
     public const float HeightMeterValueMinUI = 0f;
     public const float HeightMeterValueAlertUI = 1000f;
     public const float HeightMeterValueMaxUI = 15230f;
+    public const float AttitudeMeterMaxPitchShown = 45;
     public static Color32 HeightAboveAlertColour = new Color32(80, 255, 0, 255);
     public static Color32 HeightBelowAlertColour = new Color32(255, 141, 0, 255);
     public static Color32 AutoSpeedColourOff = new Color32(130, 130, 130, 190);
