@@ -16,7 +16,7 @@ TagManager:
   - RadarTracked
   - Water
   - UI
-  - Enemy
+  - UITracker
   - Player
   - 
   - 
@@ -45,4 +45,10 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: UITracker
+    uniqueID: 1971656357
+    locked: 0
+  - name: Player
+    uniqueID: 978290233
     locked: 0

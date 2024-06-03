@@ -78,7 +78,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "stop tracking target",
+                    "name": "toggle tracker",
                     "type": "Button",
                     "id": "1cb3da0a-cef6-4445-983a-a9bfea70b4ac",
                     "expectedControlType": "Button",
@@ -260,7 +260,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard",
-                    "action": "stop tracking target",
+                    "action": "toggle tracker",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

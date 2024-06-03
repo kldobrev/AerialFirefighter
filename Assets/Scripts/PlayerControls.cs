@@ -100,7 +100,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""stop tracking target"",
+                    ""name"": ""toggle tracker"",
                     ""type"": ""Button"",
                     ""id"": ""1cb3da0a-cef6-4445-983a-a9bfea70b4ac"",
                     ""expectedControlType"": ""Button"",
@@ -282,7 +282,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
-                    ""action"": ""stop tracking target"",
+                    ""action"": ""toggle tracker"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -324,7 +324,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_gameplay_switchweapon = m_gameplay.FindAction("switch weapon", throwIfNotFound: true);
         m_gameplay_toggleautospeed = m_gameplay.FindAction("toggle auto speed", throwIfNotFound: true);
         m_gameplay_tracktarget = m_gameplay.FindAction("track target", throwIfNotFound: true);
-        m_gameplay_stoptrackingtarget = m_gameplay.FindAction("stop tracking target", throwIfNotFound: true);
+        m_gameplay_toggletracker = m_gameplay.FindAction("toggle tracker", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -394,7 +394,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_gameplay_switchweapon;
     private readonly InputAction m_gameplay_toggleautospeed;
     private readonly InputAction m_gameplay_tracktarget;
-    private readonly InputAction m_gameplay_stoptrackingtarget;
+    private readonly InputAction m_gameplay_toggletracker;
     public struct GameplayActions
     {
         private @PlayerControls m_Wrapper;
@@ -407,7 +407,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @switchweapon => m_Wrapper.m_gameplay_switchweapon;
         public InputAction @toggleautospeed => m_Wrapper.m_gameplay_toggleautospeed;
         public InputAction @tracktarget => m_Wrapper.m_gameplay_tracktarget;
-        public InputAction @stoptrackingtarget => m_Wrapper.m_gameplay_stoptrackingtarget;
+        public InputAction @toggletracker => m_Wrapper.m_gameplay_toggletracker;
         public InputActionMap Get() { return m_Wrapper.m_gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -441,9 +441,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @tracktarget.started += instance.OnTracktarget;
             @tracktarget.performed += instance.OnTracktarget;
             @tracktarget.canceled += instance.OnTracktarget;
-            @stoptrackingtarget.started += instance.OnStoptrackingtarget;
-            @stoptrackingtarget.performed += instance.OnStoptrackingtarget;
-            @stoptrackingtarget.canceled += instance.OnStoptrackingtarget;
+            @toggletracker.started += instance.OnToggletracker;
+            @toggletracker.performed += instance.OnToggletracker;
+            @toggletracker.canceled += instance.OnToggletracker;
         }
 
         private void UnregisterCallbacks(IGameplayActions instance)
@@ -472,9 +472,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @tracktarget.started -= instance.OnTracktarget;
             @tracktarget.performed -= instance.OnTracktarget;
             @tracktarget.canceled -= instance.OnTracktarget;
-            @stoptrackingtarget.started -= instance.OnStoptrackingtarget;
-            @stoptrackingtarget.performed -= instance.OnStoptrackingtarget;
-            @stoptrackingtarget.canceled -= instance.OnStoptrackingtarget;
+            @toggletracker.started -= instance.OnToggletracker;
+            @toggletracker.performed -= instance.OnToggletracker;
+            @toggletracker.canceled -= instance.OnToggletracker;
         }
 
         public void RemoveCallbacks(IGameplayActions instance)
@@ -511,6 +511,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnSwitchweapon(InputAction.CallbackContext context);
         void OnToggleautospeed(InputAction.CallbackContext context);
         void OnTracktarget(InputAction.CallbackContext context);
-        void OnStoptrackingtarget(InputAction.CallbackContext context);
+        void OnToggletracker(InputAction.CallbackContext context);
     }
 }

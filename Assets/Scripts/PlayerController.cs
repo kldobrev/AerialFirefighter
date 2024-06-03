@@ -27,6 +27,8 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private float liftForce;
     [SerializeField]
     private float stabilizeForce;
+    [SerializeField]
+    private Transform objective;
     //[SerializeField]
     //private WeaponContainer[] weapons;
     public static AmmunitionUITracker UIAmmoTracker;
@@ -40,9 +42,9 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     [SerializeField]
     private UnityEvent<Vector2, float> updateRadarCamera;
     [SerializeField]
-    private UnityEvent trackTarget;
+    private UnityEvent<Transform> updateLocator;
     [SerializeField]
-    private UnityEvent stopTrackingTarget;
+    private UnityEvent toggleUITracker;
     [SerializeField]
     private UnityEvent<bool, float, float> sendWeaponDataToTracker;
 
@@ -88,7 +90,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         controls.gameplay.switchweapon.canceled += OnSwitchweapon;
         controls.gameplay.toggleautospeed.performed += OnToggleautospeed;
         controls.gameplay.tracktarget.performed += OnTracktarget;
-        controls.gameplay.stoptrackingtarget.performed += OnStoptrackingtarget;
+        controls.gameplay.toggletracker.performed += OnToggletracker;
     }
 
     // Start is called before the first frame update
@@ -115,6 +117,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         enableStabilize = true; // Will be set by player in menu
         stabilize = false;
         propellerRotation = Vector3.zero;
+        updateLocator.Invoke(objective);
     }
 
     // Update is called once per frame
@@ -327,12 +330,12 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
 
     public void OnTracktarget(InputAction.CallbackContext context)
     {
-        trackTarget.Invoke();
+        Debug.Log("Setting target to " + objective);
     }
 
-    public void OnStoptrackingtarget(InputAction.CallbackContext context)
+    public void OnToggletracker(InputAction.CallbackContext context)
     {
-        stopTrackingTarget.Invoke();
+        toggleUITracker.Invoke();
     }
 
     private void OnCollisionEnter(Collision collision)

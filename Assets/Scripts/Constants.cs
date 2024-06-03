@@ -62,5 +62,7 @@ public static class Constants {
     public static Color32 AutoSpeedColourOff = new Color32(130, 130, 130, 190);
     public static Color32 AutoSpeedColourOn = new Color32(53, 255, 0, 255);
     public static Color32 WeaponEmptyIconColour = new Color32(78, 78, 78, 178);
+    public const float TargetIconMovementMult = 2;
+    public const float BarResetBorder = 300;
 
 }
