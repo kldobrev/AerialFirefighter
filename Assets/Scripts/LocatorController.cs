@@ -22,7 +22,6 @@ public class LocatorController : MonoBehaviour
     private float startBarPositionX;
     private float startTargetIconPositionX;
     private float playerTargetAngle;
-    private float angleDelta;
     private Vector3 nextBarPosition;
     private Vector3 nextTargetIconPosition;
     private Vector3 direction;
@@ -38,7 +37,6 @@ public class LocatorController : MonoBehaviour
         nextBarPosition = barRectTrns.localPosition;
         startTargetIconPositionX = targetIcon.localPosition.x;
         nextTargetIconPosition = targetIcon.localPosition;
-        angleDelta = 0;
     }
 
     // Update is called once per frame
@@ -47,8 +45,7 @@ public class LocatorController : MonoBehaviour
         playerAngleY = playerTrns.rotation.eulerAngles.y;
         if (locatorAngle != playerAngleY)
         {
-            locatorAngle = playerAngleY > 180 ? playerAngleY - 360 : playerAngleY;
-            angleDelta = locatorAngle - angleDelta;
+            locatorAngle = HelperMethods.GetSignedAngleFromEuler(playerAngleY);
             nextBarPosition.x = startBarPositionX - locatorAngle;
             if (locatorAngle < -Constants.BarResetBorder || locatorAngle > Constants.BarResetBorder)  // Resetting bar image position
             {

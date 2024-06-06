@@ -22,7 +22,7 @@ public static class Constants {
     // Player controller
 
     public const string RetractGearsAnimParamName = "RetractLandingGears";
-    public const float PlDefaultDrag = 0.05f;
+    public const float PlDefaultDrag = 0.12f;
     public const float PlDefaultAngularDrag = 0.05f;
     public const float PlBrakeDrag = 0.01f;
     public const float PlTurnDrag = 0.0015f;
@@ -31,12 +31,13 @@ public static class Constants {
     public const int SendHeightFramerule = 2;
     public const int SendCoordsFramerule = 1;
     public const int SendSpeedFramerule = 5;
-    public const float HeightTreshold = 4100;
+    public const float HeightTreshold = 41000;
     public const float HeightDrag = 200f;
     public const float HeightDragTurn = 1f;
     public const string GearsRetractTriggerTag = "GearsRetractor";
     public const string PlayerTagName = "Player";
     public const string EnemiesTagName = "Enemy";
+    public const float PitchDragAngle = 21;
 
     // Tracker controller
 

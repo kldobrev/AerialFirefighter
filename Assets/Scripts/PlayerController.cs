@@ -24,11 +24,13 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     [SerializeField]
     private float rollFactor;
     [SerializeField]
-    private float liftForce;
+    private float liftForce = 3.1f;
     [SerializeField]
     private float stabilizeForce;
     [SerializeField]
     private Transform objective;
+    [SerializeField]
+    private float pitchLiftFactor = 2;
     //[SerializeField]
     //private WeaponContainer[] weapons;
     public static AmmunitionUITracker UIAmmoTracker;
@@ -47,6 +49,12 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private UnityEvent toggleUITracker;
     [SerializeField]
     private UnityEvent<bool, float, float> sendWeaponDataToTracker;
+
+
+    public float yawDrag = 1;
+    public float pitchDrag = 1;
+    public float rollDrag = 1;
+
 
 
     private float accelerateValue;
@@ -71,6 +79,8 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private bool enableStabilize;
     private bool stabilize;
     private Vector3 propellerRotation;
+    private float signedEulerPitch;
+    private float planeSpeed;
 
 
     private void Awake()
@@ -105,7 +115,6 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         planeDrag = Constants.PlDefaultDrag;
         planeAngularDrag = Constants.PlDefaultAngularDrag;
         sendHeightFrameCount = sendCoordsFrameCount = sendSpeedFrameCount = 0;
-        planeDrag = Constants.PlDefaultDrag;
         selectedWeaponIdx = 0;
         UIAmmoTracker = transform.GetComponent<AmmunitionUITracker>();
         rigBodyTransform = rafaleBody.transform;
@@ -152,7 +161,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         if (sendSpeedFrameCount == Constants.SendSpeedFramerule)
         {
             sendSpeedFrameCount = 0;
-            planeMagnitudeRounded = Mathf.RoundToInt(rafaleBody.velocity.magnitude);
+            planeMagnitudeRounded = Mathf.RoundToInt(planeSpeed);
             setSpeedometerSpeed.Invoke(planeMagnitudeRounded);
         }
         else
@@ -167,6 +176,9 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     void FixedUpdate()
     {
         accelerateValue = 0;
+        planeSpeed = rafaleBody.velocity.magnitude;
+        planeDrag = Constants.PlDefaultDrag;
+
         if (throttleInput != 0)  // Accelerate using player input ignoring auto speed value
         {
             accelerateValue = throttleInput * throttleAcceleration;
@@ -175,37 +187,36 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         {
             if (isAirbourne && isAutoSpeedOn) // Maintain constant speed if enabled
             {
-                accelerateValue = rafaleBody.velocity.magnitude < autoSpeed ? throttleAcceleration : 0;
+                accelerateValue = planeSpeed < autoSpeed ? throttleAcceleration : 0;
             }   
         }
         
         if (brakeInput != 0)    // Brake engaged
         {
-            if(rafaleBody.velocity.magnitude >= Constants.PlMinSpeedAir)
+            if(planeSpeed >= Constants.PlMinSpeedAir)
             {
                 planeDrag += Constants.PlBrakeDrag;
             }
         }
-        else
+        else if (signedEulerPitch > -Constants.PitchDragAngle)
         {
             rafaleBody.AddRelativeForce(Vector3.forward * accelerateValue, ForceMode.Acceleration);
-            if (rafaleBody.rotation.x <= 0) // Plane is tilted up
-            {
-                rafaleBody.AddRelativeForce(Vector3.up * rafaleBody.velocity.magnitude * liftForce, ForceMode.Impulse);
-            }
         }
+        signedEulerPitch = HelperMethods.GetSignedAngleFromEuler(rafaleBody.rotation.eulerAngles.x);
+        rafaleBody.AddRelativeForce(Vector3.up * ((planeSpeed - (planeSpeed * signedEulerPitch * pitchLiftFactor))
+            * liftForce), ForceMode.Impulse);
 
-        if(rafaleBody.position.y > Constants.HeightTreshold)    // Height ceiling check
+        if (rafaleBody.position.y > Constants.HeightTreshold)    // Height ceiling check
         {
             rafaleBody.AddRelativeForce(Vector3.down * Constants.HeightDrag, ForceMode.Acceleration);
             rafaleBody.AddRelativeTorque(Vector3.down * Constants.HeightDragTurn, ForceMode.VelocityChange);
         }
 
-        if (torqueInput != Vector2.zero && rafaleBody.velocity.magnitude > 1)
+        if (torqueInput != Vector2.zero && planeSpeed > 1)
         {
             if (throttleInput == 0)
             {
-                planeDrag = Constants.PlTurnDrag;
+                planeDrag += Constants.PlTurnDrag;
             }
             rafaleBody.AddRelativeTorque(torqueInput.y * pitchFactor * Vector3.right, ForceMode.Acceleration);
             rafaleBody.AddRelativeTorque(torqueInput.x * yawFactor * Vector3.up, ForceMode.Acceleration);
@@ -215,7 +226,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         {
             if (throttleInput == 0)
             {
-                planeDrag = Constants.PlTurnDrag;
+                planeDrag += Constants.PlTurnDrag;
             }
             rafaleBody.AddRelativeTorque(rollInput * rollFactor * Vector3.forward, ForceMode.Acceleration);
         }
@@ -264,7 +275,6 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private void OnCancelTurn(InputAction.CallbackContext context)
     {
         torqueInput = Vector2.zero;
-        planeDrag = Constants.PlDefaultDrag;
         if(!controls.gameplay.roll.IsPressed()) planeAngularDrag = 3f;
     }
 
@@ -290,7 +300,6 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     public void OnAccelerate(InputAction.CallbackContext context)
     {
         throttleInput = context.ReadValue<float>();
-        planeDrag = Constants.PlDefaultDrag;
     }
 
     public void OnBrake(InputAction.CallbackContext context)
@@ -301,7 +310,6 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     public void OnCancelBrake(InputAction.CallbackContext context)
     {
         brakeInput = 0f;
-        planeDrag = Constants.PlDefaultDrag;
     }
 
     public void OnFireweapon(InputAction.CallbackContext context)

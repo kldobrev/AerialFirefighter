@@ -32,8 +32,8 @@ public class AttitudeMeterController : MonoBehaviour
             bankPitchContainerTrns.rotation = Quaternion.Euler(0, 0, bankPitchRotation);
         }
 
-        pitch = playerTrns.transform.rotation.eulerAngles.x;
-        pitch = pitch > 180 ? pitch - 360 : pitch;
+        pitch = HelperMethods.GetSignedAngleFromEuler(playerTrns.rotation.eulerAngles.x);
         pitchSlider.value = Mathf.Clamp(pitch, -Constants.AttitudeMeterMaxPitchShown, Constants.AttitudeMeterMaxPitchShown);
     }
+
 }

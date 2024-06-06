@@ -14687,11 +14687,11 @@ RectTransform:
   - {fileID: 1473283701}
   m_Father: {fileID: 224394740}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.84800005, y: 0.73700005}
+  m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -50.250244, y: -44.250244}
-  m_SizeDelta: {x: 10, y: 16}
-  m_Pivot: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -166.3, y: -156}
+  m_SizeDelta: {x: 302, y: 300}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1567514168
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18231,7 +18231,7 @@ MonoBehaviour:
   pitchFactor: 0.3
   yawFactor: 0.1
   rollFactor: 1.5
-  liftForce: 4
+  liftForce: 3.55
   stabilizeForce: 0.0001
   objective: {fileID: 1801975756}
   setSpeedometerSpeed:
@@ -18339,6 +18339,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  yawDrag: 1
+  pitchDrag: 1
+  rollDrag: 1
 --- !u!95 &2078725544
 Animator:
   serializedVersion: 5
@@ -19008,7 +19011,7 @@ Rigidbody:
   serializedVersion: 4
   m_Mass: 2000
   m_Drag: 0.05
-  m_AngularDrag: 0.01
+  m_AngularDrag: 90
   m_CenterOfMass: {x: 0, y: 0, z: -0.5}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -19216,8 +19219,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4155046195940137143}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.05446257, y: 0.00029244108, z: 0.00001500328, w: 0.9985158}
-  m_LocalPosition: {x: 5303.7, y: 0.454, z: 7703.9}
+  m_LocalRotation: {x: -0.05282396, y: 0, z: 0, w: 0.9986039}
+  m_LocalPosition: {x: 5303.6997, y: 0, z: 7703.8994}
   m_LocalScale: {x: 3.5, y: 3.5, z: 3.5}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -19226,7 +19229,7 @@ Transform:
   - {fileID: 1617295713}
   - {fileID: 1966105455}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: -7.174, y: 0.032, z: 0.024}
+  m_LocalEulerAnglesHint: {x: -6.056, y: 0, z: 0}
 --- !u!1 &4155046195940137143
 GameObject:
   m_ObjectHideFlags: 0
