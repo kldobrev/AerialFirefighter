@@ -1,10 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using static UnityEditor.VersionControl.Message;
 
 public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
 {
@@ -25,15 +29,14 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private float rollFactor;
     [SerializeField]
     private float liftForce = 3.1f;
-    [SerializeField]
-    private float stabilizeForce;
-    [SerializeField]
-    private Transform objective;
+    //[SerializeField]
+    //private Transform objective;
     [SerializeField]
     private float pitchLiftFactor = 2;
     //[SerializeField]
     //private WeaponContainer[] weapons;
     public static AmmunitionUITracker UIAmmoTracker;
+
 
     [SerializeField]
     private UnityEvent<int> setSpeedometerSpeed;
@@ -43,8 +46,8 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private UnityEvent<float> updateHeightMeter;
     [SerializeField]
     private UnityEvent<Vector2, float> updateRadarCamera;
-    [SerializeField]
-    private UnityEvent<Transform> updateLocator;
+    //[SerializeField]
+    //private UnityEvent<Transform> updateLocator;
     [SerializeField]
     private UnityEvent toggleUITracker;
     [SerializeField]
@@ -60,8 +63,8 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private float accelerateValue;
     private float throttleInput;
     private float brakeInput;
-    private Vector2 torqueInput;
-    private float rollInput;
+    private Vector2 pitchRollInput;
+    private float yawInput;
     private Animator playerAnimator;
     private float autoSpeed;
     private bool isAirbourne;
@@ -71,33 +74,34 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private float planeAngularDrag;
     private Transform rigBodyTransform;
     private int planeMagnitudeRounded;
-    private int sendHeightFrameCount;
-    private int sendCoordsFrameCount;
-    private int sendSpeedFrameCount;
+    private FrameRule sendHeightRule;
+    private FrameRule sendCoordsRule;
+    private FrameRule sendSpeedRule;
+    private FrameRule spinPropellerRule;
     private int selectedWeaponIdx;
     public static Transform PlayerBodyTransform;
-    private bool enableStabilize;
-    private bool stabilize;
-    private Vector3 propellerRotation;
     private float signedEulerPitch;
     private float planeSpeed;
+    private static bool engineStarted;
+    private bool landingComplete;
+    private float propellerSpeed;
 
 
     private void Awake()
     {
         controls = new PlayerControls();
 
-        controls.gameplay.turn.performed += OnTurn;
-        controls.gameplay.turn.canceled += OnCancelTurn;
-        controls.gameplay.roll.performed += OnRoll;
-        controls.gameplay.roll.canceled += OnCancelRoll;
+        controls.gameplay.startstopengine.canceled += OnStartstopengine;
+        controls.gameplay.pitchroll.performed += OnPitchroll;
+        controls.gameplay.pitchroll.canceled += OnCancelPitchroll;
+        controls.gameplay.yaw.performed += OnYaw;
+        controls.gameplay.yaw.canceled += OnCancelYaw;
         controls.gameplay.accelerate.performed += OnAccelerate;
         controls.gameplay.accelerate.canceled += context => throttleInput = 0f;
         controls.gameplay.brake.performed += OnBrake;
         controls.gameplay.brake.canceled += OnCancelBrake;
         controls.gameplay.fireweapon.performed += OnFireweapon;
         controls.gameplay.fireweapon.canceled += OnStopFiringWeapon;
-        controls.gameplay.switchweapon.canceled += OnSwitchweapon;
         controls.gameplay.toggleautospeed.performed += OnToggleautospeed;
         controls.gameplay.tracktarget.performed += OnTracktarget;
         controls.gameplay.toggletracker.performed += OnToggletracker;
@@ -114,7 +118,10 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         planeMagnitudeRounded = 0;
         planeDrag = Constants.PlDefaultDrag;
         planeAngularDrag = Constants.PlDefaultAngularDrag;
-        sendHeightFrameCount = sendCoordsFrameCount = sendSpeedFrameCount = 0;
+        sendHeightRule = new FrameRule(Constants.SendHeightFramerule);
+        sendCoordsRule = new FrameRule(Constants.SendCoordsFramerule);
+        sendSpeedRule = new FrameRule(Constants.SendSpeedFramerule);
+        spinPropellerRule = new FrameRule(Constants.SpinPropellerFramerule);
         selectedWeaponIdx = 0;
         UIAmmoTracker = transform.GetComponent<AmmunitionUITracker>();
         rigBodyTransform = rafaleBody.transform;
@@ -123,10 +130,17 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         //UIAmmoTracker.UpdateWeaponAmmoInUI(weapons[selectedWeaponIdx].Ammunition);
         //sendWeaponDataToTracker.Invoke(true, weapons[selectedWeaponIdx].Range, weapons[selectedWeaponIdx].LockingStep);
         PlayerBodyTransform = bodyTransform;
-        enableStabilize = true; // Will be set by player in menu
-        stabilize = false;
-        propellerRotation = Vector3.zero;
-        updateLocator.Invoke(objective);
+        propellerSpeed = 0;
+        landingComplete = false;
+        engineStarted = false;
+        //updateLocator.Invoke(objective);
+
+        // Move to game manager script the logic below
+        Transform ground = GameObject.Find("Ground").transform;
+        for (int i = 0; i < ground.childCount; i++)
+        {
+            ground.GetChild(i).tag = Constants.TerrainTagName;
+        }
     }
 
     // Update is called once per frame
@@ -138,39 +152,29 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
             isAirbourne = true;
         }
 
-        if(sendHeightFrameCount == Constants.SendHeightFramerule)
-        {
-            sendHeightFrameCount = 0;
-            updateHeightMeter.Invoke(transform.position.y);
-        }
-        else
-        {
-            sendHeightFrameCount++;
-        }
-        
-        if(sendCoordsFrameCount == Constants.SendCoordsFramerule)
-        {
-            sendCoordsFrameCount = 0;
-            updateRadarCamera.Invoke(new Vector2(transform.position.x, transform.position.z), transform.rotation.eulerAngles.y);
-        }
-        else
-        {
-            sendCoordsFrameCount++;
-        }
+        if (sendHeightRule.CheckFrameRule()) updateHeightMeter.Invoke(transform.position.y);
+        sendHeightRule.AdvanceCounter();
 
-        if (sendSpeedFrameCount == Constants.SendSpeedFramerule)
+        if (sendCoordsRule.CheckFrameRule()) updateRadarCamera.Invoke(new Vector2(transform.position.x, 
+            transform.position.z), transform.rotation.eulerAngles.y);
+        sendCoordsRule.AdvanceCounter();
+
+        if (sendSpeedRule.CheckFrameRule())
         {
-            sendSpeedFrameCount = 0;
             planeMagnitudeRounded = Mathf.RoundToInt(planeSpeed);
             setSpeedometerSpeed.Invoke(planeMagnitudeRounded);
         }
-        else
-        {
-            sendSpeedFrameCount++;
-        }
+        sendSpeedRule.AdvanceCounter();
 
-        propellerRotation.x = planeMagnitudeRounded * 5;
-        propeller.Rotate(Vector3.Lerp(Vector3.zero, propellerRotation, 5 * Time.deltaTime));
+        if (engineStarted || propellerSpeed > 0)
+        {
+            propeller.Rotate(propellerSpeed, 0, 0);
+            if (propellerSpeed < Constants.MaxPropellerSpeed || !engineStarted)
+            {
+                if (spinPropellerRule.CheckFrameRule()) propellerSpeed += (engineStarted ? 1 : -1);
+                spinPropellerRule.AdvanceCounter();
+            }
+        }
     }
 
     void FixedUpdate()
@@ -179,32 +183,38 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         planeSpeed = rafaleBody.velocity.magnitude;
         planeDrag = Constants.PlDefaultDrag;
 
-        if (throttleInput != 0)  // Accelerate using player input ignoring auto speed value
+        if (propellerSpeed >= Constants.MaxPropellerSpeed)
         {
-            accelerateValue = throttleInput * throttleAcceleration;
-        }
-        else
-        {
-            if (isAirbourne && isAutoSpeedOn) // Maintain constant speed if enabled
+            if (throttleInput != 0)  // Accelerate using player input ignoring auto speed value
             {
-                accelerateValue = planeSpeed < autoSpeed ? throttleAcceleration : 0;
-            }   
+                accelerateValue = throttleInput * throttleAcceleration;
+            }
+            else
+            {
+                if (isAirbourne && isAutoSpeedOn) // Maintain constant speed if enabled
+                {
+                    accelerateValue = planeSpeed < autoSpeed ? throttleAcceleration : 0;
+                }
+            }
+
+            if (planeSpeed > 180) planeDrag += (Constants.HighSpeedDrag * planeSpeed);
+            signedEulerPitch = HelperMethods.GetSignedAngleFromEuler(rafaleBody.rotation.eulerAngles.x);
         }
-        
+        rafaleBody.AddRelativeForce(Vector3.up * ((planeSpeed - (planeSpeed * signedEulerPitch * pitchLiftFactor))
+            * liftForce), ForceMode.Impulse);
+
         if (brakeInput != 0)    // Brake engaged
         {
-            if(planeSpeed >= Constants.PlMinSpeedAir)
-            {
-                planeDrag += Constants.PlBrakeDrag;
-            }
+            planeDrag += Constants.PlBrakeDrag;
         }
-        else if (signedEulerPitch > -Constants.PitchDragAngle)
+        else if (signedEulerPitch >= -Constants.PitchDragAngle)
         {
             rafaleBody.AddRelativeForce(Vector3.forward * accelerateValue, ForceMode.Acceleration);
         }
-        signedEulerPitch = HelperMethods.GetSignedAngleFromEuler(rafaleBody.rotation.eulerAngles.x);
-        rafaleBody.AddRelativeForce(Vector3.up * ((planeSpeed - (planeSpeed * signedEulerPitch * pitchLiftFactor))
-            * liftForce), ForceMode.Impulse);
+        else
+        {
+            planeDrag += (Constants.HighPitchDrag * (-signedEulerPitch));
+        }
 
         if (rafaleBody.position.y > Constants.HeightTreshold)    // Height ceiling check
         {
@@ -212,32 +222,23 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
             rafaleBody.AddRelativeTorque(Vector3.down * Constants.HeightDragTurn, ForceMode.VelocityChange);
         }
 
-        if (torqueInput != Vector2.zero && planeSpeed > 1)
+        if (pitchRollInput != Vector2.zero && planeSpeed > 1)
         {
             if (throttleInput == 0)
             {
                 planeDrag += Constants.PlTurnDrag;
             }
-            rafaleBody.AddRelativeTorque(torqueInput.y * pitchFactor * Vector3.right, ForceMode.Acceleration);
-            rafaleBody.AddRelativeTorque(torqueInput.x * yawFactor * Vector3.up, ForceMode.Acceleration);
+            rafaleBody.AddRelativeTorque(pitchRollInput.y * pitchFactor * Vector3.right, ForceMode.Acceleration);
+            rafaleBody.AddRelativeTorque(pitchRollInput.x * rollFactor * Vector3.forward, ForceMode.Acceleration);
         }
 
-        if (isAirbourne && rollInput != 0f)
+        if (isAirbourne && yawInput != 0f)
         {
             if (throttleInput == 0)
             {
                 planeDrag += Constants.PlTurnDrag;
             }
-            rafaleBody.AddRelativeTorque(rollInput * rollFactor * Vector3.forward, ForceMode.Acceleration);
-        }
-
-        if(stabilize)
-        {
-            //rafaleBody.AddRelativeTorque(Vector3.forward * stabilizeForce, ForceMode.VelocityChange);
-            //rafaleBody.MoveRotation(Quaternion.Euler(0, 0, rafaleBody.rotation.z < 0 ? stabilizeForce : -stabilizeForce));
-            rafaleBody.MoveRotation(Quaternion.Euler(0, 0, Mathf.LerpAngle(rafaleBody.rotation.eulerAngles.z, 0, 0.05f)));
-            Physics.SyncTransforms();
-            if (rafaleBody.rotation.z < 0.0001 || rafaleBody.rotation.z > 359.0001) stabilize = false;
+            rafaleBody.AddRelativeTorque(yawInput * yawFactor * Vector3.up, ForceMode.Acceleration);
         }
         
         if(rafaleBody.drag != planeDrag) rafaleBody.drag = planeDrag;
@@ -263,38 +264,50 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         controls.gameplay.Disable();
     }
 
+    public static bool EngineStarted()
+    {
+        return engineStarted;
+    }
+
     // Controls section
 
-    public void OnTurn(InputAction.CallbackContext context)
+    public void OnStartstopengine(InputAction.CallbackContext context)
     {
-        torqueInput = context.ReadValue<Vector2>();
-        planeAngularDrag = 0.05f;
-        if (stabilize) stabilize = false;
+        engineStarted = !engineStarted;
+        Debug.Log("Engine: " + engineStarted);
     }
 
-    private void OnCancelTurn(InputAction.CallbackContext context)
+    public void OnPitchroll(InputAction.CallbackContext context)
     {
-        torqueInput = Vector2.zero;
-        if(!controls.gameplay.roll.IsPressed()) planeAngularDrag = 3f;
-    }
-
-    public void OnRoll(InputAction.CallbackContext context)
-    {
-        rollInput = context.ReadValue<float>();
-        if (stabilize) stabilize = false;
+        pitchRollInput = context.ReadValue<Vector2>();
         planeAngularDrag = 0.05f;
     }
 
-    private void OnCancelRoll(InputAction.CallbackContext context)
+    private void OnCancelPitchroll(InputAction.CallbackContext context)
     {
-        rollInput = 0f;
-        //planeDrag = Constants.PlDefaultDrag;
-        /*if(enableStabilize && rafaleBody.rotation.eulerAngles.z != 0 && 
-            (rafaleBody.rotation.eulerAngles.z < 10 || rafaleBody.rotation.eulerAngles.z > 350))
+        pitchRollInput = Vector2.zero;
+        //if (!controls.gameplay.roll.IsPressed()) rafaleBody.angularVelocity = Vector3.zero;
+        if (yawInput == 0)
         {
-            stabilize = true;
-        }*/
-        if (!controls.gameplay.turn.IsPressed()) planeAngularDrag = 3f;
+            planeAngularDrag = 3f;
+            StartCoroutine(NullifyAngularSpeed());
+        }
+    }
+
+    public void OnYaw(InputAction.CallbackContext context)
+    {
+        yawInput = context.ReadValue<float>();
+        planeAngularDrag = 0.05f;
+    }
+
+    private void OnCancelYaw(InputAction.CallbackContext context)
+    {
+        yawInput = 0f;
+        if (pitchRollInput == Vector2.zero)
+        {
+            planeAngularDrag = 3f;
+            StartCoroutine(NullifyAngularSpeed());
+        }
     }
 
     public void OnAccelerate(InputAction.CallbackContext context)
@@ -322,14 +335,6 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         //weapons[selectedWeaponIdx].StopFiring();
     }
 
-    public void OnSwitchweapon(InputAction.CallbackContext context)
-    {
-        selectedWeaponIdx = selectedWeaponIdx == Constants.MaxNumWeapons - 1 ? 0 : selectedWeaponIdx + 1;
-        //UIAmmoTracker.SwitchSelectedWeaponInUI(selectedWeaponIdx, weapons[selectedWeaponIdx]);
-        //UIAmmoTracker.UpdateWeaponAmmoInUI(weapons[selectedWeaponIdx].Ammunition);
-        //sendWeaponDataToTracker.Invoke(selectedWeaponIdx == 0, weapons[selectedWeaponIdx].Range, weapons[selectedWeaponIdx].LockingStep);
-    }
-
     public void OnToggleautospeed(InputAction.CallbackContext context)
     {
         SetAutoSpeed();
@@ -338,7 +343,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
 
     public void OnTracktarget(InputAction.CallbackContext context)
     {
-        Debug.Log("Setting target to " + objective);
+        //Debug.Log("Setting target to " + objective);
     }
 
     public void OnToggletracker(InputAction.CallbackContext context)
@@ -348,11 +353,17 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
 
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.transform.parent.CompareTag("Ground") && isAirbourne)
+        if (collision.gameObject.CompareTag(Constants.TerrainTagName) && isAirbourne)
         {
-            Debug.Log("Attempted landing");
+            Debug.Log("Landing angle: " + signedEulerPitch);
             isAirbourne = false;
         }
+    }
+
+    private IEnumerator NullifyAngularSpeed()
+    {
+        yield return new WaitForSeconds(0.8f);
+        if(pitchRollInput == Vector2.zero && yawInput == 0) rafaleBody.angularVelocity = Vector3.zero;
     }
 
 }

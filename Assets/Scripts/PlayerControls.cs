@@ -28,6 +28,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             ""id"": ""5a152aa5-ce4c-4678-a97e-3d2fcef516ba"",
             ""actions"": [
                 {
+                    ""name"": ""start/stop engine"",
+                    ""type"": ""Button"",
+                    ""id"": ""c142afb8-4a0e-4d16-8323-4a46e9af8524"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""accelerate"",
                     ""type"": ""Value"",
                     ""id"": ""e2062c40-563c-4113-a080-9c5c47d5c13b"",
@@ -46,7 +55,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""roll"",
+                    ""name"": ""yaw"",
                     ""type"": ""Value"",
                     ""id"": ""1682d68b-9315-4864-a3e8-b96474d46ae6"",
                     ""expectedControlType"": ""Axis"",
@@ -55,11 +64,11 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""turn"",
+                    ""name"": ""pitch/roll"",
                     ""type"": ""Value"",
                     ""id"": ""c99209c7-8fa0-4995-818c-21bcb2bbd083"",
                     ""expectedControlType"": ""Vector2"",
-                    ""processors"": ""InvertVector2"",
+                    ""processors"": ""InvertVector2(invertX=false)"",
                     ""interactions"": """",
                     ""initialStateCheck"": true
                 },
@@ -67,15 +76,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""name"": ""fire weapon"",
                     ""type"": ""Button"",
                     ""id"": ""5dcf7ad4-0bdd-43da-ba84-d0485fcfcf2b"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""switch weapon"",
-                    ""type"": ""Button"",
-                    ""id"": ""9b01327c-1a2d-40a7-81e2-8be160693e72"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -150,7 +150,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": ""InvertVector2(invertY=false)"",
                     ""groups"": """",
-                    ""action"": ""turn"",
+                    ""action"": ""pitch/roll"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -161,7 +161,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
-                    ""action"": ""turn"",
+                    ""action"": ""pitch/roll"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -172,7 +172,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
-                    ""action"": ""turn"",
+                    ""action"": ""pitch/roll"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -183,7 +183,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
-                    ""action"": ""turn"",
+                    ""action"": ""pitch/roll"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -194,7 +194,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
-                    ""action"": ""turn"",
+                    ""action"": ""pitch/roll"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -236,9 +236,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""id"": ""ca72fca0-742b-437e-b2d5-4e1f725a4c33"",
                     ""path"": ""1DAxis"",
                     ""interactions"": """",
-                    ""processors"": ""Invert"",
+                    ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""roll"",
+                    ""action"": ""yaw"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -249,7 +249,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
-                    ""action"": ""roll"",
+                    ""action"": ""yaw"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -260,7 +260,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
-                    ""action"": ""roll"",
+                    ""action"": ""yaw"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -288,12 +288,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""b5d4e472-69f5-40bc-a4e8-10e94a0c7b2a"",
-                    ""path"": ""<Keyboard>/numpad9"",
+                    ""id"": ""0cd3d3ba-468a-46e1-b842-c6adc30628e7"",
+                    ""path"": ""<Keyboard>/r"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""switch weapon"",
+                    ""groups"": """",
+                    ""action"": ""start/stop engine"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -316,12 +316,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
 }");
         // gameplay
         m_gameplay = asset.FindActionMap("gameplay", throwIfNotFound: true);
+        m_gameplay_startstopengine = m_gameplay.FindAction("start/stop engine", throwIfNotFound: true);
         m_gameplay_accelerate = m_gameplay.FindAction("accelerate", throwIfNotFound: true);
         m_gameplay_brake = m_gameplay.FindAction("brake", throwIfNotFound: true);
-        m_gameplay_roll = m_gameplay.FindAction("roll", throwIfNotFound: true);
-        m_gameplay_turn = m_gameplay.FindAction("turn", throwIfNotFound: true);
+        m_gameplay_yaw = m_gameplay.FindAction("yaw", throwIfNotFound: true);
+        m_gameplay_pitchroll = m_gameplay.FindAction("pitch/roll", throwIfNotFound: true);
         m_gameplay_fireweapon = m_gameplay.FindAction("fire weapon", throwIfNotFound: true);
-        m_gameplay_switchweapon = m_gameplay.FindAction("switch weapon", throwIfNotFound: true);
         m_gameplay_toggleautospeed = m_gameplay.FindAction("toggle auto speed", throwIfNotFound: true);
         m_gameplay_tracktarget = m_gameplay.FindAction("track target", throwIfNotFound: true);
         m_gameplay_toggletracker = m_gameplay.FindAction("toggle tracker", throwIfNotFound: true);
@@ -386,12 +386,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     // gameplay
     private readonly InputActionMap m_gameplay;
     private List<IGameplayActions> m_GameplayActionsCallbackInterfaces = new List<IGameplayActions>();
+    private readonly InputAction m_gameplay_startstopengine;
     private readonly InputAction m_gameplay_accelerate;
     private readonly InputAction m_gameplay_brake;
-    private readonly InputAction m_gameplay_roll;
-    private readonly InputAction m_gameplay_turn;
+    private readonly InputAction m_gameplay_yaw;
+    private readonly InputAction m_gameplay_pitchroll;
     private readonly InputAction m_gameplay_fireweapon;
-    private readonly InputAction m_gameplay_switchweapon;
     private readonly InputAction m_gameplay_toggleautospeed;
     private readonly InputAction m_gameplay_tracktarget;
     private readonly InputAction m_gameplay_toggletracker;
@@ -399,12 +399,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     {
         private @PlayerControls m_Wrapper;
         public GameplayActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @startstopengine => m_Wrapper.m_gameplay_startstopengine;
         public InputAction @accelerate => m_Wrapper.m_gameplay_accelerate;
         public InputAction @brake => m_Wrapper.m_gameplay_brake;
-        public InputAction @roll => m_Wrapper.m_gameplay_roll;
-        public InputAction @turn => m_Wrapper.m_gameplay_turn;
+        public InputAction @yaw => m_Wrapper.m_gameplay_yaw;
+        public InputAction @pitchroll => m_Wrapper.m_gameplay_pitchroll;
         public InputAction @fireweapon => m_Wrapper.m_gameplay_fireweapon;
-        public InputAction @switchweapon => m_Wrapper.m_gameplay_switchweapon;
         public InputAction @toggleautospeed => m_Wrapper.m_gameplay_toggleautospeed;
         public InputAction @tracktarget => m_Wrapper.m_gameplay_tracktarget;
         public InputAction @toggletracker => m_Wrapper.m_gameplay_toggletracker;
@@ -417,24 +417,24 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_GameplayActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_GameplayActionsCallbackInterfaces.Add(instance);
+            @startstopengine.started += instance.OnStartstopengine;
+            @startstopengine.performed += instance.OnStartstopengine;
+            @startstopengine.canceled += instance.OnStartstopengine;
             @accelerate.started += instance.OnAccelerate;
             @accelerate.performed += instance.OnAccelerate;
             @accelerate.canceled += instance.OnAccelerate;
             @brake.started += instance.OnBrake;
             @brake.performed += instance.OnBrake;
             @brake.canceled += instance.OnBrake;
-            @roll.started += instance.OnRoll;
-            @roll.performed += instance.OnRoll;
-            @roll.canceled += instance.OnRoll;
-            @turn.started += instance.OnTurn;
-            @turn.performed += instance.OnTurn;
-            @turn.canceled += instance.OnTurn;
+            @yaw.started += instance.OnYaw;
+            @yaw.performed += instance.OnYaw;
+            @yaw.canceled += instance.OnYaw;
+            @pitchroll.started += instance.OnPitchroll;
+            @pitchroll.performed += instance.OnPitchroll;
+            @pitchroll.canceled += instance.OnPitchroll;
             @fireweapon.started += instance.OnFireweapon;
             @fireweapon.performed += instance.OnFireweapon;
             @fireweapon.canceled += instance.OnFireweapon;
-            @switchweapon.started += instance.OnSwitchweapon;
-            @switchweapon.performed += instance.OnSwitchweapon;
-            @switchweapon.canceled += instance.OnSwitchweapon;
             @toggleautospeed.started += instance.OnToggleautospeed;
             @toggleautospeed.performed += instance.OnToggleautospeed;
             @toggleautospeed.canceled += instance.OnToggleautospeed;
@@ -448,24 +448,24 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
 
         private void UnregisterCallbacks(IGameplayActions instance)
         {
+            @startstopengine.started -= instance.OnStartstopengine;
+            @startstopengine.performed -= instance.OnStartstopengine;
+            @startstopengine.canceled -= instance.OnStartstopengine;
             @accelerate.started -= instance.OnAccelerate;
             @accelerate.performed -= instance.OnAccelerate;
             @accelerate.canceled -= instance.OnAccelerate;
             @brake.started -= instance.OnBrake;
             @brake.performed -= instance.OnBrake;
             @brake.canceled -= instance.OnBrake;
-            @roll.started -= instance.OnRoll;
-            @roll.performed -= instance.OnRoll;
-            @roll.canceled -= instance.OnRoll;
-            @turn.started -= instance.OnTurn;
-            @turn.performed -= instance.OnTurn;
-            @turn.canceled -= instance.OnTurn;
+            @yaw.started -= instance.OnYaw;
+            @yaw.performed -= instance.OnYaw;
+            @yaw.canceled -= instance.OnYaw;
+            @pitchroll.started -= instance.OnPitchroll;
+            @pitchroll.performed -= instance.OnPitchroll;
+            @pitchroll.canceled -= instance.OnPitchroll;
             @fireweapon.started -= instance.OnFireweapon;
             @fireweapon.performed -= instance.OnFireweapon;
             @fireweapon.canceled -= instance.OnFireweapon;
-            @switchweapon.started -= instance.OnSwitchweapon;
-            @switchweapon.performed -= instance.OnSwitchweapon;
-            @switchweapon.canceled -= instance.OnSwitchweapon;
             @toggleautospeed.started -= instance.OnToggleautospeed;
             @toggleautospeed.performed -= instance.OnToggleautospeed;
             @toggleautospeed.canceled -= instance.OnToggleautospeed;
@@ -503,12 +503,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     }
     public interface IGameplayActions
     {
+        void OnStartstopengine(InputAction.CallbackContext context);
         void OnAccelerate(InputAction.CallbackContext context);
         void OnBrake(InputAction.CallbackContext context);
-        void OnRoll(InputAction.CallbackContext context);
-        void OnTurn(InputAction.CallbackContext context);
+        void OnYaw(InputAction.CallbackContext context);
+        void OnPitchroll(InputAction.CallbackContext context);
         void OnFireweapon(InputAction.CallbackContext context);
-        void OnSwitchweapon(InputAction.CallbackContext context);
         void OnToggleautospeed(InputAction.CallbackContext context);
         void OnTracktarget(InputAction.CallbackContext context);
         void OnToggletracker(InputAction.CallbackContext context);

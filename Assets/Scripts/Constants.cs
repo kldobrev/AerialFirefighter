@@ -26,11 +26,11 @@ public static class Constants {
     public const float PlDefaultAngularDrag = 0.05f;
     public const float PlBrakeDrag = 0.01f;
     public const float PlTurnDrag = 0.0015f;
-    public const float PlMinSpeedAir = 100f;
     public const float PlaneLiftForce = 0.9f;
     public const int SendHeightFramerule = 2;
     public const int SendCoordsFramerule = 1;
     public const int SendSpeedFramerule = 5;
+    public const int SpinPropellerFramerule = 7;
     public const float HeightTreshold = 41000;
     public const float HeightDrag = 200f;
     public const float HeightDragTurn = 1f;
@@ -38,6 +38,9 @@ public static class Constants {
     public const string PlayerTagName = "Player";
     public const string EnemiesTagName = "Enemy";
     public const float PitchDragAngle = 21;
+    public const float HighSpeedDrag = 0.0002f;
+    public const float HighPitchDrag = 0.001f;
+    public const float MaxPropellerSpeed = 50;
 
     // Tracker controller
 
@@ -65,5 +68,9 @@ public static class Constants {
     public static Color32 WeaponEmptyIconColour = new Color32(78, 78, 78, 178);
     public const float TargetIconMovementMult = 2;
     public const float BarResetBorder = 300;
+
+    // Terrain
+
+    public const string TerrainTagName = "Terrain";
 
 }

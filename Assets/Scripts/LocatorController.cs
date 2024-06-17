@@ -12,11 +12,12 @@ public class LocatorController : MonoBehaviour
     [SerializeField]
     private Transform playerTrns;
     [SerializeField]
+    private Transform targetTrns;
+    [SerializeField]
     private RectTransform barRectTrns;
     [SerializeField]
     private RectTransform targetIcon;
 
-    private Transform targetTrns;
     private float playerAngleY;
     private float locatorAngle;
     private float startBarPositionX;
