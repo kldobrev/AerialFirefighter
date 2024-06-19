@@ -52,6 +52,13 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private UnityEvent toggleUITracker;
     [SerializeField]
     private UnityEvent<bool, float, float> sendWeaponDataToTracker;
+    [SerializeField]
+    private UnityEvent<float> setFuelGaugeCap;
+    [SerializeField]
+    private UnityEvent<float> updateFuelGaugeQtity;
+
+
+    public float propellerSpeed;
 
 
     public float yawDrag = 1;
@@ -84,7 +91,8 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private float planeSpeed;
     private static bool engineStarted;
     private bool landingComplete;
-    private float propellerSpeed;
+    //private float propellerSpeed;
+    private float fuelQuantity;
 
 
     private void Awake()
@@ -133,6 +141,10 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         propellerSpeed = 0;
         landingComplete = false;
         engineStarted = false;
+        setFuelGaugeCap.Invoke(Constants.FuelCapacity);
+        //fuelQuantity = 5000;
+        fuelQuantity = 1400;
+        updateFuelGaugeQtity.Invoke(fuelQuantity);
         //updateLocator.Invoke(objective);
 
         // Move to game manager script the logic below
@@ -166,13 +178,24 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         }
         sendSpeedRule.AdvanceCounter();
 
+        if (engineStarted)
+        {
+            fuelQuantity -= (Constants.EngineRunningFuelWaste + (0.001f * planeSpeed));
+            if (fuelQuantity <= 0) engineStarted = false;
+            updateFuelGaugeQtity.Invoke(fuelQuantity);
+        }
+
         if (engineStarted || propellerSpeed > 0)
         {
             propeller.Rotate(propellerSpeed, 0, 0);
-            if (propellerSpeed < Constants.MaxPropellerSpeed || !engineStarted)
+            if (propellerSpeed < Constants.MaxIdlePropellerSpeed || !engineStarted)
             {
                 if (spinPropellerRule.CheckFrameRule()) propellerSpeed += (engineStarted ? 1 : -1);
                 spinPropellerRule.AdvanceCounter();
+            }
+            else if (propellerSpeed >= Constants.MaxIdlePropellerSpeed)
+            {
+                propellerSpeed = Constants.MaxIdlePropellerSpeed + (0.1f * planeSpeed);
             }
         }
     }
@@ -183,7 +206,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         planeSpeed = rafaleBody.velocity.magnitude;
         planeDrag = Constants.PlDefaultDrag;
 
-        if (propellerSpeed >= Constants.MaxPropellerSpeed)
+        if (propellerSpeed >= Constants.MaxIdlePropellerSpeed)
         {
             if (throttleInput != 0)  // Accelerate using player input ignoring auto speed value
             {
@@ -197,7 +220,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
                 }
             }
 
-            if (planeSpeed > 180) planeDrag += (Constants.HighSpeedDrag * planeSpeed);
+            if (planeSpeed > Constants.PlaneMaxSpeed) planeDrag += (Constants.HighSpeedDrag * planeSpeed);
             signedEulerPitch = HelperMethods.GetSignedAngleFromEuler(rafaleBody.rotation.eulerAngles.x);
         }
         rafaleBody.AddRelativeForce(Vector3.up * ((planeSpeed - (planeSpeed * signedEulerPitch * pitchLiftFactor))
@@ -273,8 +296,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
 
     public void OnStartstopengine(InputAction.CallbackContext context)
     {
-        engineStarted = !engineStarted;
-        Debug.Log("Engine: " + engineStarted);
+        if (fuelQuantity > 0) engineStarted = !engineStarted;
     }
 
     public void OnPitchroll(InputAction.CallbackContext context)
@@ -355,7 +377,6 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     {
         if (collision.gameObject.CompareTag(Constants.TerrainTagName) && isAirbourne)
         {
-            Debug.Log("Landing angle: " + signedEulerPitch);
             isAirbourne = false;
         }
     }

@@ -7,6 +7,7 @@ public class LandingController : MonoBehaviour
     [SerializeField]
     private Transform playerTrns;
     private float playerEulerPitch;
+    private float playerEulerBank;
     private float landingTimer;
 
     // Start is called before the first frame update
@@ -19,8 +20,9 @@ public class LandingController : MonoBehaviour
     private void OnTriggerEnter(UnityEngine.Collider other)
     {
         playerEulerPitch = HelperMethods.GetSignedAngleFromEuler(playerTrns.rotation.eulerAngles.x);
-        Debug.Log("Landing: " + other.gameObject.name);
-        if (-5 <= playerEulerPitch && playerEulerPitch <= 3)
+        playerEulerBank = HelperMethods.GetSignedAngleFromEuler(playerTrns.rotation.eulerAngles.z);
+        Debug.Log("Pitch: " + playerEulerPitch + ", Bank: " + playerEulerBank);
+        if (-5 <= playerEulerPitch && playerEulerPitch <= 3 && -10 < playerEulerBank && playerEulerBank < 10)
         {
             Debug.Log("Landing angle rule met.");
         }
@@ -29,7 +31,7 @@ public class LandingController : MonoBehaviour
     private void OnTriggerStay(Collider other)
     {
         landingTimer = !PlayerController.EngineStarted() ? landingTimer + Time.fixedDeltaTime : 0;
-        if (landingTimer >= 3)
+        if (landingTimer >= 3 && !PlayerController.EngineStarted())
         {
             Debug.Log("Landing successfull!");
         }

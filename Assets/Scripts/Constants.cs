@@ -40,7 +40,10 @@ public static class Constants {
     public const float PitchDragAngle = 21;
     public const float HighSpeedDrag = 0.0002f;
     public const float HighPitchDrag = 0.001f;
-    public const float MaxPropellerSpeed = 50;
+    public const float MaxIdlePropellerSpeed = 50;
+    public const float FuelCapacity = 5000;
+    public const float EngineRunningFuelWaste = 0.01f;
+    public const float PlaneMaxSpeed = 210;
 
     // Tracker controller
 
@@ -68,6 +71,9 @@ public static class Constants {
     public static Color32 WeaponEmptyIconColour = new Color32(78, 78, 78, 178);
     public const float TargetIconMovementMult = 2;
     public const float BarResetBorder = 300;
+    public static Color32 FuelGaugeColor = new Color32(255, 0, 0, 1);
+    public const float FuelGaugeNormalAlpha = 1;
+    public const float FuelGaugeAlertAlpha = 160;
 
     // Terrain
 
