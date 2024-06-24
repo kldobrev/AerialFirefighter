@@ -29,12 +29,8 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private float rollFactor;
     [SerializeField]
     private float liftForce = 3.1f;
-    //[SerializeField]
-    //private Transform objective;
     [SerializeField]
     private float pitchLiftFactor = 2;
-    //[SerializeField]
-    //private WeaponContainer[] weapons;
     public static AmmunitionUITracker UIAmmoTracker;
 
 
@@ -46,8 +42,6 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private UnityEvent<float> updateHeightMeter;
     [SerializeField]
     private UnityEvent<Vector2, float> updateRadarCamera;
-    //[SerializeField]
-    //private UnityEvent<Transform> updateLocator;
     [SerializeField]
     private UnityEvent toggleUITracker;
     [SerializeField]
@@ -56,15 +50,10 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private UnityEvent<float> setFuelGaugeCap;
     [SerializeField]
     private UnityEvent<float> updateFuelGaugeQtity;
-
-
-    public float propellerSpeed;
-
-
-    public float yawDrag = 1;
-    public float pitchDrag = 1;
-    public float rollDrag = 1;
-
+    [SerializeField]
+    private UnityEvent startFadeOut;
+    [SerializeField]
+    private UnityEvent startFadeIn;
 
 
     private float accelerateValue;
@@ -72,27 +61,25 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private float brakeInput;
     private Vector2 pitchRollInput;
     private float yawInput;
-    private Animator playerAnimator;
     private float autoSpeed;
     private bool isAirbourne;
     private bool isAutoSpeedOn;
     private float airbourneThresholdY;
     private float planeDrag;
     private float planeAngularDrag;
-    private Transform rigBodyTransform;
     private int planeMagnitudeRounded;
     private FrameRule sendHeightRule;
     private FrameRule sendCoordsRule;
     private FrameRule sendSpeedRule;
     private FrameRule spinPropellerRule;
-    private int selectedWeaponIdx;
     public static Transform PlayerBodyTransform;
     private float signedEulerPitch;
     private float planeSpeed;
     private static bool engineStarted;
-    private bool landingComplete;
-    //private float propellerSpeed;
+    private float propellerSpeed;
     private float fuelQuantity;
+    private bool outsideFieldBounds;
+    private bool lockedControls;
 
 
     private void Awake()
@@ -111,14 +98,11 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         controls.gameplay.fireweapon.performed += OnFireweapon;
         controls.gameplay.fireweapon.canceled += OnStopFiringWeapon;
         controls.gameplay.toggleautospeed.performed += OnToggleautospeed;
-        controls.gameplay.tracktarget.performed += OnTracktarget;
-        controls.gameplay.toggletracker.performed += OnToggletracker;
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        playerAnimator = transform.GetComponent<Animator>();
         isAirbourne = false;
         isAutoSpeedOn = false;
         airbourneThresholdY = transform.position.y + 1;
@@ -130,22 +114,15 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         sendCoordsRule = new FrameRule(Constants.SendCoordsFramerule);
         sendSpeedRule = new FrameRule(Constants.SendSpeedFramerule);
         spinPropellerRule = new FrameRule(Constants.SpinPropellerFramerule);
-        selectedWeaponIdx = 0;
         UIAmmoTracker = transform.GetComponent<AmmunitionUITracker>();
-        rigBodyTransform = rafaleBody.transform;
-        //weapons[0].SetWeapon(Constants.HeatseekerMissile);   // Will be set by player
-        //weapons[1].SetWeapon(Constants.BulletCannon);   // Will be set by player
-        //UIAmmoTracker.UpdateWeaponAmmoInUI(weapons[selectedWeaponIdx].Ammunition);
-        //sendWeaponDataToTracker.Invoke(true, weapons[selectedWeaponIdx].Range, weapons[selectedWeaponIdx].LockingStep);
         PlayerBodyTransform = bodyTransform;
         propellerSpeed = 0;
-        landingComplete = false;
         engineStarted = false;
         setFuelGaugeCap.Invoke(Constants.FuelCapacity);
-        //fuelQuantity = 5000;
-        fuelQuantity = 1400;
+        fuelQuantity = 2500;    // Will be set from game settings
+        outsideFieldBounds = false;
+        lockedControls = false;
         updateFuelGaugeQtity.Invoke(fuelQuantity);
-        //updateLocator.Invoke(objective);
 
         // Move to game manager script the logic below
         Transform ground = GameObject.Find("Ground").transform;
@@ -164,6 +141,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
             isAirbourne = true;
         }
 
+        // Updating UI elements
         if (sendHeightRule.CheckFrameRule()) updateHeightMeter.Invoke(transform.position.y);
         sendHeightRule.AdvanceCounter();
 
@@ -178,6 +156,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         }
         sendSpeedRule.AdvanceCounter();
 
+        // Fuel management
         if (engineStarted)
         {
             fuelQuantity -= (Constants.EngineRunningFuelWaste + (0.001f * planeSpeed));
@@ -185,12 +164,13 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
             updateFuelGaugeQtity.Invoke(fuelQuantity);
         }
 
+        // Propeller spinning
         if (engineStarted || propellerSpeed > 0)
         {
             propeller.Rotate(propellerSpeed, 0, 0);
             if (propellerSpeed < Constants.MaxIdlePropellerSpeed || !engineStarted)
             {
-                if (spinPropellerRule.CheckFrameRule()) propellerSpeed += (engineStarted ? 1 : -1);
+                if (spinPropellerRule.CheckFrameRule()) propellerSpeed += (engineStarted ? 2 : -2);
                 spinPropellerRule.AdvanceCounter();
             }
             else if (propellerSpeed >= Constants.MaxIdlePropellerSpeed)
@@ -198,6 +178,26 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
                 propellerSpeed = Constants.MaxIdlePropellerSpeed + (0.1f * planeSpeed);
             }
         }
+
+        if (outsideFieldBounds)
+        {
+            if (UIController.GetScreenTransparency() == 0)
+            {
+                lockedControls = true;
+                startFadeOut.Invoke();
+            }
+            else if (UIController.GetScreenTransparency() == 255 && lockedControls)
+            {
+                // Reversing plane direction and speed after passing stage boundary
+                transform.Rotate(new Vector3(2 * transform.rotation.eulerAngles.x, 180, 0));
+                Vector3 currentDirection = -rafaleBody.velocity.normalized;
+                rafaleBody.velocity = currentDirection * rafaleBody.velocity.magnitude;
+                Physics.SyncTransforms();
+                lockedControls = false;
+            }
+        }
+        
+
     }
 
     void FixedUpdate()
@@ -214,7 +214,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
             }
             else
             {
-                if (isAirbourne && isAutoSpeedOn) // Maintain constant speed if enabled
+                if (isAutoSpeedOn) // Maintain constant speed if enabled
                 {
                     accelerateValue = planeSpeed < autoSpeed ? throttleAcceleration : 0;
                 }
@@ -230,7 +230,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         {
             planeDrag += Constants.PlBrakeDrag;
         }
-        else if (signedEulerPitch >= -Constants.PitchDragAngle)
+        else if (signedEulerPitch >= -Constants.PitchDragAngle && rafaleBody.position.y < Constants.MaxHeightAllowed)
         {
             rafaleBody.AddRelativeForce(Vector3.forward * accelerateValue, ForceMode.Acceleration);
         }
@@ -239,10 +239,9 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
             planeDrag += (Constants.HighPitchDrag * (-signedEulerPitch));
         }
 
-        if (rafaleBody.position.y > Constants.HeightTreshold)    // Height ceiling check
+        if (rafaleBody.position.y >= Constants.MaxHeightAllowed)    // Height ceiling check
         {
-            rafaleBody.AddRelativeForce(Vector3.down * Constants.HeightDrag, ForceMode.Acceleration);
-            rafaleBody.AddRelativeTorque(Vector3.down * Constants.HeightDragTurn, ForceMode.VelocityChange);
+            planeDrag += Constants.HeightDrag;
         }
 
         if (pitchRollInput != Vector2.zero && planeSpeed > 1)
@@ -268,13 +267,14 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         if(rafaleBody.angularDrag != planeAngularDrag) rafaleBody.angularDrag = planeAngularDrag;
     }
 
-    private void SetAutoSpeed()
+    private void ToggleAutoSpeed()
     {
         isAutoSpeedOn = !isAutoSpeedOn;
         if(isAutoSpeedOn)
         {
             autoSpeed = (float)planeMagnitudeRounded;
         }
+        updateAutoSpeedIndicator.Invoke(isAutoSpeedOn, planeMagnitudeRounded);
     }
 
     private void OnEnable()
@@ -296,30 +296,39 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
 
     public void OnStartstopengine(InputAction.CallbackContext context)
     {
-        if (fuelQuantity > 0) engineStarted = !engineStarted;
+        if (!lockedControls && fuelQuantity > 0)
+        {
+            engineStarted = !engineStarted;
+            if (!engineStarted && isAutoSpeedOn) ToggleAutoSpeed();
+        }
     }
 
     public void OnPitchroll(InputAction.CallbackContext context)
     {
-        pitchRollInput = context.ReadValue<Vector2>();
-        planeAngularDrag = 0.05f;
+        if (!lockedControls)
+        {
+            pitchRollInput = context.ReadValue<Vector2>();
+            planeAngularDrag = Constants.PlTurnAngularDrag;
+        }
     }
 
     private void OnCancelPitchroll(InputAction.CallbackContext context)
     {
         pitchRollInput = Vector2.zero;
-        //if (!controls.gameplay.roll.IsPressed()) rafaleBody.angularVelocity = Vector3.zero;
         if (yawInput == 0)
         {
-            planeAngularDrag = 3f;
+            planeAngularDrag = Constants.PlDefaultAngularDrag;
             StartCoroutine(NullifyAngularSpeed());
         }
     }
 
     public void OnYaw(InputAction.CallbackContext context)
     {
-        yawInput = context.ReadValue<float>();
-        planeAngularDrag = 0.05f;
+        if (!lockedControls)
+        {
+            yawInput = context.ReadValue<float>();
+            planeAngularDrag = Constants.PlTurnAngularDrag;
+        }
     }
 
     private void OnCancelYaw(InputAction.CallbackContext context)
@@ -327,50 +336,39 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         yawInput = 0f;
         if (pitchRollInput == Vector2.zero)
         {
-            planeAngularDrag = 3f;
+            planeAngularDrag = Constants.PlDefaultAngularDrag;
             StartCoroutine(NullifyAngularSpeed());
         }
     }
 
     public void OnAccelerate(InputAction.CallbackContext context)
     {
-        throttleInput = context.ReadValue<float>();
+        if (!lockedControls) throttleInput = context.ReadValue<float>();
     }
 
     public void OnBrake(InputAction.CallbackContext context)
     {
-        brakeInput = context.ReadValue<float>();
+        if (!lockedControls) brakeInput = context.ReadValue<float>();
     }
 
     public void OnCancelBrake(InputAction.CallbackContext context)
     {
-        brakeInput = 0f;
+        brakeInput = 0;
     }
 
     public void OnFireweapon(InputAction.CallbackContext context)
     {
-        //weapons[selectedWeaponIdx].Fire();
+        // In progress
     }
 
     public void OnStopFiringWeapon(InputAction.CallbackContext context)
     {
-        //weapons[selectedWeaponIdx].StopFiring();
+        // In progress
     }
 
     public void OnToggleautospeed(InputAction.CallbackContext context)
     {
-        SetAutoSpeed();
-        updateAutoSpeedIndicator.Invoke(isAutoSpeedOn, planeMagnitudeRounded);
-    }
-
-    public void OnTracktarget(InputAction.CallbackContext context)
-    {
-        //Debug.Log("Setting target to " + objective);
-    }
-
-    public void OnToggletracker(InputAction.CallbackContext context)
-    {
-        toggleUITracker.Invoke();
+        if (!lockedControls && engineStarted) ToggleAutoSpeed();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -379,6 +377,21 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         {
             isAirbourne = false;
         }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("StageBounds") && outsideFieldBounds)
+        {
+            outsideFieldBounds = false;
+            startFadeIn.Invoke();
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("StageBounds") && !outsideFieldBounds)
+            outsideFieldBounds = true;
     }
 
     private IEnumerator NullifyAngularSpeed()

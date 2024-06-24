@@ -23,7 +23,8 @@ public static class Constants {
 
     public const string RetractGearsAnimParamName = "RetractLandingGears";
     public const float PlDefaultDrag = 0.12f;
-    public const float PlDefaultAngularDrag = 0.05f;
+    public const float PlDefaultAngularDrag = 3f;
+    public const float PlTurnAngularDrag = 0.05f;
     public const float PlBrakeDrag = 0.01f;
     public const float PlTurnDrag = 0.0015f;
     public const float PlaneLiftForce = 0.9f;
@@ -31,8 +32,8 @@ public static class Constants {
     public const int SendCoordsFramerule = 1;
     public const int SendSpeedFramerule = 5;
     public const int SpinPropellerFramerule = 7;
-    public const float HeightTreshold = 41000;
-    public const float HeightDrag = 200f;
+    public const float MaxHeightAllowed = 2000;
+    public const float HeightDrag = 0.5f;
     public const float HeightDragTurn = 1f;
     public const string GearsRetractTriggerTag = "GearsRetractor";
     public const string PlayerTagName = "Player";
@@ -41,7 +42,7 @@ public static class Constants {
     public const float HighSpeedDrag = 0.0002f;
     public const float HighPitchDrag = 0.001f;
     public const float MaxIdlePropellerSpeed = 50;
-    public const float FuelCapacity = 5000;
+    public const float FuelCapacity = 8000;
     public const float EngineRunningFuelWaste = 0.01f;
     public const float PlaneMaxSpeed = 210;
 
@@ -74,6 +75,7 @@ public static class Constants {
     public static Color32 FuelGaugeColor = new Color32(255, 0, 0, 1);
     public const float FuelGaugeNormalAlpha = 1;
     public const float FuelGaugeAlertAlpha = 160;
+    public static Color32 FadePanelDefaultColour = new Color32(0, 0, 0, 0);
 
     // Terrain
 

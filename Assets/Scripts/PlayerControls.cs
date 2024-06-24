@@ -89,24 +89,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""track target"",
-                    ""type"": ""Button"",
-                    ""id"": ""4568bfad-470a-4876-b0e0-bae743e4d487"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""toggle tracker"",
-                    ""type"": ""Button"",
-                    ""id"": ""1cb3da0a-cef6-4445-983a-a9bfea70b4ac"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -266,28 +248,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""58dfeda7-cdd7-41f5-9562-ec6a580b50a5"",
-                    ""path"": ""<Keyboard>/numpad4"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""track target"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""0f993afa-f1e1-45d0-bdcd-dffef9b7a714"",
-                    ""path"": ""<Keyboard>/numpad5"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""toggle tracker"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""0cd3d3ba-468a-46e1-b842-c6adc30628e7"",
                     ""path"": ""<Keyboard>/r"",
                     ""interactions"": """",
@@ -323,8 +283,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_gameplay_pitchroll = m_gameplay.FindAction("pitch/roll", throwIfNotFound: true);
         m_gameplay_fireweapon = m_gameplay.FindAction("fire weapon", throwIfNotFound: true);
         m_gameplay_toggleautospeed = m_gameplay.FindAction("toggle auto speed", throwIfNotFound: true);
-        m_gameplay_tracktarget = m_gameplay.FindAction("track target", throwIfNotFound: true);
-        m_gameplay_toggletracker = m_gameplay.FindAction("toggle tracker", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -393,8 +351,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_gameplay_pitchroll;
     private readonly InputAction m_gameplay_fireweapon;
     private readonly InputAction m_gameplay_toggleautospeed;
-    private readonly InputAction m_gameplay_tracktarget;
-    private readonly InputAction m_gameplay_toggletracker;
     public struct GameplayActions
     {
         private @PlayerControls m_Wrapper;
@@ -406,8 +362,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @pitchroll => m_Wrapper.m_gameplay_pitchroll;
         public InputAction @fireweapon => m_Wrapper.m_gameplay_fireweapon;
         public InputAction @toggleautospeed => m_Wrapper.m_gameplay_toggleautospeed;
-        public InputAction @tracktarget => m_Wrapper.m_gameplay_tracktarget;
-        public InputAction @toggletracker => m_Wrapper.m_gameplay_toggletracker;
         public InputActionMap Get() { return m_Wrapper.m_gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -438,12 +392,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @toggleautospeed.started += instance.OnToggleautospeed;
             @toggleautospeed.performed += instance.OnToggleautospeed;
             @toggleautospeed.canceled += instance.OnToggleautospeed;
-            @tracktarget.started += instance.OnTracktarget;
-            @tracktarget.performed += instance.OnTracktarget;
-            @tracktarget.canceled += instance.OnTracktarget;
-            @toggletracker.started += instance.OnToggletracker;
-            @toggletracker.performed += instance.OnToggletracker;
-            @toggletracker.canceled += instance.OnToggletracker;
         }
 
         private void UnregisterCallbacks(IGameplayActions instance)
@@ -469,12 +417,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @toggleautospeed.started -= instance.OnToggleautospeed;
             @toggleautospeed.performed -= instance.OnToggleautospeed;
             @toggleautospeed.canceled -= instance.OnToggleautospeed;
-            @tracktarget.started -= instance.OnTracktarget;
-            @tracktarget.performed -= instance.OnTracktarget;
-            @tracktarget.canceled -= instance.OnTracktarget;
-            @toggletracker.started -= instance.OnToggletracker;
-            @toggletracker.performed -= instance.OnToggletracker;
-            @toggletracker.canceled -= instance.OnToggletracker;
         }
 
         public void RemoveCallbacks(IGameplayActions instance)
@@ -510,7 +452,5 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnPitchroll(InputAction.CallbackContext context);
         void OnFireweapon(InputAction.CallbackContext context);
         void OnToggleautospeed(InputAction.CallbackContext context);
-        void OnTracktarget(InputAction.CallbackContext context);
-        void OnToggletracker(InputAction.CallbackContext context);
     }
 }

@@ -9,6 +9,7 @@ TagManager:
   - RadarPointEnemy
   - Enemy
   - Terrain
+  - StageBounds
   layers:
   - Default
   - TransparentFX

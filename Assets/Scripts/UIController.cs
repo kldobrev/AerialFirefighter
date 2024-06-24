@@ -22,11 +22,14 @@ public class UIController : MonoBehaviour
     private GameObject [] weaponIcons;
     [SerializeField]
     private TextMeshProUGUI ammoLeftDisplay;
+    [SerializeField]
+    private RawImage fadeEffectsPanel;
 
     private int speedDisplayed;
     private Image heightMeterBkg;
     private int weaponsAdded;
     private int currentWeaponIconIdx;
+    private static byte[] fadePanelColour;
 
 
     void Awake()
@@ -47,6 +50,13 @@ public class UIController : MonoBehaviour
         heightMeterBkg = heightMeter.GetComponentInChildren<Image>();
         heightMeterBkg.color = Constants.HeightBelowAlertColour;
         currentWeaponIconIdx = 0;
+        fadePanelColour = new byte[4];
+        fadePanelColour[0] = Constants.FadePanelDefaultColour.r;
+        fadePanelColour[1] = Constants.FadePanelDefaultColour.g;
+        fadePanelColour[2] = Constants.FadePanelDefaultColour.b;
+        fadePanelColour[3] = Constants.FadePanelDefaultColour.a;
+        fadeEffectsPanel.color = Constants.FadePanelDefaultColour;
+
     }
 
     public void UpdateSpeedometer(int newSpeed)
@@ -126,6 +136,42 @@ public class UIController : MonoBehaviour
         else
         {
             Debug.Log("Attempting to add more weapon icons than allowed.");
+        }
+    }
+
+    public void ScreenFadeToBlack()
+    {
+        StartCoroutine(FadeToBlack());
+    }
+
+    public void ReverseScreenFadeToBlack()
+    {
+        StartCoroutine(ReverseFadeToBlack());
+    }
+
+    public static float GetScreenTransparency()
+    {
+        return fadePanelColour[3];
+    }
+
+    private IEnumerator FadeToBlack()
+    {
+        while (fadePanelColour[3] != 255)
+        {
+            fadePanelColour[3] += 5;
+            fadeEffectsPanel.color = new Color32(fadePanelColour[0],
+                fadePanelColour[1], fadePanelColour[2], fadePanelColour[3]);
+            yield return null;
+        }
+    }
+    private IEnumerator ReverseFadeToBlack()
+    {
+        while (fadePanelColour[3] != 0)
+        {
+            fadePanelColour[3] -= 5;
+            fadeEffectsPanel.color = new Color32(fadePanelColour[0],
+                fadePanelColour[1], fadePanelColour[2], fadePanelColour[3]);
+            yield return null;
         }
     }
 
