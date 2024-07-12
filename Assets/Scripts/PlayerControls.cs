@@ -73,7 +73,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""fire weapon"",
+                    ""name"": ""drop water"",
                     ""type"": ""Button"",
                     ""id"": ""5dcf7ad4-0bdd-43da-ba84-d0485fcfcf2b"",
                     ""expectedControlType"": ""Button"",
@@ -95,11 +95,11 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""7a64551b-14d2-415b-97db-b3855bb62943"",
-                    ""path"": ""<Keyboard>/numpad8"",
+                    ""path"": ""<Keyboard>/o"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
-                    ""action"": ""fire weapon"",
+                    ""action"": ""drop water"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -281,7 +281,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_gameplay_brake = m_gameplay.FindAction("brake", throwIfNotFound: true);
         m_gameplay_yaw = m_gameplay.FindAction("yaw", throwIfNotFound: true);
         m_gameplay_pitchroll = m_gameplay.FindAction("pitch/roll", throwIfNotFound: true);
-        m_gameplay_fireweapon = m_gameplay.FindAction("fire weapon", throwIfNotFound: true);
+        m_gameplay_dropwater = m_gameplay.FindAction("drop water", throwIfNotFound: true);
         m_gameplay_toggleautospeed = m_gameplay.FindAction("toggle auto speed", throwIfNotFound: true);
     }
 
@@ -349,7 +349,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_gameplay_brake;
     private readonly InputAction m_gameplay_yaw;
     private readonly InputAction m_gameplay_pitchroll;
-    private readonly InputAction m_gameplay_fireweapon;
+    private readonly InputAction m_gameplay_dropwater;
     private readonly InputAction m_gameplay_toggleautospeed;
     public struct GameplayActions
     {
@@ -360,7 +360,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @brake => m_Wrapper.m_gameplay_brake;
         public InputAction @yaw => m_Wrapper.m_gameplay_yaw;
         public InputAction @pitchroll => m_Wrapper.m_gameplay_pitchroll;
-        public InputAction @fireweapon => m_Wrapper.m_gameplay_fireweapon;
+        public InputAction @dropwater => m_Wrapper.m_gameplay_dropwater;
         public InputAction @toggleautospeed => m_Wrapper.m_gameplay_toggleautospeed;
         public InputActionMap Get() { return m_Wrapper.m_gameplay; }
         public void Enable() { Get().Enable(); }
@@ -386,9 +386,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @pitchroll.started += instance.OnPitchroll;
             @pitchroll.performed += instance.OnPitchroll;
             @pitchroll.canceled += instance.OnPitchroll;
-            @fireweapon.started += instance.OnFireweapon;
-            @fireweapon.performed += instance.OnFireweapon;
-            @fireweapon.canceled += instance.OnFireweapon;
+            @dropwater.started += instance.OnDropwater;
+            @dropwater.performed += instance.OnDropwater;
+            @dropwater.canceled += instance.OnDropwater;
             @toggleautospeed.started += instance.OnToggleautospeed;
             @toggleautospeed.performed += instance.OnToggleautospeed;
             @toggleautospeed.canceled += instance.OnToggleautospeed;
@@ -411,9 +411,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @pitchroll.started -= instance.OnPitchroll;
             @pitchroll.performed -= instance.OnPitchroll;
             @pitchroll.canceled -= instance.OnPitchroll;
-            @fireweapon.started -= instance.OnFireweapon;
-            @fireweapon.performed -= instance.OnFireweapon;
-            @fireweapon.canceled -= instance.OnFireweapon;
+            @dropwater.started -= instance.OnDropwater;
+            @dropwater.performed -= instance.OnDropwater;
+            @dropwater.canceled -= instance.OnDropwater;
             @toggleautospeed.started -= instance.OnToggleautospeed;
             @toggleautospeed.performed -= instance.OnToggleautospeed;
             @toggleautospeed.canceled -= instance.OnToggleautospeed;
@@ -450,7 +450,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnBrake(InputAction.CallbackContext context);
         void OnYaw(InputAction.CallbackContext context);
         void OnPitchroll(InputAction.CallbackContext context);
-        void OnFireweapon(InputAction.CallbackContext context);
+        void OnDropwater(InputAction.CallbackContext context);
         void OnToggleautospeed(InputAction.CallbackContext context);
     }
 }

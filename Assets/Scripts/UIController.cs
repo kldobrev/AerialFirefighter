@@ -24,11 +24,14 @@ public class UIController : MonoBehaviour
     private TextMeshProUGUI ammoLeftDisplay;
     [SerializeField]
     private RawImage fadeEffectsPanel;
+    [SerializeField]
+    private TextMeshProUGUI firesLeftCounter;
 
     private int speedDisplayed;
     private Image heightMeterBkg;
     private int weaponsAdded;
     private int currentWeaponIconIdx;
+    private static int numberOfFires;
     private static byte[] fadePanelColour;
 
 
@@ -56,7 +59,6 @@ public class UIController : MonoBehaviour
         fadePanelColour[2] = Constants.FadePanelDefaultColour.b;
         fadePanelColour[3] = Constants.FadePanelDefaultColour.a;
         fadeEffectsPanel.color = Constants.FadePanelDefaultColour;
-
     }
 
     public void UpdateSpeedometer(int newSpeed)
@@ -64,7 +66,7 @@ public class UIController : MonoBehaviour
         if(newSpeed != speedDisplayed)
         {
             speedDisplayed = newSpeed;
-            speedometer.text = "Speed: " + newSpeed.ToString().PadLeft(4, '0') + " km/h";
+            speedometer.text = "Speed: " + newSpeed.ToString().PadLeft(3, '0') + " km/h";
         }
     }
 
@@ -98,7 +100,7 @@ public class UIController : MonoBehaviour
             heightNumeric.color = Constants.HeightAboveAlertColour;
         }
         heightMeter.value = height;
-        heightNumeric.text = ((int) Mathf.Clamp(height, 0f, Constants.HeightMeterValueMaxUI)).ToString().PadLeft(5, '0') + " m";
+        heightNumeric.text = ((int) Mathf.Clamp(height, 0f, Constants.HeightMeterValueMaxUI)).ToString().PadLeft(4, '0') + " m";
     }
 
     public void SwitchCurrentWeapon(int weaponIdx, int ammoAmount)
@@ -147,6 +149,11 @@ public class UIController : MonoBehaviour
     public void ReverseScreenFadeToBlack()
     {
         StartCoroutine(ReverseFadeToBlack());
+    }
+
+    public void UpdateFireCount(int fireCount)
+    {
+        firesLeftCounter.text = fireCount.ToString();
     }
 
     public static float GetScreenTransparency()

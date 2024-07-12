@@ -42,9 +42,15 @@ public static class Constants {
     public const float HighSpeedDrag = 0.0002f;
     public const float HighPitchDrag = 0.001f;
     public const float MaxIdlePropellerSpeed = 50;
-    public const float FuelCapacity = 8000;
+    public const float FuelCapacity = 10000;
     public const float EngineRunningFuelWaste = 0.01f;
     public const float PlaneMaxSpeed = 210;
+    public const float WaterCapacity = 1000;
+    public const float WaterWasteRate = 1;
+    public const float WaterScoopRate = 2;
+    public const float WaterQuantityToWeightRatio = 1;
+    public const float WeightPlaneNoLoad = 2000;
+    public const float MaxWeightPlaneFullyLoaded = 3000;
 
     // Tracker controller
 
@@ -75,10 +81,16 @@ public static class Constants {
     public static Color32 FuelGaugeColor = new Color32(255, 0, 0, 1);
     public const float FuelGaugeNormalAlpha = 1;
     public const float FuelGaugeAlertAlpha = 160;
+    public static Color32 FuelGaugeEmptyColour = new Color32(87, 87, 87, 200);
     public static Color32 FadePanelDefaultColour = new Color32(0, 0, 0, 0);
 
     // Terrain
 
     public const string TerrainTagName = "Terrain";
+
+    // Gameplay
+    public const float FireDefaultIntensity = 100;
+    public const float FireParticleDamage = 5;
+    public static Vector3 FireScaleReduction = new Vector3(0, 0, 0.04f);
 
 }

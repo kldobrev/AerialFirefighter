@@ -51,7 +51,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "fire weapon",
+                    "name": "drop water",
                     "type": "Button",
                     "id": "5dcf7ad4-0bdd-43da-ba84-d0485fcfcf2b",
                     "expectedControlType": "Button",
@@ -73,11 +73,11 @@
                 {
                     "name": "",
                     "id": "7a64551b-14d2-415b-97db-b3855bb62943",
-                    "path": "<Keyboard>/numpad8",
+                    "path": "<Keyboard>/o",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard",
-                    "action": "fire weapon",
+                    "action": "drop water",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

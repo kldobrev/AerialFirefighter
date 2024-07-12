@@ -11,11 +11,17 @@ public class FuelGaugeController : MonoBehaviour
     private RectTransform arrowTrns;
     [SerializeField]
     private RawImage background;
+    [SerializeField]
+    private RawImage arrow;
+    [SerializeField]
+    private RawImage measurementsPanel;
 
     private float capacity;
     private float quantity;
     private float capToQtityRatio;
-    private byte [] currentColour;
+    private byte [] currentBkgColour;
+    private IEnumerator fuelAlert;
+
 
     public void SetFuelCapacity(float cap)
     {
@@ -28,14 +34,22 @@ public class FuelGaugeController : MonoBehaviour
         capToQtityRatio = quantity / capacity;
         arrowTrns.rotation = Quaternion.Euler(0, 0, -180 * capToQtityRatio);
 
-        if (capToQtityRatio < 0.25 && currentColour.IsUnityNull())
+        if(capToQtityRatio == 0)
         {
-            currentColour = new Byte[4];
-            currentColour[0] = Constants.FuelGaugeColor.r;
-            currentColour[1] = Constants.FuelGaugeColor.g;
-            currentColour[2] = Constants.FuelGaugeColor.b;
-            currentColour[3] = Constants.FuelGaugeColor.a;
-            StartCoroutine(LowFuelAlertFlash());
+            StopCoroutine(fuelAlert);
+            background.color = new Color32(0, 0, 0, 0);
+            measurementsPanel.color = Constants.FuelGaugeEmptyColour;
+            arrow.color = Constants.FuelGaugeEmptyColour;
+        }
+        else if (capToQtityRatio < 0.25 && currentBkgColour.IsUnityNull())
+        {
+            currentBkgColour = new Byte[4];
+            currentBkgColour[0] = Constants.FuelGaugeColor.r;
+            currentBkgColour[1] = Constants.FuelGaugeColor.g;
+            currentBkgColour[2] = Constants.FuelGaugeColor.b;
+            currentBkgColour[3] = Constants.FuelGaugeColor.a;
+            fuelAlert = LowFuelAlertFlash();
+            StartCoroutine(fuelAlert);
         }
     }
 
@@ -44,17 +58,18 @@ public class FuelGaugeController : MonoBehaviour
         byte alphaModifier = 1;
         while (true)
         {
-            currentColour[3] += alphaModifier;
-            background.color = new Color32(currentColour[0], currentColour[1], currentColour[2], currentColour[3]);
-            if (currentColour[3] == Constants.FuelGaugeAlertAlpha)
+            currentBkgColour[3] += alphaModifier;
+            background.color = new Color32(currentBkgColour[0], currentBkgColour[1], currentBkgColour[2], currentBkgColour[3]);
+            if (currentBkgColour[3] == Constants.FuelGaugeAlertAlpha)
             {
                 alphaModifier = 255;
             }
-            else if (currentColour[3] == Constants.FuelGaugeNormalAlpha)
+            else if (currentBkgColour[3] == Constants.FuelGaugeNormalAlpha)
             {
                 alphaModifier = 1;
             }
             yield return null;
         }
     }
+
 }

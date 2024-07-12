@@ -31,6 +31,8 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private float liftForce = 3.1f;
     [SerializeField]
     private float pitchLiftFactor = 2;
+    [SerializeField]
+    private ParticleSystem dropWaterEffect;
     public static AmmunitionUITracker UIAmmoTracker;
 
 
@@ -54,6 +56,12 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private UnityEvent startFadeOut;
     [SerializeField]
     private UnityEvent startFadeIn;
+    [SerializeField]
+    private UnityEvent<float> setWaterGaugeCap;
+    [SerializeField]
+    private UnityEvent<float> updateWaterGaugeQtity;
+    [SerializeField]
+    private UnityEvent<int> updateFireCounter;
 
 
     private float accelerateValue;
@@ -80,6 +88,10 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private float fuelQuantity;
     private bool outsideFieldBounds;
     private bool lockedControls;
+    private bool nullifyingAngleEnabled;
+    private bool waterTankOpened;
+    private float waterQuantity;
+    private int numberFiresLeft;
 
 
     private void Awake()
@@ -95,8 +107,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         controls.gameplay.accelerate.canceled += context => throttleInput = 0f;
         controls.gameplay.brake.performed += OnBrake;
         controls.gameplay.brake.canceled += OnCancelBrake;
-        controls.gameplay.fireweapon.performed += OnFireweapon;
-        controls.gameplay.fireweapon.canceled += OnStopFiringWeapon;
+        controls.gameplay.dropwater.canceled += OnDropwater;
         controls.gameplay.toggleautospeed.performed += OnToggleautospeed;
     }
 
@@ -119,9 +130,15 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         propellerSpeed = 0;
         engineStarted = false;
         setFuelGaugeCap.Invoke(Constants.FuelCapacity);
-        fuelQuantity = 2500;    // Will be set from game settings
+        setWaterGaugeCap.Invoke(Constants.WaterCapacity);
+        fuelQuantity = 10000;    // Will be set from game settings
+        waterQuantity = 1000;
+        rafaleBody.mass = Mathf.Clamp(Constants.WeightPlaneNoLoad + (waterQuantity * Constants.WaterQuantityToWeightRatio),
+            Constants.WeightPlaneNoLoad, Constants.MaxWeightPlaneFullyLoaded);   // Should be executed only when attempting firefighter missions
         outsideFieldBounds = false;
         lockedControls = false;
+        nullifyingAngleEnabled = false;
+        waterTankOpened = false;
         updateFuelGaugeQtity.Invoke(fuelQuantity);
 
         // Move to game manager script the logic below
@@ -130,6 +147,11 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         {
             ground.GetChild(i).tag = Constants.TerrainTagName;
         }
+
+        // Temporary logic, should be moved when appropriate
+        numberFiresLeft = GameObject.Find("Fires").transform.childCount;
+        updateFireCounter.Invoke(numberFiresLeft);
+
     }
 
     // Update is called once per frame
@@ -137,7 +159,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     {
         if (!isAirbourne && transform.position.y > airbourneThresholdY)
         {
-            Debug.Log(planeMagnitudeRounded);
+            Debug.Log("Lift off: " + planeMagnitudeRounded);
             isAirbourne = true;
         }
 
@@ -162,6 +184,19 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
             fuelQuantity -= (Constants.EngineRunningFuelWaste + (0.001f * planeSpeed));
             if (fuelQuantity <= 0) engineStarted = false;
             updateFuelGaugeQtity.Invoke(fuelQuantity);
+        }
+
+        // Water management
+        if (waterTankOpened)
+        {
+            waterQuantity -= Constants.WaterWasteRate;
+            rafaleBody.mass -= (Constants.WaterWasteRate * Constants.WaterQuantityToWeightRatio);
+            if(waterQuantity <= 0)
+            {
+                waterTankOpened = false;
+                dropWaterEffect.Stop();
+            }
+            updateWaterGaugeQtity.Invoke(waterQuantity);
         }
 
         // Propeller spinning
@@ -215,9 +250,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
             else
             {
                 if (isAutoSpeedOn) // Maintain constant speed if enabled
-                {
                     accelerateValue = planeSpeed < autoSpeed ? throttleAcceleration : 0;
-                }
             }
 
             if (planeSpeed > Constants.PlaneMaxSpeed) planeDrag += (Constants.HighSpeedDrag * planeSpeed);
@@ -240,26 +273,18 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         }
 
         if (rafaleBody.position.y >= Constants.MaxHeightAllowed)    // Height ceiling check
-        {
             planeDrag += Constants.HeightDrag;
-        }
 
         if (pitchRollInput != Vector2.zero && planeSpeed > 1)
         {
-            if (throttleInput == 0)
-            {
-                planeDrag += Constants.PlTurnDrag;
-            }
+            if (throttleInput == 0) planeDrag += Constants.PlTurnDrag;
             rafaleBody.AddRelativeTorque(pitchRollInput.y * pitchFactor * Vector3.right, ForceMode.Acceleration);
             rafaleBody.AddRelativeTorque(pitchRollInput.x * rollFactor * Vector3.forward, ForceMode.Acceleration);
         }
 
         if (isAirbourne && yawInput != 0f)
         {
-            if (throttleInput == 0)
-            {
-                planeDrag += Constants.PlTurnDrag;
-            }
+            if (throttleInput == 0) planeDrag += Constants.PlTurnDrag;
             rafaleBody.AddRelativeTorque(yawInput * yawFactor * Vector3.up, ForceMode.Acceleration);
         }
         
@@ -270,10 +295,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private void ToggleAutoSpeed()
     {
         isAutoSpeedOn = !isAutoSpeedOn;
-        if(isAutoSpeedOn)
-        {
-            autoSpeed = (float)planeMagnitudeRounded;
-        }
+        if(isAutoSpeedOn) autoSpeed = (float)planeMagnitudeRounded;
         updateAutoSpeedIndicator.Invoke(isAutoSpeedOn, planeMagnitudeRounded);
     }
 
@@ -290,6 +312,13 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     public static bool EngineStarted()
     {
         return engineStarted;
+    }
+
+    // Temporary logic, should be moved when appropriate
+    public void DecrementFiresCount()
+    {
+        numberFiresLeft--;
+        updateFireCounter.Invoke(numberFiresLeft);
     }
 
     // Controls section
@@ -315,7 +344,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private void OnCancelPitchroll(InputAction.CallbackContext context)
     {
         pitchRollInput = Vector2.zero;
-        if (yawInput == 0)
+        if (yawInput == 0 && !nullifyingAngleEnabled)
         {
             planeAngularDrag = Constants.PlDefaultAngularDrag;
             StartCoroutine(NullifyAngularSpeed());
@@ -334,7 +363,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private void OnCancelYaw(InputAction.CallbackContext context)
     {
         yawInput = 0f;
-        if (pitchRollInput == Vector2.zero)
+        if (pitchRollInput == Vector2.zero && !nullifyingAngleEnabled)
         {
             planeAngularDrag = Constants.PlDefaultAngularDrag;
             StartCoroutine(NullifyAngularSpeed());
@@ -356,9 +385,20 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         brakeInput = 0;
     }
 
-    public void OnFireweapon(InputAction.CallbackContext context)
+    public void OnDropwater(InputAction.CallbackContext context)
     {
-        // In progress
+        if (isAirbourne && waterQuantity > 0)
+        {
+            waterTankOpened = !waterTankOpened;
+            if (waterTankOpened)
+            {
+                dropWaterEffect.Play();
+            }
+            else
+            {
+                dropWaterEffect.Stop();
+            }
+        }
     }
 
     public void OnStopFiringWeapon(InputAction.CallbackContext context)
@@ -376,6 +416,16 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         if (collision.gameObject.CompareTag(Constants.TerrainTagName) && isAirbourne)
         {
             isAirbourne = false;
+            float signedEulerBank = HelperMethods.GetSignedAngleFromEuler(transform.rotation.eulerAngles.z);
+            Debug.Log("Pitch: " + signedEulerPitch + ", Bank: " + signedEulerBank);
+            if (-5 <= signedEulerPitch && signedEulerPitch <= 3 && -10 < signedEulerBank && signedEulerBank < 10)
+            {
+                Debug.Log("Landing angle rule met.");
+            }
+            else
+            {
+                startFadeOut.Invoke();
+            }
         }
     }
 
@@ -396,8 +446,10 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
 
     private IEnumerator NullifyAngularSpeed()
     {
+        nullifyingAngleEnabled = true;
         yield return new WaitForSeconds(0.8f);
         if(pitchRollInput == Vector2.zero && yawInput == 0) rafaleBody.angularVelocity = Vector3.zero;
+        nullifyingAngleEnabled = false;
     }
 
 }
