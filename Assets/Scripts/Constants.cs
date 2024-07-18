@@ -45,12 +45,18 @@ public static class Constants {
     public const float FuelCapacity = 10000;
     public const float EngineRunningFuelWaste = 0.01f;
     public const float PlaneMaxSpeed = 210;
-    public const float WaterCapacity = 1000;
-    public const float WaterWasteRate = 1;
-    public const float WaterScoopRate = 2;
-    public const float WaterQuantityToWeightRatio = 1;
     public const float WeightPlaneNoLoad = 2000;
     public const float MaxWeightPlaneFullyLoaded = 3000;
+
+    // Fire Missions
+    public const float WaterCapacity = 1000;
+    public const float WaterWasteRate = 1f;
+    public const float WaterScoopRate = 0.1f;
+    public const float WaterQuantityToWeightRatio = 1;
+    public const float PourWaterBankAngleMinMax = 15;
+    public const float ExtinguishedComboTime = 2.5f;
+    public const int SingleExtinguishScore = 100;
+    public const int WaterUnitScoopScore = 10;
 
     // Tracker controller
 
@@ -83,6 +89,13 @@ public static class Constants {
     public const float FuelGaugeAlertAlpha = 160;
     public static Color32 FuelGaugeEmptyColour = new Color32(87, 87, 87, 200);
     public static Color32 FadePanelDefaultColour = new Color32(0, 0, 0, 0);
+    public static Color32 ExtinguishSignColour = new Color32(69, 237, 0, 0);
+    public const byte UISignMaxAlpha = 200;
+    public const string ExtinguishSignDefaultValue = "FIRE EXTINGUISHED";
+    public const int UISignFadeSpeed = 10;
+    public const float UISignDefaultFontSize = 60;
+    public const float UISignMaxFontSize = 80;
+    public static Color32 ScoreToAddSignColour = new Color32(255, 255, 0, 0);
 
     // Terrain
 

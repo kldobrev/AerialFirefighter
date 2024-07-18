@@ -55,7 +55,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.3, y: 2.2, z: 4.5}
+  m_Size: {x: 2.3, y: 2.2, z: 11}
   m_Center: {x: 0, y: 0, z: 2.45}
 --- !u!198 &8347580577788967952
 ParticleSystem:
@@ -4866,7 +4866,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e26108d29870336469068ff0ecd9eed1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  intensity: 100
+  intensity: 60
 --- !u!1001 &644118905783086135
 PrefabInstance:
   m_ObjectHideFlags: 0

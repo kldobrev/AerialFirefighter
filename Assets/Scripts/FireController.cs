@@ -11,10 +11,13 @@ public class FireController : MonoBehaviour
     {
         intensity -= Constants.FireParticleDamage;
         transform.localScale -= Constants.FireScaleReduction;
+
+        Debug.Log("Intensity down to: " + intensity);
+
         if(intensity <= 0)
         {
             transform.GetComponent<ParticleSystem>().Stop();
-            GameObject.Find("Player").GetComponent<PlayerController>().DecrementFiresCount();  // Temporary logic, should be moved when appropriate
+            transform.parent.GetComponent<FireMissionController>().DecrementFiresCount();
             Destroy(gameObject);
         }
     }

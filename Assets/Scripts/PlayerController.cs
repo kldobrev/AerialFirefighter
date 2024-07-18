@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     [SerializeField]
     private Transform bodyTransform;
     [SerializeField]
-    private Rigidbody rafaleBody;
+    private Rigidbody planeBody;
     [SerializeField]
     private Transform propeller;
     [SerializeField]
@@ -60,8 +60,6 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private UnityEvent<float> setWaterGaugeCap;
     [SerializeField]
     private UnityEvent<float> updateWaterGaugeQtity;
-    [SerializeField]
-    private UnityEvent<int> updateFireCounter;
 
 
     private float accelerateValue;
@@ -91,7 +89,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private bool nullifyingAngleEnabled;
     private bool waterTankOpened;
     private float waterQuantity;
-    private int numberFiresLeft;
+    private float bankAngle;
 
 
     private void Awake()
@@ -133,7 +131,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         setWaterGaugeCap.Invoke(Constants.WaterCapacity);
         fuelQuantity = 10000;    // Will be set from game settings
         waterQuantity = 1000;
-        rafaleBody.mass = Mathf.Clamp(Constants.WeightPlaneNoLoad + (waterQuantity * Constants.WaterQuantityToWeightRatio),
+        planeBody.mass = Mathf.Clamp(Constants.WeightPlaneNoLoad + (waterQuantity * Constants.WaterQuantityToWeightRatio),
             Constants.WeightPlaneNoLoad, Constants.MaxWeightPlaneFullyLoaded);   // Should be executed only when attempting firefighter missions
         outsideFieldBounds = false;
         lockedControls = false;
@@ -147,10 +145,6 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         {
             ground.GetChild(i).tag = Constants.TerrainTagName;
         }
-
-        // Temporary logic, should be moved when appropriate
-        numberFiresLeft = GameObject.Find("Fires").transform.childCount;
-        updateFireCounter.Invoke(numberFiresLeft);
 
     }
 
@@ -189,13 +183,15 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         // Water management
         if (waterTankOpened)
         {
-            waterQuantity -= Constants.WaterWasteRate;
-            rafaleBody.mass -= (Constants.WaterWasteRate * Constants.WaterQuantityToWeightRatio);
-            if(waterQuantity <= 0)
+            bankAngle = HelperMethods.GetSignedAngleFromEuler(planeBody.rotation.eulerAngles.z);
+            if (waterQuantity <= 0 || bankAngle < -Constants.PourWaterBankAngleMinMax || 
+                bankAngle > Constants.PourWaterBankAngleMinMax)
             {
                 waterTankOpened = false;
                 dropWaterEffect.Stop();
             }
+            waterQuantity -= Constants.WaterWasteRate;
+            planeBody.mass -= (Constants.WaterWasteRate * Constants.WaterQuantityToWeightRatio);
             updateWaterGaugeQtity.Invoke(waterQuantity);
         }
 
@@ -225,20 +221,19 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
             {
                 // Reversing plane direction and speed after passing stage boundary
                 transform.Rotate(new Vector3(2 * transform.rotation.eulerAngles.x, 180, 0));
-                Vector3 currentDirection = -rafaleBody.velocity.normalized;
-                rafaleBody.velocity = currentDirection * rafaleBody.velocity.magnitude;
+                Vector3 currentDirection = -planeBody.velocity.normalized;
+                planeBody.velocity = currentDirection * planeBody.velocity.magnitude;
                 Physics.SyncTransforms();
                 lockedControls = false;
             }
         }
-        
 
     }
 
     void FixedUpdate()
     {
         accelerateValue = 0;
-        planeSpeed = rafaleBody.velocity.magnitude;
+        planeSpeed = planeBody.velocity.magnitude;
         planeDrag = Constants.PlDefaultDrag;
 
         if (propellerSpeed >= Constants.MaxIdlePropellerSpeed)
@@ -254,42 +249,42 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
             }
 
             if (planeSpeed > Constants.PlaneMaxSpeed) planeDrag += (Constants.HighSpeedDrag * planeSpeed);
-            signedEulerPitch = HelperMethods.GetSignedAngleFromEuler(rafaleBody.rotation.eulerAngles.x);
+            signedEulerPitch = HelperMethods.GetSignedAngleFromEuler(planeBody.rotation.eulerAngles.x);
         }
-        rafaleBody.AddRelativeForce(Vector3.up * ((planeSpeed - (planeSpeed * signedEulerPitch * pitchLiftFactor))
+        planeBody.AddRelativeForce(Vector3.up * ((planeSpeed - (planeSpeed * signedEulerPitch * pitchLiftFactor))
             * liftForce), ForceMode.Impulse);
 
         if (brakeInput != 0)    // Brake engaged
         {
             planeDrag += Constants.PlBrakeDrag;
         }
-        else if (signedEulerPitch >= -Constants.PitchDragAngle && rafaleBody.position.y < Constants.MaxHeightAllowed)
+        else if (signedEulerPitch >= -Constants.PitchDragAngle && planeBody.position.y < Constants.MaxHeightAllowed)
         {
-            rafaleBody.AddRelativeForce(Vector3.forward * accelerateValue, ForceMode.Acceleration);
+            planeBody.AddRelativeForce(Vector3.forward * accelerateValue, ForceMode.Acceleration);
         }
         else
         {
             planeDrag += (Constants.HighPitchDrag * (-signedEulerPitch));
         }
 
-        if (rafaleBody.position.y >= Constants.MaxHeightAllowed)    // Height ceiling check
+        if (planeBody.position.y >= Constants.MaxHeightAllowed)    // Height ceiling check
             planeDrag += Constants.HeightDrag;
 
         if (pitchRollInput != Vector2.zero && planeSpeed > 1)
         {
-            if (throttleInput == 0) planeDrag += Constants.PlTurnDrag;
-            rafaleBody.AddRelativeTorque(pitchRollInput.y * pitchFactor * Vector3.right, ForceMode.Acceleration);
-            rafaleBody.AddRelativeTorque(pitchRollInput.x * rollFactor * Vector3.forward, ForceMode.Acceleration);
+            if (pitchRollInput.y != 0 && isAirbourne) planeDrag += (Constants.PlTurnDrag * planeSpeed);
+            planeBody.AddRelativeTorque(pitchRollInput.y * pitchFactor * Vector3.right, ForceMode.Acceleration);
+            planeBody.AddRelativeTorque(pitchRollInput.x * rollFactor * Vector3.forward, ForceMode.Acceleration);
         }
 
         if (isAirbourne && yawInput != 0f)
         {
-            if (throttleInput == 0) planeDrag += Constants.PlTurnDrag;
-            rafaleBody.AddRelativeTorque(yawInput * yawFactor * Vector3.up, ForceMode.Acceleration);
+            if (throttleInput == 0) planeDrag += Constants.PlTurnDrag; 
+            planeBody.AddRelativeTorque(yawInput * yawFactor * Vector3.up, ForceMode.Acceleration);
         }
-        
-        if(rafaleBody.drag != planeDrag) rafaleBody.drag = planeDrag;
-        if(rafaleBody.angularDrag != planeAngularDrag) rafaleBody.angularDrag = planeAngularDrag;
+
+        if (planeBody.drag != planeDrag) planeBody.drag = planeDrag;
+        if(planeBody.angularDrag != planeAngularDrag) planeBody.angularDrag = planeAngularDrag;
     }
 
     private void ToggleAutoSpeed()
@@ -312,13 +307,6 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     public static bool EngineStarted()
     {
         return engineStarted;
-    }
-
-    // Temporary logic, should be moved when appropriate
-    public void DecrementFiresCount()
-    {
-        numberFiresLeft--;
-        updateFireCounter.Invoke(numberFiresLeft);
     }
 
     // Controls section
@@ -399,6 +387,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
                 dropWaterEffect.Stop();
             }
         }
+
     }
 
     public void OnStopFiringWeapon(InputAction.CallbackContext context)
@@ -448,7 +437,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     {
         nullifyingAngleEnabled = true;
         yield return new WaitForSeconds(0.8f);
-        if(pitchRollInput == Vector2.zero && yawInput == 0) rafaleBody.angularVelocity = Vector3.zero;
+        if(pitchRollInput == Vector2.zero && yawInput == 0) planeBody.angularVelocity = Vector3.zero;
         nullifyingAngleEnabled = false;
     }
 
