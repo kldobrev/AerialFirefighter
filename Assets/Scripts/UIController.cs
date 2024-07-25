@@ -53,7 +53,8 @@ public class UIController : MonoBehaviour
         speedometer.text = Constants.DefaultSpeedValueUI;
         autoSpeedIndicator.text = Constants.DefaultAutoSpeedValueUI;
         speedDisplayed = 0;
-        autoSpeedIndicator.color = Constants.AutoSpeedColourOff;
+        speedometer.color = Constants.SpeedColourInactive;
+        autoSpeedIndicator.color = Constants.SpeedColourInactive;
         heightMeter.value = 0f;
         heightMeter.minValue = Constants.HeightMeterValueMinUI;
         heightMeter.maxValue = Constants.HeightMeterValueMaxUI;
@@ -82,6 +83,11 @@ public class UIController : MonoBehaviour
         scoreToAddSign.color = Constants.ScoreToAddSignColour;
     }
 
+    public void SetSpeedometerColour(bool active)
+    {
+        speedometer.color = active ? Constants.SpeedColourIndicatorOn : Constants.SpeedColourInactive;
+    }
+
     public void UpdateSpeedometer(int newSpeed)
     {
         if(newSpeed != speedDisplayed)
@@ -100,7 +106,7 @@ public class UIController : MonoBehaviour
         }
         else
         {
-            autoSpeedIndicator.color = Constants.AutoSpeedColourOff;
+            autoSpeedIndicator.color = Constants.SpeedColourInactive;
         }
     }
 

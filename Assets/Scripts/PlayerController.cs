@@ -33,9 +33,19 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private float pitchLiftFactor = 2;
     [SerializeField]
     private ParticleSystem dropWaterEffect;
+    [SerializeField]
+    private ParticleSystem waterSplashEffect;
+    //[SerializeField]
+    //private ParticleSystem crashInWaterEffect;
+
     public static AmmunitionUITracker UIAmmoTracker;
 
+    public float displayWaterFloatForce = 0.12f;
+    public float displayWaterPushDownForce = 1;
 
+
+    [SerializeField]
+    private UnityEvent<bool> setSpeedometerActive;
     [SerializeField]
     private UnityEvent<int> setSpeedometerSpeed;
     [SerializeField]
@@ -60,6 +70,8 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private UnityEvent<float> setWaterGaugeCap;
     [SerializeField]
     private UnityEvent<float> updateWaterGaugeQtity;
+
+
 
 
     private float accelerateValue;
@@ -90,6 +102,8 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private bool waterTankOpened;
     private float waterQuantity;
     private float bankAngle;
+    private float liftValue;
+    private bool throttleAllowed;
 
 
     private void Awake()
@@ -137,6 +151,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         lockedControls = false;
         nullifyingAngleEnabled = false;
         waterTankOpened = false;
+        throttleAllowed = false;
         updateFuelGaugeQtity.Invoke(fuelQuantity);
 
         // Move to game manager script the logic below
@@ -190,8 +205,9 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
                 waterTankOpened = false;
                 dropWaterEffect.Stop();
             }
-            waterQuantity -= Constants.WaterWasteRate;
-            planeBody.mass -= (Constants.WaterWasteRate * Constants.WaterQuantityToWeightRatio);
+            waterQuantity = Mathf.Clamp(waterQuantity - Constants.WaterWasteRate, 0, Constants.WaterCapacity);
+            planeBody.mass = Mathf.Clamp(planeBody.mass - (Constants.WaterWasteRate * Constants.WaterQuantityToWeightRatio),
+                Constants.WeightPlaneNoLoad, Constants.MaxWeightPlaneFullyLoaded);
             updateWaterGaugeQtity.Invoke(waterQuantity);
         }
 
@@ -202,11 +218,13 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
             if (propellerSpeed < Constants.MaxIdlePropellerSpeed || !engineStarted)
             {
                 if (spinPropellerRule.CheckFrameRule()) propellerSpeed += (engineStarted ? 2 : -2);
+                AllowThrottle(false);
                 spinPropellerRule.AdvanceCounter();
             }
             else if (propellerSpeed >= Constants.MaxIdlePropellerSpeed)
             {
                 propellerSpeed = Constants.MaxIdlePropellerSpeed + (0.1f * planeSpeed);
+                AllowThrottle(true);
             }
         }
 
@@ -236,7 +254,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         planeSpeed = planeBody.velocity.magnitude;
         planeDrag = Constants.PlDefaultDrag;
 
-        if (propellerSpeed >= Constants.MaxIdlePropellerSpeed)
+        if (throttleAllowed)
         {
             if (throttleInput != 0)  // Accelerate using player input ignoring auto speed value
             {
@@ -251,8 +269,9 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
             if (planeSpeed > Constants.PlaneMaxSpeed) planeDrag += (Constants.HighSpeedDrag * planeSpeed);
             signedEulerPitch = HelperMethods.GetSignedAngleFromEuler(planeBody.rotation.eulerAngles.x);
         }
-        planeBody.AddRelativeForce(Vector3.up * ((planeSpeed - (planeSpeed * signedEulerPitch * pitchLiftFactor))
-            * liftForce), ForceMode.Impulse);
+
+        liftValue = (planeSpeed - (planeSpeed * signedEulerPitch * pitchLiftFactor)) * liftForce;
+        planeBody.AddRelativeForce(Vector3.up * liftValue, ForceMode.Impulse);
 
         if (brakeInput != 0)    // Brake engaged
         {
@@ -287,11 +306,81 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         if(planeBody.angularDrag != planeAngularDrag) planeBody.angularDrag = planeAngularDrag;
     }
 
-    private void ToggleAutoSpeed()
+    private void AllowThrottle(bool allowVal)
     {
-        isAutoSpeedOn = !isAutoSpeedOn;
-        if(isAutoSpeedOn) autoSpeed = (float)planeMagnitudeRounded;
-        updateAutoSpeedIndicator.Invoke(isAutoSpeedOn, planeMagnitudeRounded);
+        if (throttleAllowed != allowVal) throttleAllowed = allowVal;
+        setSpeedometerActive.Invoke(allowVal);
+    }
+
+
+    // Collisions/Triggers
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag(Constants.TerrainTagName) && isAirbourne)
+        {
+            isAirbourne = false;
+            float signedEulerBank = HelperMethods.GetSignedAngleFromEuler(transform.rotation.eulerAngles.z);
+            Debug.Log("Pitch: " + signedEulerPitch + ", Bank: " + signedEulerBank);
+            if (-5 <= signedEulerPitch && signedEulerPitch <= 3 && -10 < signedEulerBank && signedEulerBank < 10)
+            {
+                Debug.Log("Landing angle rule met.");
+            }
+            else
+            {
+                startFadeOut.Invoke();  // Crash
+            }
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("StageBounds") && outsideFieldBounds)
+        {
+            outsideFieldBounds = false;
+            startFadeIn.Invoke();
+        }
+        else if (other.gameObject.CompareTag(Constants.WaterSurfaceTagName))
+        {
+            waterSplashEffect.Play();
+            if (waterQuantity < Constants.WaterCapacity)
+            {
+                waterQuantity = Mathf.Clamp(waterQuantity + Constants.WaterScoopRate, 0, Constants.WaterCapacity);
+                planeBody.mass = Mathf.Clamp(planeBody.mass + (Constants.WaterScoopRate * Constants.WaterQuantityToWeightRatio),
+                    Constants.WeightPlaneNoLoad, Constants.MaxWeightPlaneFullyLoaded);
+                updateWaterGaugeQtity.Invoke(waterQuantity);
+            }
+        }
+        else if (other.gameObject.CompareTag(Constants.WaterDepthsTagName))
+        {
+            Debug.Log("Crash into water.");
+            waterSplashEffect.Stop();
+            startFadeOut.Invoke();  // Crash
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.CompareTag(Constants.WaterSurfaceTagName))
+        {
+            float signedEulerBank = HelperMethods.GetSignedAngleFromEuler(transform.rotation.eulerAngles.z);
+            if (-20 <= signedEulerPitch && signedEulerPitch <= 3 && -10 < signedEulerBank && signedEulerBank < 10)
+            {
+                // Trying to keep plane afloat while scooping water
+                planeBody.AddRelativeForce(Vector3.up * displayWaterFloatForce, ForceMode.VelocityChange);
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("StageBounds") && !outsideFieldBounds)
+            outsideFieldBounds = true;
+        else if (other.gameObject.CompareTag(Constants.WaterSurfaceTagName))
+        {
+            planeBody.AddRelativeForce(Vector3.down * displayWaterPushDownForce, ForceMode.VelocityChange);
+            waterSplashEffect.Stop();
+        }
     }
 
     private void OnEnable()
@@ -308,6 +397,15 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     {
         return engineStarted;
     }
+
+    private IEnumerator NullifyAngularSpeed()
+    {
+        nullifyingAngleEnabled = true;
+        yield return new WaitForSeconds(0.8f);
+        if(pitchRollInput == Vector2.zero && yawInput == 0) planeBody.angularVelocity = Vector3.zero;
+        nullifyingAngleEnabled = false;
+    }
+
 
     // Controls section
 
@@ -390,9 +488,11 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
 
     }
 
-    public void OnStopFiringWeapon(InputAction.CallbackContext context)
+    private void ToggleAutoSpeed()
     {
-        // In progress
+        isAutoSpeedOn = !isAutoSpeedOn;
+        if (isAutoSpeedOn) autoSpeed = (float)planeMagnitudeRounded;
+        updateAutoSpeedIndicator.Invoke(isAutoSpeedOn, planeMagnitudeRounded);
     }
 
     public void OnToggleautospeed(InputAction.CallbackContext context)
@@ -400,45 +500,9 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         if (!lockedControls && engineStarted) ToggleAutoSpeed();
     }
 
-    private void OnCollisionEnter(Collision collision)
+    public void OnStopFiringWeapon(InputAction.CallbackContext context)
     {
-        if (collision.gameObject.CompareTag(Constants.TerrainTagName) && isAirbourne)
-        {
-            isAirbourne = false;
-            float signedEulerBank = HelperMethods.GetSignedAngleFromEuler(transform.rotation.eulerAngles.z);
-            Debug.Log("Pitch: " + signedEulerPitch + ", Bank: " + signedEulerBank);
-            if (-5 <= signedEulerPitch && signedEulerPitch <= 3 && -10 < signedEulerBank && signedEulerBank < 10)
-            {
-                Debug.Log("Landing angle rule met.");
-            }
-            else
-            {
-                startFadeOut.Invoke();
-            }
-        }
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.CompareTag("StageBounds") && outsideFieldBounds)
-        {
-            outsideFieldBounds = false;
-            startFadeIn.Invoke();
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.gameObject.CompareTag("StageBounds") && !outsideFieldBounds)
-            outsideFieldBounds = true;
-    }
-
-    private IEnumerator NullifyAngularSpeed()
-    {
-        nullifyingAngleEnabled = true;
-        yield return new WaitForSeconds(0.8f);
-        if(pitchRollInput == Vector2.zero && yawInput == 0) planeBody.angularVelocity = Vector3.zero;
-        nullifyingAngleEnabled = false;
+        // In progress
     }
 
 }

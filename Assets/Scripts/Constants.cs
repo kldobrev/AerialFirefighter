@@ -50,13 +50,16 @@ public static class Constants {
 
     // Fire Missions
     public const float WaterCapacity = 1000;
-    public const float WaterWasteRate = 1f;
-    public const float WaterScoopRate = 0.1f;
+    public const float WaterWasteRate = 1.5f;
+    public const float WaterScoopRate = 30;
     public const float WaterQuantityToWeightRatio = 1;
     public const float PourWaterBankAngleMinMax = 15;
     public const float ExtinguishedComboTime = 2.5f;
     public const int SingleExtinguishScore = 100;
     public const int WaterUnitScoopScore = 10;
+    public const string WaterSurfaceTagName = "Surface";
+    public const string WaterDepthsTagName = "Depths";
+    public const float WaterFloatForce = 375;
 
     // Tracker controller
 
@@ -79,7 +82,8 @@ public static class Constants {
     public const float AttitudeMeterMaxPitchShown = 45;
     public static Color32 HeightAboveAlertColour = new Color32(80, 255, 0, 255);
     public static Color32 HeightBelowAlertColour = new Color32(255, 141, 0, 255);
-    public static Color32 AutoSpeedColourOff = new Color32(130, 130, 130, 190);
+    public static Color32 SpeedColourInactive = new Color32(130, 130, 130, 190);
+    public static Color32 SpeedColourIndicatorOn = new Color32(255, 130, 0, 255);
     public static Color32 AutoSpeedColourOn = new Color32(53, 255, 0, 255);
     public static Color32 WeaponEmptyIconColour = new Color32(78, 78, 78, 178);
     public const float TargetIconMovementMult = 2;
