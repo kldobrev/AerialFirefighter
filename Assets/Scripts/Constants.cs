@@ -32,10 +32,11 @@ public static class Constants {
     public const int SendCoordsFramerule = 1;
     public const int SendSpeedFramerule = 5;
     public const int SpinPropellerFramerule = 7;
-    public const float MaxHeightAllowed = 2000;
+    //public const float MaxHeightAllowed = 2000;
+    public const float MaxHeightAllowed = 1200;
     public const float HeightDrag = 0.5f;
     public const float HeightDragTurn = 1f;
-    public const string GearsRetractTriggerTag = "GearsRetractor";
+    //public const string GearsRetractTriggerTag = "GearsRetractor";
     public const string PlayerTagName = "Player";
     public const string EnemiesTagName = "Enemy";
     public const float PitchDragAngle = 21;
@@ -104,6 +105,10 @@ public static class Constants {
     // Terrain
 
     public const string TerrainTagName = "Terrain";
+    public const float LandingPitchMin = -6;
+    public const float LandingPitchMax = 3;
+    public const float LandingBankMin = -5;
+    public const float LandingBankMax = 5;
 
     // Gameplay
     public const float FireDefaultIntensity = 100;

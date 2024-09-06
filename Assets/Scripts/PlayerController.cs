@@ -44,6 +44,12 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     public float displayWaterPushDownForce = 1;
 
 
+
+
+    [SerializeField]
+    private CapsuleCollider frontCollider;
+
+
     [SerializeField]
     private UnityEvent<bool> setSpeedometerActive;
     [SerializeField]
@@ -317,20 +323,26 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
 
     private void OnCollisionEnter(Collision collision)
     {
+        //Debug.Log("Impulse: " + collision.GetContact(0).impulse.y / Time.fixedDeltaTime);
+
         if (collision.gameObject.CompareTag(Constants.TerrainTagName) && isAirbourne)
         {
             isAirbourne = false;
             float signedEulerBank = HelperMethods.GetSignedAngleFromEuler(transform.rotation.eulerAngles.z);
             Debug.Log("Pitch: " + signedEulerPitch + ", Bank: " + signedEulerBank);
-            if (-5 <= signedEulerPitch && signedEulerPitch <= 3 && -10 < signedEulerBank && signedEulerBank < 10)
+            ContactPoint collisionPoint = collision.GetContact(0);
+            if (collisionPoint.normal == Vector3.up && collisionPoint.impulse.y == 0 &&
+                Constants.LandingPitchMin <= signedEulerPitch && signedEulerPitch <= Constants.LandingPitchMax &&
+                Constants.LandingBankMin < signedEulerBank && signedEulerBank < Constants.LandingBankMax)
             {
-                Debug.Log("Landing angle rule met.");
+                Debug.Log("Landing rules met.");
             }
             else
             {
                 startFadeOut.Invoke();  // Crash
             }
         }
+
     }
 
     private void OnTriggerEnter(Collider other)
@@ -498,11 +510,6 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     public void OnToggleautospeed(InputAction.CallbackContext context)
     {
         if (!lockedControls && engineStarted) ToggleAutoSpeed();
-    }
-
-    public void OnStopFiringWeapon(InputAction.CallbackContext context)
-    {
-        // In progress
     }
 
 }
