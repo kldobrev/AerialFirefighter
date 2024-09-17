@@ -16,7 +16,6 @@ public class FireMissionController : MissionController
     private UnityEvent hideAddToScoreSign;
 
     private int numberFiresLeft;
-    private float comboTimer;
     private int firesExtinguishedInCombo;
     private int comboScore;
 
@@ -24,9 +23,12 @@ public class FireMissionController : MissionController
     protected override void Start()
     {
         base.Start();
-        numberFiresLeft = transform.childCount;
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            numberFiresLeft += transform.GetChild(i).childCount;
+        }
+
         updateFireCounter.Invoke(numberFiresLeft, 0);
-        comboTimer = 0;
         firesExtinguishedInCombo = 0;
         comboScore = 0;
     }
@@ -34,8 +36,7 @@ public class FireMissionController : MissionController
     public void DecrementFiresCount()
     {
         numberFiresLeft--;
-        comboTimer = 0;
-        if(firesExtinguishedInCombo == 0)
+        if (firesExtinguishedInCombo == 0)
         {
             StartCoroutine(StartComboTimer());
         }
@@ -53,12 +54,7 @@ public class FireMissionController : MissionController
 
     private IEnumerator StartComboTimer()
     {
-        while (comboTimer < Constants.ExtinguishedComboTime)
-        {
-            comboTimer += Time.deltaTime;
-            yield return null;
-        }
-        comboTimer = 0;
+        yield return new WaitForSeconds(Constants.ExtinguishedComboTime);
         firesExtinguishedInCombo = 0;
         score += comboScore;
         updateScoreSign.Invoke(score);

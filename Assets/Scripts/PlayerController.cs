@@ -35,19 +35,16 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private ParticleSystem dropWaterEffect;
     [SerializeField]
     private ParticleSystem waterSplashEffect;
-    //[SerializeField]
-    //private ParticleSystem crashInWaterEffect;
+    [SerializeField]
+    private ParticleSystem crashEffect;
+    [SerializeField]
+    private ParticleSystem crashInWaterEffect;
 
     public static AmmunitionUITracker UIAmmoTracker;
 
     public float displayWaterFloatForce = 0.12f;
     public float displayWaterPushDownForce = 1;
 
-
-
-
-    [SerializeField]
-    private CapsuleCollider frontCollider;
 
 
     [SerializeField]
@@ -76,7 +73,10 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private UnityEvent<float> setWaterGaugeCap;
     [SerializeField]
     private UnityEvent<float> updateWaterGaugeQtity;
-
+    [SerializeField]
+    private UnityEvent<Vector3> detachCamera;
+    [SerializeField]
+    private UnityEvent<Color32> showCrashSign;
 
 
 
@@ -318,12 +318,20 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         setSpeedometerActive.Invoke(allowVal);
     }
 
+    private void CrashPlane(ParticleSystem effect, Color32 signColour)
+    {
+        effect.transform.position = planeBody.position;
+        effect.Play();
+        detachCamera.Invoke(effect.transform.position);
+        Destroy(gameObject);
+        showCrashSign.Invoke(signColour);
+    }
 
     // Collisions/Triggers
 
     private void OnCollisionEnter(Collision collision)
     {
-        //Debug.Log("Impulse: " + collision.GetContact(0).impulse.y / Time.fixedDeltaTime);
+        Debug.Log("Impulse: " + collision.GetContact(0).impulse.y / Time.fixedDeltaTime);
 
         if (collision.gameObject.CompareTag(Constants.TerrainTagName) && isAirbourne)
         {
@@ -339,7 +347,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
             }
             else
             {
-                startFadeOut.Invoke();  // Crash
+                CrashPlane(crashEffect, Constants.CrashSignColourGround);
             }
         }
 
@@ -365,9 +373,8 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         }
         else if (other.gameObject.CompareTag(Constants.WaterDepthsTagName))
         {
-            Debug.Log("Crash into water.");
             waterSplashEffect.Stop();
-            startFadeOut.Invoke();  // Crash
+            CrashPlane(crashInWaterEffect, Constants.CrashSignColourWater);
         }
     }
 

@@ -101,6 +101,10 @@ public static class Constants {
     public const float UISignDefaultFontSize = 60;
     public const float UISignMaxFontSize = 80;
     public static Color32 ScoreToAddSignColour = new Color32(255, 255, 0, 0);
+    public static float FadeScreenSpeed = 5;
+    public static Color32 CrashSignColourGround = new Color32(237, 83, 0, 200);
+    public static Color32 CrashSignColourWater = new Color32(0, 228, 227, 200);
+    public static Vector3 DefaultLocatorIconPosition = new Vector3(0, 0, 0);
 
     // Terrain
 

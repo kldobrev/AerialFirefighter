@@ -4867,6 +4867,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   intensity: 60
+  removeFireGroupFromLocator:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4990107919764146025, guid: 8d2e5d25a7ca7ea4097eb5e803f18b84,
+          type: 3}
+        m_TargetAssemblyTypeName: LocatorController, Assembly-CSharp
+        m_MethodName: RemoveFireIcon
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1001 &644118905783086135
 PrefabInstance:
   m_ObjectHideFlags: 0

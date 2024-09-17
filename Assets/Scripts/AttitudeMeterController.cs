@@ -26,14 +26,17 @@ public class AttitudeMeterController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(bankPitchRotation != playerTrns.rotation.eulerAngles.z)
+        if (playerTrns != null)
         {
-            bankPitchRotation = -playerTrns.rotation.eulerAngles.z;
-            bankPitchContainerTrns.rotation = Quaternion.Euler(0, 0, bankPitchRotation);
-        }
+            if (bankPitchRotation != playerTrns.rotation.eulerAngles.z)
+            {
+                bankPitchRotation = -playerTrns.rotation.eulerAngles.z;
+                bankPitchContainerTrns.rotation = Quaternion.Euler(0, 0, bankPitchRotation);
+            }
 
-        pitch = HelperMethods.GetSignedAngleFromEuler(playerTrns.rotation.eulerAngles.x);
-        pitchSlider.value = Mathf.Clamp(pitch, -Constants.AttitudeMeterMaxPitchShown, Constants.AttitudeMeterMaxPitchShown);
+            pitch = HelperMethods.GetSignedAngleFromEuler(playerTrns.rotation.eulerAngles.x);
+            pitchSlider.value = Mathf.Clamp(pitch, -Constants.AttitudeMeterMaxPitchShown, Constants.AttitudeMeterMaxPitchShown);
+        }
     }
 
 }

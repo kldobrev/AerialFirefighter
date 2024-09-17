@@ -30,15 +30,17 @@ public class UIController : MonoBehaviour
     private TextMeshProUGUI scoreSign;
     [SerializeField]
     private TextMeshProUGUI scoreToAddSign;
+    [SerializeField]
+    private TextMeshProUGUI crashSign;
 
     private int speedDisplayed;
     private Image heightMeterBkg;
     private int weaponsAdded;
     private int currentWeaponIconIdx;
+    private static byte screenAlpha;
+    private static byte extinguishSignAlpha;
+    private static byte scoreToAddSignAlpha;
     private static int numberOfFires;
-    private static byte[] fadePanelColour;
-    private static byte[] extinguishSignColour;
-    private static byte[] scoreToAddSignColour;
     private float extingSignTimer;
 
 
@@ -61,26 +63,13 @@ public class UIController : MonoBehaviour
         heightMeterBkg = heightMeter.GetComponentInChildren<Image>();
         heightMeterBkg.color = Constants.HeightBelowAlertColour;
         currentWeaponIconIdx = 0;
-        fadePanelColour = new byte[4];
-        fadePanelColour[0] = Constants.FadePanelDefaultColour.r;
-        fadePanelColour[1] = Constants.FadePanelDefaultColour.g;
-        fadePanelColour[2] = Constants.FadePanelDefaultColour.b;
-        fadePanelColour[3] = Constants.FadePanelDefaultColour.a;
         fadeEffectsPanel.color = Constants.FadePanelDefaultColour;
-
-        extinguishSignColour = new byte[4];
-        extinguishSignColour[0] = Constants.ExtinguishSignColour.r;
-        extinguishSignColour[1] = Constants.ExtinguishSignColour.g;
-        extinguishSignColour[2] = Constants.ExtinguishSignColour.b;
-        extinguishSignColour[3] = Constants.ExtinguishSignColour.a;
+        screenAlpha = Constants.FadePanelDefaultColour.a;
+        extinguishSignAlpha = Constants.ExtinguishSignColour.a;
         extinguishedSign.color = Constants.ExtinguishSignColour;
-
-        scoreToAddSignColour = new byte[4];
-        scoreToAddSignColour[0] = Constants.ScoreToAddSignColour.r;
-        scoreToAddSignColour[1] = Constants.ScoreToAddSignColour.g;
-        scoreToAddSignColour[2] = Constants.ScoreToAddSignColour.b;
-        scoreToAddSignColour[3] = Constants.ScoreToAddSignColour.a;
+        scoreToAddSignAlpha = Constants.ScoreToAddSignColour.a;
         scoreToAddSign.color = Constants.ScoreToAddSignColour;
+        extinguishedSign.transform.parent.gameObject.SetActive(true);
     }
 
     public void SetSpeedometerColour(bool active)
@@ -132,12 +121,12 @@ public class UIController : MonoBehaviour
 
     public void ScreenFadeToBlack()
     {
-        StartCoroutine(FadeToBlack());
+        StartCoroutine(ScreenFade(Constants.FadeScreenSpeed));
     }
 
     public void ReverseScreenFadeToBlack()
     {
-        StartCoroutine(ReverseFadeToBlack());
+        StartCoroutine(ScreenFade(-Constants.FadeScreenSpeed));
     }
 
     public void UpdateFireCount(int fireCount, int firesInCombo)
@@ -151,7 +140,7 @@ public class UIController : MonoBehaviour
 
     public static float GetScreenTransparency()
     {
-        return fadePanelColour[3];
+        return screenAlpha;
     }
 
     public void ShowExtinguishedSign(int numFires)
@@ -159,7 +148,8 @@ public class UIController : MonoBehaviour
         if(numFires == 1)
         {
             extinguishedSign.text = Constants.ExtinguishSignDefaultValue;
-            StartCoroutine(FadeExtinguishSignIn());
+            extinguishedSign.fontSize = Constants.UISignDefaultFontSize;
+            StartCoroutine(FadeText(extinguishedSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
         }
         else
         {
@@ -169,7 +159,9 @@ public class UIController : MonoBehaviour
 
     public void HideFireExtinguishedSign()
     {
-        StartCoroutine(FadeExtinguishSignOut());
+        StartCoroutine(FadeText(extinguishedSign, 0, Constants.UISignMaxAlpha, -Constants.UISignFadeSpeed));
+        StartCoroutine(TransitionTextSize(extinguishedSign, Constants.UISignDefaultFontSize, 
+            Constants.UISignMaxFontSize, 1));
     }
 
     public void UpdateScoreSign(int score)
@@ -180,76 +172,62 @@ public class UIController : MonoBehaviour
     public void UpdateScoreToAddSign(int score)
     {
         scoreToAddSign.text = "+" + score.ToString();
-        if (scoreToAddSignColour[3] != Constants.UISignMaxAlpha)
+        if (scoreToAddSignAlpha != Constants.UISignMaxAlpha)
         {
-            StartCoroutine(FadeScoreSign(true));
+            StartCoroutine(FadeText(scoreToAddSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
         }
+    }
+
+    public void PlayCrashSequence(Color32 signColour)
+    {
+        crashSign.color = signColour;
+        StartCoroutine(CrashCoroutine());
+    }
+
+    private IEnumerator CrashCoroutine()
+    {
+        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(FadeText(crashSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
+        yield return new WaitForSeconds(1.5f);
+        yield return StartCoroutine(ScreenFade(Constants.FadeScreenSpeed));
     }
 
     public void HideScoreToAddSign()
     {
-        StartCoroutine(FadeScoreSign(false));
+        StartCoroutine(FadeText(scoreToAddSign, 0, Constants.UISignMaxAlpha, -Constants.UISignFadeSpeed));
     }
 
-    private IEnumerator FadeToBlack()
+    private IEnumerator ScreenFade(float fadeSpeed)
     {
-        while (fadePanelColour[3] != 255)
+        float alphaTarget = fadeSpeed > 0 ? 255 : 0;
+        while (screenAlpha != alphaTarget)
         {
-            fadePanelColour[3] += 5;
-            fadeEffectsPanel.color = new Color32(fadePanelColour[0],
-                fadePanelColour[1], fadePanelColour[2], fadePanelColour[3]);
+            screenAlpha = (byte) Math.Clamp(screenAlpha + fadeSpeed, 0, 255);
+            fadeEffectsPanel.color = new Color32(Constants.FadePanelDefaultColour.r,
+                Constants.FadePanelDefaultColour.g, Constants.FadePanelDefaultColour.b, screenAlpha);
             yield return null;
         }
     }
 
-    private IEnumerator ReverseFadeToBlack()
+    private IEnumerator FadeText(TextMeshProUGUI sign, float minAlpha, float maxAlpha, float fadeSpeed)
     {
-        while (fadePanelColour[3] != 0)
+        Color32 signColour = sign.color;
+        float signTargetAlpha = fadeSpeed > 0 ? maxAlpha : minAlpha;
+        while (signColour.a != signTargetAlpha)
         {
-            fadePanelColour[3] -= 5;
-            fadeEffectsPanel.color = new Color32(fadePanelColour[0],
-                fadePanelColour[1], fadePanelColour[2], fadePanelColour[3]);
+            signColour.a = (byte) Math.Clamp(signColour.a + fadeSpeed, minAlpha, maxAlpha);
+            sign.color = signColour;
             yield return null;
         }
     }
 
-    private IEnumerator FadeExtinguishSignIn()
+    private IEnumerator TransitionTextSize(TextMeshProUGUI sign, float signSizeMin, float signSizeMax,
+        float speed)
     {
-        extinguishedSign.fontSize = Constants.UISignDefaultFontSize;
-        while (extinguishSignColour[3] != Constants.UISignMaxAlpha)
+        float signTargetSize = speed > 0 ? signSizeMax : signSizeMin;
+        while (sign.fontSize != signTargetSize)
         {
-            extinguishSignColour[3] = (byte) Math.Clamp(extinguishSignColour[3] + Constants.UISignFadeSpeed,
-                0, Constants.UISignMaxAlpha);
-            extinguishedSign.color = new Color32(extinguishSignColour[0], extinguishSignColour[1],
-                extinguishSignColour[2], extinguishSignColour[3]);
-            yield return null;
-        }
-    }
-
-    private IEnumerator FadeExtinguishSignOut()
-    {
-        while (extinguishSignColour[3] != 0 || extinguishedSign.fontSize != Constants.UISignMaxFontSize)
-        {
-            extinguishedSign.fontSize = Mathf.Clamp(extinguishedSign.fontSize + 1, Constants.UISignDefaultFontSize, 
-                Constants.UISignMaxFontSize);
-            extinguishSignColour[3] = (byte) Math.Clamp(extinguishSignColour[3] - Constants.UISignFadeSpeed, 
-                0, Constants.UISignMaxAlpha);
-            extinguishedSign.color = new Color32(extinguishSignColour[0], extinguishSignColour[1],
-                extinguishSignColour[2], extinguishSignColour[3]);
-            yield return null;
-        }
-    }
-
-    private IEnumerator FadeScoreSign(bool fadeInDirection)
-    {
-        int fadeDirection = fadeInDirection ? 1 : -1;
-        int borderAlphaValue = fadeInDirection ? Constants.UISignMaxAlpha : 0;
-        while (scoreToAddSignColour[3] != borderAlphaValue)
-        {
-            scoreToAddSignColour[3] = (byte) Math.Clamp(scoreToAddSignColour[3] + (fadeDirection * Constants.UISignFadeSpeed),
-                0, Constants.UISignMaxAlpha);
-            scoreToAddSign.color = new Color32(scoreToAddSignColour[0], scoreToAddSignColour[1],
-                scoreToAddSignColour[2], scoreToAddSignColour[3]);
+            extinguishedSign.fontSize = Mathf.Clamp(extinguishedSign.fontSize + speed, signSizeMin, signSizeMax);
             yield return null;
         }
     }
