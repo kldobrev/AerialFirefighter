@@ -48,6 +48,12 @@ public static class Constants {
     public const float PlaneMaxSpeed = 210;
     public const float WeightPlaneNoLoad = 2000;
     public const float MaxWeightPlaneFullyLoaded = 3000;
+    public static Vector3 CameraTrailingDistanceDefault = new Vector3(4.7f, 1, 0);
+    public static Vector3 CameraTrailingDistanceWater = new Vector3(5.5f, 2.3f, 0);
+    public static Vector3 CameraCrashDistance = new Vector3(30, 15, 0);
+    public const float CameraTransitionSpeed = 0.05f;
+    public const float CameraTimeLimit = 3;
+
 
     // Fire Missions
     public const float WaterCapacity = 1000;
@@ -95,8 +101,10 @@ public static class Constants {
     public static Color32 FuelGaugeEmptyColour = new Color32(87, 87, 87, 200);
     public static Color32 FadePanelDefaultColour = new Color32(0, 0, 0, 0);
     public static Color32 ExtinguishSignColour = new Color32(69, 237, 0, 0);
+    public static Color32 ExtinguishSignColourAll = new Color32(250, 255, 65, 0);
     public const byte UISignMaxAlpha = 200;
-    public const string ExtinguishSignDefaultValue = "FIRE EXTINGUISHED";
+    public const string ExtinguishSignDefaultText = "FIRE EXTINGUISHED";
+    public const string ExtinguishSignAllExtinguishedText= "ALL FIRES EXTINGUISHED";
     public const int UISignFadeSpeed = 10;
     public const float UISignDefaultFontSize = 60;
     public const float UISignMaxFontSize = 80;
@@ -104,6 +112,9 @@ public static class Constants {
     public static float FadeScreenSpeed = 5;
     public static Color32 CrashSignColourGround = new Color32(237, 83, 0, 200);
     public static Color32 CrashSignColourWater = new Color32(0, 228, 227, 200);
+    public static Color32 CrashSignColourFuel = new Color32(237, 184, 0, 200);
+    public const string CrashSignTextCrash = "CRASH";
+    public const string CrashSignTextEmpty = "FUEL DEPLETED";
     public static Vector3 DefaultLocatorIconPosition = new Vector3(0, 0, 0);
 
     // Terrain

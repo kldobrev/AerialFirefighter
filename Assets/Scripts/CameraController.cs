@@ -8,24 +8,18 @@ public class CameraController : MonoBehaviour
     [SerializeField]
     private Transform playerTransform;
     [SerializeField]
-    private Vector3 trailingDistance;
-    [SerializeField]
     private Vector3 crashDistance;
     [SerializeField]
     private float smoothSpeed;
-    [SerializeField]
-    private float crashSmoothSpeed;
 
-    private Vector3 crashPosition;
-    private Vector3 crashTargetPosition;
+    private Vector3 targetPosition;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        crashTargetPosition = Vector3.zero;
-        crashPosition = Vector3.zero;
-        transform.position = playerTransform.position + trailingDistance;
+        targetPosition = Constants.CameraTrailingDistanceDefault;
+        transform.position = playerTransform.position + Constants.CameraTrailingDistanceDefault;
     }
 
     // Update is called once per frame
@@ -33,27 +27,44 @@ public class CameraController : MonoBehaviour
     {
         if (playerTransform != null)
         {
-            transform.position = Vector3.Lerp(transform.position, playerTransform.TransformPoint(trailingDistance), smoothSpeed);
+            transform.position = Vector3.Lerp(transform.position, playerTransform.TransformPoint(targetPosition), 
+                smoothSpeed);
             transform.LookAt(playerTransform);
         }
     }
 
     public void StopFollowingPlayer(Vector3 crashLocation)
     {
-        crashPosition = crashLocation;
         playerTransform = null;
-        crashTargetPosition = transform.position + crashDistance;
-        StartCoroutine(DistanceCamera());
+        targetPosition = transform.position + Constants.CameraCrashDistance;
+        StartCoroutine(TransitionCamera(crashLocation));
     }
 
-    private IEnumerator DistanceCamera()
+    public void ChangeCameraPosition(Vector3 newDistance)
     {
-        while (transform.position != crashTargetPosition)
+        StartCoroutine(TransitionTrailingDistance(newDistance));
+    }
+
+    private IEnumerator TransitionTrailingDistance(Vector3 newDistance)
+    {
+        while (targetPosition != newDistance)
         {
-            transform.position = Vector3.Lerp(transform.position, crashTargetPosition, crashSmoothSpeed);
-            transform.LookAt(crashPosition);
+            targetPosition = Vector3.Lerp(targetPosition, newDistance, 
+                Constants.CameraTransitionSpeed);
             yield return null;
         }
+    }
+
+    private IEnumerator TransitionCamera(Vector3 followPosition)
+    {
+        while (transform.position != targetPosition && followPosition != null)
+        {
+            transform.position = Vector3.Lerp(transform.position, targetPosition,
+                Constants.CameraTransitionSpeed);
+            transform.LookAt(followPosition);
+            yield return null;
+        }
+        targetPosition = Constants.CameraTrailingDistanceDefault;
     }
 
 }

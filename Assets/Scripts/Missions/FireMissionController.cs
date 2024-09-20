@@ -1,9 +1,12 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class FireMissionController : MissionController
 {
+    [SerializeField]
+    private GameObject landingGuide;
     [SerializeField]
     private UnityEvent<int, int> updateFireCounter;
     [SerializeField]
@@ -14,6 +17,8 @@ public class FireMissionController : MissionController
     private UnityEvent<int> updateAddedScoreSign;
     [SerializeField]
     private UnityEvent hideAddToScoreSign;
+    [SerializeField]
+    private UnityEvent showAirportIcon;
 
     private int numberFiresLeft;
     private int firesExtinguishedInCombo;
@@ -48,8 +53,14 @@ public class FireMissionController : MissionController
         if (numberFiresLeft == 0)
         {
             missionPassed = true;
-            EndMission();
+            EnableRunway();
         }
+    }
+
+    private void EnableRunway()
+    {
+        landingGuide.SetActive(true);
+        showAirportIcon.Invoke();
     }
 
     private IEnumerator StartComboTimer()

@@ -76,8 +76,9 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     [SerializeField]
     private UnityEvent<Vector3> detachCamera;
     [SerializeField]
-    private UnityEvent<Color32> showCrashSign;
-
+    private UnityEvent<string, Color32> showCrashSign;
+    [SerializeField]
+    private UnityEvent<Vector3> changeCameraDistance;
 
 
     private float accelerateValue;
@@ -110,6 +111,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private float bankAngle;
     private float liftValue;
     private bool throttleAllowed;
+    private float cameraTransitionTimer;
 
 
     private void Awake()
@@ -158,6 +160,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         nullifyingAngleEnabled = false;
         waterTankOpened = false;
         throttleAllowed = false;
+        cameraTransitionTimer = 0;
         updateFuelGaugeQtity.Invoke(fuelQuantity);
 
         // Move to game manager script the logic below
@@ -197,7 +200,14 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         if (engineStarted)
         {
             fuelQuantity -= (Constants.EngineRunningFuelWaste + (0.001f * planeSpeed));
-            if (fuelQuantity <= 0) engineStarted = false;
+            if (fuelQuantity <= 0)
+            {
+                engineStarted = false;
+                if (!isAirbourne)
+                {
+                    showCrashSign.Invoke(Constants.CrashSignTextEmpty, Constants.CrashSignColourFuel);
+                }
+            }
             updateFuelGaugeQtity.Invoke(fuelQuantity);
         }
 
@@ -324,7 +334,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         effect.Play();
         detachCamera.Invoke(effect.transform.position);
         Destroy(gameObject);
-        showCrashSign.Invoke(signColour);
+        showCrashSign.Invoke(Constants.CrashSignTextCrash, signColour);
     }
 
     // Collisions/Triggers
@@ -362,7 +372,6 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         }
         else if (other.gameObject.CompareTag(Constants.WaterSurfaceTagName))
         {
-            waterSplashEffect.Play();
             if (waterQuantity < Constants.WaterCapacity)
             {
                 waterQuantity = Mathf.Clamp(waterQuantity + Constants.WaterScoopRate, 0, Constants.WaterCapacity);
@@ -387,6 +396,13 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
             {
                 // Trying to keep plane afloat while scooping water
                 planeBody.AddRelativeForce(Vector3.up * displayWaterFloatForce, ForceMode.VelocityChange);
+                waterSplashEffect.Play();
+                if (cameraTransitionTimer == 0)
+                {
+                    changeCameraDistance.Invoke(Constants.CameraTrailingDistanceWater);
+                    StartCoroutine(CameraTimerCountdown());
+                }
+                cameraTransitionTimer = Constants.CameraTimeLimit;
             }
         }
     }
@@ -423,6 +439,17 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         yield return new WaitForSeconds(0.8f);
         if(pitchRollInput == Vector2.zero && yawInput == 0) planeBody.angularVelocity = Vector3.zero;
         nullifyingAngleEnabled = false;
+    }
+
+    private IEnumerator CameraTimerCountdown()
+    {
+        cameraTransitionTimer = Constants.CameraTimeLimit;
+        while (cameraTransitionTimer != 0)
+        {
+            cameraTransitionTimer = Mathf.Clamp(cameraTransitionTimer - Time.deltaTime, 0, Constants.CameraTimeLimit);
+            yield return null;
+        }
+        changeCameraDistance.Invoke(Constants.CameraTrailingDistanceDefault);
     }
 
 

@@ -67,6 +67,7 @@ public class UIController : MonoBehaviour
         screenAlpha = Constants.FadePanelDefaultColour.a;
         extinguishSignAlpha = Constants.ExtinguishSignColour.a;
         extinguishedSign.color = Constants.ExtinguishSignColour;
+        extinguishedSign.fontSize = Constants.UISignDefaultFontSize;
         scoreToAddSignAlpha = Constants.ScoreToAddSignColour.a;
         scoreToAddSign.color = Constants.ScoreToAddSignColour;
         extinguishedSign.transform.parent.gameObject.SetActive(true);
@@ -132,10 +133,7 @@ public class UIController : MonoBehaviour
     public void UpdateFireCount(int fireCount, int firesInCombo)
     {
         firesLeftCounter.text = fireCount.ToString();
-        if (firesInCombo > 0)
-        {
-            ShowExtinguishedSign(firesInCombo);
-        }
+        ShowExtinguishedSign(fireCount, firesInCombo);
     }
 
     public static float GetScreenTransparency()
@@ -143,17 +141,22 @@ public class UIController : MonoBehaviour
         return screenAlpha;
     }
 
-    public void ShowExtinguishedSign(int numFires)
+    public void ShowExtinguishedSign(int numFiresLeft, int numFiresCombo)
     {
-        if(numFires == 1)
+        if (numFiresLeft == 0)
         {
-            extinguishedSign.text = Constants.ExtinguishSignDefaultValue;
-            extinguishedSign.fontSize = Constants.UISignDefaultFontSize;
+            extinguishedSign.text = Constants.ExtinguishSignAllExtinguishedText;
+            extinguishedSign.color = Constants.ExtinguishSignColourAll;
+            StartCoroutine(FadeText(extinguishedSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
+        }
+        else if(numFiresCombo == 1)
+        {
+            extinguishedSign.text = Constants.ExtinguishSignDefaultText;
             StartCoroutine(FadeText(extinguishedSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
         }
         else
         {
-            extinguishedSign.text = Constants.ExtinguishSignDefaultValue  + " x" + numFires.ToString();
+            extinguishedSign.text = Constants.ExtinguishSignDefaultText + " x" + numFiresCombo.ToString();
         }
     }
 
@@ -178,8 +181,9 @@ public class UIController : MonoBehaviour
         }
     }
 
-    public void PlayCrashSequence(Color32 signColour)
+    public void PlayCrashSequence(string signText, Color32 signColour)
     {
+        crashSign.text = signText;
         crashSign.color = signColour;
         StartCoroutine(CrashCoroutine());
     }

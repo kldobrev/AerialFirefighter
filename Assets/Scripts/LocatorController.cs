@@ -18,13 +18,15 @@ public class LocatorController : MonoBehaviour
     [SerializeField]
     private Transform firesTrns;
     [SerializeField]
+    private Transform airportTrns;
+    [SerializeField]
     private RectTransform barRectTrns;
     [SerializeField]
-    private GameObject runwayIconPrefab;
+    private GameObject airportIconPrefab;
     [SerializeField]
     private GameObject fireIconPrefab;
     [SerializeField]
-    private Transform fireIconsHolder;
+    private Transform iconsHolder;
 
     private float playerAngleY;
     private float locatorAngle;
@@ -55,7 +57,7 @@ public class LocatorController : MonoBehaviour
         targets = new();
         for (int i = 0; i < firesTrns.childCount; i++)
         {
-            GameObject icon = Instantiate(fireIconPrefab, fireIconsHolder);
+            GameObject icon = Instantiate(fireIconPrefab, iconsHolder);
             targets.Add(icon);
         }
     }
@@ -73,25 +75,37 @@ public class LocatorController : MonoBehaviour
             }
             barRectTrns.localPosition = nextBarPosition;
 
-            for (int i = 0; i < firesTrns.childCount; i++)
+            if (firesTrns.childCount != 0)
             {
-                Transform targetTrns = firesTrns.GetChild(i);
-                direction = targetTrns.position - playerTrns.position;
-                playerForward = playerTrns.forward;
-                direction.y = playerForward.y = 0;  // Excluding vertical coordinates from calculations
-                playerTargetAngle = Vector3.SignedAngle(direction, playerForward, Vector3.up);
-                nextTargetIconPosition.x = startTargetIconPositionX - ((playerTargetAngle / 180) * locatorHalfWidth);
-                nextTargetIconPosition.x = Mathf.Clamp(nextTargetIconPosition.x, locatorRectTrns.rect.xMin, locatorRectTrns.rect.xMax);
-                try
+                for (int i = 0; i < firesTrns.childCount; i++)
                 {
-                    targets[i].transform.localPosition = nextTargetIconPosition;
-                }
-                catch (ArgumentOutOfRangeException)
-                {
-                    Debug.Log("Locator controller trying to access an element that was just deleted.");
+                    MoveIcon(firesTrns.GetChild(i), i);
                 }
             }
+            else
+            {
+                MoveIcon(airportTrns, 0);
+            }
             playerAngleY = playerTrns.rotation.eulerAngles.y;
+        }
+    }
+
+    private void MoveIcon(Transform target, int iconIdx)
+    {
+        Transform targetTrns = target;
+        direction = targetTrns.position - playerTrns.position;
+        playerForward = playerTrns.forward;
+        direction.y = playerForward.y = 0;  // Excluding vertical coordinates from calculations
+        playerTargetAngle = Vector3.SignedAngle(direction, playerForward, Vector3.up);
+        nextTargetIconPosition.x = startTargetIconPositionX - ((playerTargetAngle / 180) * locatorHalfWidth);
+        nextTargetIconPosition.x = Mathf.Clamp(nextTargetIconPosition.x, locatorRectTrns.rect.xMin, locatorRectTrns.rect.xMax);
+        try
+        {
+            targets[iconIdx].transform.localPosition = nextTargetIconPosition;
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            Debug.Log("Locator controller trying to access an element that was just deleted. Lookup index: " + iconIdx);
         }
     }
 
@@ -99,6 +113,12 @@ public class LocatorController : MonoBehaviour
     {
         Destroy(targets.ElementAt(groupIdx));
         targets.RemoveAt(groupIdx);
+    }
+
+    public void ShowAirportIcon()
+    {
+        GameObject airportIcon = Instantiate(airportIconPrefab, iconsHolder);
+        targets.Add(airportIcon);
     }
 
 }
