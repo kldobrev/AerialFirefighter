@@ -20,9 +20,13 @@ public class LocatorController : MonoBehaviour
     [SerializeField]
     private Transform airportTrns;
     [SerializeField]
+    private Transform goalSphereTrns;
+    [SerializeField]
     private RectTransform barRectTrns;
     [SerializeField]
     private GameObject airportIconPrefab;
+    [SerializeField]
+    private GameObject flagIconPrefab;
     [SerializeField]
     private GameObject fireIconPrefab;
     [SerializeField]
@@ -39,15 +43,16 @@ public class LocatorController : MonoBehaviour
     private Vector3 direction;
     private Vector3 playerForward;
 
-    private static List<GameObject> targets;
-
-
+    private static List<Transform> targets;
+    private static List<Transform> icons;
+    private static int removeIdx;
 
     // Start is called before the first frame update
     void Start()
     {
         playerAngleY = 0;
         locatorAngle = 0;
+        removeIdx = -1;
         locatorHalfWidth = locatorRectTrns.rect.size.x / 2;
         startBarPositionX = barRectTrns.localPosition.x;
         nextBarPosition = barRectTrns.localPosition;
@@ -55,10 +60,12 @@ public class LocatorController : MonoBehaviour
         nextTargetIconPosition = Constants.DefaultLocatorIconPosition;
 
         targets = new();
+        icons = new();
         for (int i = 0; i < firesTrns.childCount; i++)
         {
-            GameObject icon = Instantiate(fireIconPrefab, iconsHolder);
-            targets.Add(icon);
+            Transform icon = Instantiate(fireIconPrefab, iconsHolder).transform;
+            icons.Add(icon);
+            targets.Add(firesTrns.GetChild(i));
         }
     }
 
@@ -75,25 +82,30 @@ public class LocatorController : MonoBehaviour
             }
             barRectTrns.localPosition = nextBarPosition;
 
-            if (firesTrns.childCount != 0)
+            if (targets.Count != 0)
             {
-                for (int i = 0; i < firesTrns.childCount; i++)
+                for (int i = 0; i < targets.Count; i++)
                 {
-                    MoveIcon(firesTrns.GetChild(i), i);
+                    if (i == removeIdx) continue;   // Current element is being removed
+                    Transform tracked = targets[i];
+                    if (!tracked.IsUnityNull())
+                    {
+                        MoveIcon(tracked, i);
+                    }
                 }
             }
-            else
+            /*else
             {
                 MoveIcon(airportTrns, 0);
-            }
+                MoveIcon(goalSphereTrns, 1);
+            }*/
             playerAngleY = playerTrns.rotation.eulerAngles.y;
         }
     }
 
     private void MoveIcon(Transform target, int iconIdx)
     {
-        Transform targetTrns = target;
-        direction = targetTrns.position - playerTrns.position;
+        direction = target.position - playerTrns.position;
         playerForward = playerTrns.forward;
         direction.y = playerForward.y = 0;  // Excluding vertical coordinates from calculations
         playerTargetAngle = Vector3.SignedAngle(direction, playerForward, Vector3.up);
@@ -101,7 +113,7 @@ public class LocatorController : MonoBehaviour
         nextTargetIconPosition.x = Mathf.Clamp(nextTargetIconPosition.x, locatorRectTrns.rect.xMin, locatorRectTrns.rect.xMax);
         try
         {
-            targets[iconIdx].transform.localPosition = nextTargetIconPosition;
+            icons[iconIdx].localPosition = nextTargetIconPosition;
         }
         catch (ArgumentOutOfRangeException)
         {
@@ -109,16 +121,40 @@ public class LocatorController : MonoBehaviour
         }
     }
 
-    public void RemoveFireIcon(int groupIdx)
+    public void AddGoalIcons()
     {
-        Destroy(targets.ElementAt(groupIdx));
-        targets.RemoveAt(groupIdx);
+        Transform airportIcon = Instantiate(airportIconPrefab, iconsHolder).transform;
+        icons.Add(airportIcon);
+        targets.Add(airportTrns);
+        Transform flagIcon = Instantiate(flagIconPrefab, iconsHolder).transform;
+        icons.Add(flagIcon);
+        targets.Add(goalSphereTrns);
     }
 
-    public void ShowAirportIcon()
+    public void RemoveIcon(int iconIdx)
     {
-        GameObject airportIcon = Instantiate(airportIconPrefab, iconsHolder);
-        targets.Add(airportIcon);
+        StartCoroutine(RemoveIconCoroutine(iconIdx));
+    }
+
+    public void RemoveGoalIcons()
+    {
+        StartCoroutine(RemoveGoalIconsCoroutine());
+    }
+
+    private IEnumerator RemoveGoalIconsCoroutine()
+    {
+        yield return StartCoroutine(RemoveIconCoroutine(1));
+        yield return StartCoroutine(RemoveIconCoroutine(0));
+    }
+
+    private IEnumerator RemoveIconCoroutine(int idx)
+    {
+        removeIdx = idx;
+        Destroy(icons.ElementAt(idx).gameObject);
+        icons.RemoveAt(idx);
+        targets.RemoveAt(idx);
+        removeIdx = -1;
+        yield return null;
     }
 
 }

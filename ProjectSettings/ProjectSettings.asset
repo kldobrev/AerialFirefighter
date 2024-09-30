@@ -12,8 +12,8 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: DefaultCompany
-  productName: RafaleAttack
+  companyName: Konstantin Dobrev
+  productName: AerialFirefighter
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -143,12 +143,12 @@ PlayerSettings:
   preloadedAssets:
   - {fileID: 102900000, guid: e7509c46e3bc9fd4bb033210bf84880d, type: 3}
   - {fileID: 2100000, guid: 70c308aa2195a4c46b63271bb692ebb2, type: 2}
-  - {fileID: 21300000, guid: 624377ae8c576e243aa3373fd74223ce, type: 3}
+  - {fileID: 0}
   - {fileID: 21300000, guid: 71f6b7c6351b5b44d82632de57162915, type: 3}
-  - {fileID: 21300000, guid: 6e43f8125af74404896e9d99171c9881, type: 3}
-  - {fileID: 4155046195482119558, guid: 05868fab2d415b84abdc41e4d376b804, type: 3}
-  - {fileID: 9100000, guid: 9697fdc691aea614895bd93dc602536e, type: 2}
-  - {fileID: 8033970962414961582, guid: 85f511c4069f3b14792fd6ea4b93d7fd, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   metroInputSource: 0

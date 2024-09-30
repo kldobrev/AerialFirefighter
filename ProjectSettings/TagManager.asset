@@ -7,11 +7,12 @@ TagManager:
   - Trackable
   - RadarPointAlly
   - RadarPointEnemy
-  - Enemy
   - Terrain
   - StageBounds
   - Surface
   - Depths
+  - Goal
+  - LandingZone
   layers:
   - Default
   - TransparentFX
@@ -21,12 +22,12 @@ TagManager:
   - UI
   - UITracker
   - Player
-  - LandingZone
+  - Wheels
   - Ground
   - Fire
-  - 
-  - 
-  - 
+  - LandingArea
+  - Goal
+  - DistantGround
   - 
   - 
   - 

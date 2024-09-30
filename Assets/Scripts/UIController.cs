@@ -32,22 +32,23 @@ public class UIController : MonoBehaviour
     private TextMeshProUGUI scoreToAddSign;
     [SerializeField]
     private TextMeshProUGUI crashSign;
+    [SerializeField]
+    private TextMeshProUGUI clearSign;
+
 
     private int speedDisplayed;
     private Image heightMeterBkg;
-    private int weaponsAdded;
     private int currentWeaponIconIdx;
     private static byte screenAlpha;
     private static byte extinguishSignAlpha;
     private static byte scoreToAddSignAlpha;
+    private static byte clearSignAlpha;
     private static int numberOfFires;
     private float extingSignTimer;
 
 
-    void Awake()
-    {
-        weaponsAdded = 0;
-    }
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -58,8 +59,8 @@ public class UIController : MonoBehaviour
         speedometer.color = Constants.SpeedColourInactive;
         autoSpeedIndicator.color = Constants.SpeedColourInactive;
         heightMeter.value = 0f;
-        heightMeter.minValue = Constants.HeightMeterValueMinUI;
-        heightMeter.maxValue = Constants.HeightMeterValueMaxUI;
+        heightMeter.minValue = Constants.MinHeightAllowed;
+        heightMeter.maxValue = Constants.MaxHeightAllowed;
         heightMeterBkg = heightMeter.GetComponentInChildren<Image>();
         heightMeterBkg.color = Constants.HeightBelowAlertColour;
         currentWeaponIconIdx = 0;
@@ -70,6 +71,8 @@ public class UIController : MonoBehaviour
         extinguishedSign.fontSize = Constants.UISignDefaultFontSize;
         scoreToAddSignAlpha = Constants.ScoreToAddSignColour.a;
         scoreToAddSign.color = Constants.ScoreToAddSignColour;
+        clearSignAlpha = Constants.ClearSignColour.a;
+        clearSign.color = Constants.ClearSignColour;
         extinguishedSign.transform.parent.gameObject.SetActive(true);
     }
 
@@ -91,7 +94,7 @@ public class UIController : MonoBehaviour
     {
         if(isTurnedOn)
         {
-            autoSpeedIndicator.text = "Auto speed: " + newAutoSpeed.ToString().PadLeft(4, '0') + " km/h";
+            autoSpeedIndicator.text = "Auto speed: " + newAutoSpeed.ToString().PadLeft(3, '0') + " km/h";
             autoSpeedIndicator.color = Constants.AutoSpeedColourOn;
         }
         else
@@ -102,22 +105,18 @@ public class UIController : MonoBehaviour
 
     public void UpdateHeightMeter(float height)
     {
-        if (height <= Constants.HeightMeterValueAlertUI && heightMeter.maxValue != Constants.HeightMeterValueAlertUI)
+        if (height <= Constants.AlertHeightUI && heightNumeric.color != Constants.HeightBelowAlertColour)
         {
-            heightMeter.maxValue = Constants.HeightMeterValueAlertUI;
-            heightMeter.minValue = 0f;
             heightMeterBkg.color = Constants.HeightBelowAlertColour;
             heightNumeric.color = Constants.HeightBelowAlertColour;
         }
-        else if (height > Constants.HeightMeterValueAlertUI && heightMeter.maxValue != Constants.HeightMeterValueMaxUI)
+        else if (height > Constants.AlertHeightUI && heightNumeric.color != Constants.HeightAboveAlertColour)
         {
-            heightMeter.maxValue = Constants.HeightMeterValueMaxUI;
-            heightMeter.minValue = Constants.HeightMeterValueAlertUI;
             heightMeterBkg.color = Constants.HeightAboveAlertColour;
             heightNumeric.color = Constants.HeightAboveAlertColour;
         }
-        heightMeter.value = height;
-        heightNumeric.text = ((int) Mathf.Clamp(height, 0f, Constants.HeightMeterValueMaxUI)).ToString().PadLeft(4, '0') + " m";
+        heightMeter.value = Mathf.Clamp(height, Constants.MinHeightAllowed, Constants.MaxHeightAllowed);
+        heightNumeric.text = ((int) height).ToString().PadLeft(4, '0') + " m";
     }
 
     public void ScreenFadeToBlack()
@@ -143,6 +142,7 @@ public class UIController : MonoBehaviour
 
     public void ShowExtinguishedSign(int numFiresLeft, int numFiresCombo)
     {
+        extinguishedSign.fontSize = Constants.UISignDefaultFontSize;
         if (numFiresLeft == 0)
         {
             extinguishedSign.text = Constants.ExtinguishSignAllExtinguishedText;
@@ -186,6 +186,20 @@ public class UIController : MonoBehaviour
         crashSign.text = signText;
         crashSign.color = signColour;
         StartCoroutine(CrashCoroutine());
+    }
+
+    public void PlayClearSequence(string signText)
+    {
+        clearSign.text = signText;
+        StartCoroutine(ClearCoroutine());
+    }
+
+    private IEnumerator ClearCoroutine()
+    {
+        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(FadeText(clearSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
+        yield return new WaitForSeconds(3);
+        yield return StartCoroutine(ScreenFade(Constants.FadeScreenSpeed));
     }
 
     private IEnumerator CrashCoroutine()

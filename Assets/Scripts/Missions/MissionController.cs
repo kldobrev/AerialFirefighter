@@ -6,6 +6,12 @@ using UnityEngine.Events;
 public class MissionController : MonoBehaviour
 {
     [SerializeField]
+    protected GameObject landingGuide;
+    [SerializeField]
+    protected GameObject goalSphere;
+    [SerializeField]
+    protected GameObject landingField;
+    [SerializeField]
     protected UnityEvent<bool> updateMissionResults;
     [SerializeField]
     protected UnityEvent startFadeOut;
@@ -27,14 +33,13 @@ public class MissionController : MonoBehaviour
     public void FailMission()
     {
         missionPassed = false;
-        EndMission();
     }
 
-    protected void EndMission()
+    public virtual void EndMission(bool landed)
     {
         StopCoroutine(timeTracker);
-        updateMissionResults.Invoke(missionPassed);
-        startFadeOut.Invoke();
+        updateMissionResults?.Invoke(missionPassed);
+        //startFadeOut.Invoke();
     }
 
     protected IEnumerator TrackTime()

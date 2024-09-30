@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using static UnityEditor.VersionControl.Message;
+//using static UnityEditor.VersionControl.Message;
 
 public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
 {
@@ -40,7 +40,6 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     [SerializeField]
     private ParticleSystem crashInWaterEffect;
 
-    public static AmmunitionUITracker UIAmmoTracker;
 
     public float displayWaterFloatForce = 0.12f;
     public float displayWaterPushDownForce = 1;
@@ -79,6 +78,8 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private UnityEvent<string, Color32> showCrashSign;
     [SerializeField]
     private UnityEvent<Vector3> changeCameraDistance;
+    [SerializeField]
+    private UnityEvent<bool> stageEndTrigger;
 
 
     private float accelerateValue;
@@ -112,6 +113,9 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private float liftValue;
     private bool throttleAllowed;
     private float cameraTransitionTimer;
+    private Transform cachedTrns;
+    private float landingTimerCounter;
+    private IEnumerator landingCountCoroutine;
 
 
     private void Awake()
@@ -129,6 +133,8 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         controls.gameplay.brake.canceled += OnCancelBrake;
         controls.gameplay.dropwater.canceled += OnDropwater;
         controls.gameplay.toggleautospeed.performed += OnToggleautospeed;
+
+        cachedTrns = transform;
     }
 
     // Start is called before the first frame update
@@ -136,7 +142,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     {
         isAirbourne = false;
         isAutoSpeedOn = false;
-        airbourneThresholdY = transform.position.y + 1;
+        airbourneThresholdY = cachedTrns.position.y + 1;
         autoSpeed = 0;
         planeMagnitudeRounded = 0;
         planeDrag = Constants.PlDefaultDrag;
@@ -145,7 +151,6 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         sendCoordsRule = new FrameRule(Constants.SendCoordsFramerule);
         sendSpeedRule = new FrameRule(Constants.SendSpeedFramerule);
         spinPropellerRule = new FrameRule(Constants.SpinPropellerFramerule);
-        UIAmmoTracker = transform.GetComponent<AmmunitionUITracker>();
         PlayerBodyTransform = bodyTransform;
         propellerSpeed = 0;
         engineStarted = false;
@@ -161,6 +166,8 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         waterTankOpened = false;
         throttleAllowed = false;
         cameraTransitionTimer = 0;
+        landingTimerCounter = 0;
+        landingCountCoroutine = LandingCountdown();
         updateFuelGaugeQtity.Invoke(fuelQuantity);
 
         // Move to game manager script the logic below
@@ -170,23 +177,23 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
             ground.GetChild(i).tag = Constants.TerrainTagName;
         }
 
+        StartPlaneInAir(150);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!isAirbourne && transform.position.y > airbourneThresholdY)
+        if (!isAirbourne && cachedTrns.position.y > airbourneThresholdY)
         {
-            Debug.Log("Lift off: " + planeMagnitudeRounded);
             isAirbourne = true;
         }
 
         // Updating UI elements
-        if (sendHeightRule.CheckFrameRule()) updateHeightMeter.Invoke(transform.position.y);
+        if (sendHeightRule.CheckFrameRule()) updateHeightMeter.Invoke(cachedTrns.position.y);
         sendHeightRule.AdvanceCounter();
 
-        if (sendCoordsRule.CheckFrameRule()) updateRadarCamera.Invoke(new Vector2(transform.position.x, 
-            transform.position.z), transform.rotation.eulerAngles.y);
+        if (sendCoordsRule.CheckFrameRule()) updateRadarCamera.Invoke(new Vector2(cachedTrns.position.x, 
+            cachedTrns.position.z), cachedTrns.rotation.eulerAngles.y);
         sendCoordsRule.AdvanceCounter();
 
         if (sendSpeedRule.CheckFrameRule())
@@ -254,7 +261,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
             else if (UIController.GetScreenTransparency() == 255 && lockedControls)
             {
                 // Reversing plane direction and speed after passing stage boundary
-                transform.Rotate(new Vector3(2 * transform.rotation.eulerAngles.x, 180, 0));
+                cachedTrns.Rotate(new Vector3(2 * cachedTrns.rotation.eulerAngles.x, 180, 0));
                 Vector3 currentDirection = -planeBody.velocity.normalized;
                 planeBody.velocity = currentDirection * planeBody.velocity.magnitude;
                 Physics.SyncTransforms();
@@ -341,21 +348,14 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("Impulse: " + collision.GetContact(0).impulse.y / Time.fixedDeltaTime);
-
         if (collision.gameObject.CompareTag(Constants.TerrainTagName) && isAirbourne)
         {
             isAirbourne = false;
-            float signedEulerBank = HelperMethods.GetSignedAngleFromEuler(transform.rotation.eulerAngles.z);
-            Debug.Log("Pitch: " + signedEulerPitch + ", Bank: " + signedEulerBank);
+            float signedEulerBank = HelperMethods.GetSignedAngleFromEuler(cachedTrns.rotation.eulerAngles.z);
             ContactPoint collisionPoint = collision.GetContact(0);
-            if (collisionPoint.normal == Vector3.up && collisionPoint.impulse.y == 0 &&
+            if (!(collisionPoint.normal == Vector3.up && collisionPoint.impulse.y == 0 &&
                 Constants.LandingPitchMin <= signedEulerPitch && signedEulerPitch <= Constants.LandingPitchMax &&
-                Constants.LandingBankMin < signedEulerBank && signedEulerBank < Constants.LandingBankMax)
-            {
-                Debug.Log("Landing rules met.");
-            }
-            else
+                Constants.LandingBankMin < signedEulerBank && signedEulerBank < Constants.LandingBankMax))
             {
                 CrashPlane(crashEffect, Constants.CrashSignColourGround);
             }
@@ -382,8 +382,17 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         }
         else if (other.gameObject.CompareTag(Constants.WaterDepthsTagName))
         {
+            cameraTransitionTimer = 0;
             waterSplashEffect.Stop();
             CrashPlane(crashInWaterEffect, Constants.CrashSignColourWater);
+        }
+        else if (other.gameObject.CompareTag(Constants.GoalSphereTag))
+        {
+            stageEndTrigger.Invoke(false);
+        }
+        else if (other.gameObject.CompareTag(Constants.LandingZoneTagName))
+        {
+            StartCoroutine(landingCountCoroutine);
         }
     }
 
@@ -391,8 +400,9 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     {
         if (other.gameObject.CompareTag(Constants.WaterSurfaceTagName))
         {
-            float signedEulerBank = HelperMethods.GetSignedAngleFromEuler(transform.rotation.eulerAngles.z);
-            if (-20 <= signedEulerPitch && signedEulerPitch <= 3 && -10 < signedEulerBank && signedEulerBank < 10)
+            float signedEulerBank = HelperMethods.GetSignedAngleFromEuler(cachedTrns.rotation.eulerAngles.z);
+            if (Constants.ScoopPitchMin <= signedEulerPitch && signedEulerPitch <= Constants.ScoopPitchMax &&
+                Constants.ScoopBankMin < signedEulerBank && signedEulerBank < Constants.ScoopBankMax)
             {
                 // Trying to keep plane afloat while scooping water
                 planeBody.AddRelativeForce(Vector3.up * displayWaterFloatForce, ForceMode.VelocityChange);
@@ -405,16 +415,24 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
                 cameraTransitionTimer = Constants.CameraTimeLimit;
             }
         }
+        else if(other.gameObject.CompareTag(Constants.LandingZoneTagName) && (engineStarted || planeMagnitudeRounded != 0))
+        {
+            landingTimerCounter = Constants.LandingTimer;   // Reset timer if player moves
+        }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.CompareTag("StageBounds") && !outsideFieldBounds)
+        if (other.gameObject.CompareTag(Constants.StageBoundsTagName) && !outsideFieldBounds)
             outsideFieldBounds = true;
         else if (other.gameObject.CompareTag(Constants.WaterSurfaceTagName))
         {
             planeBody.AddRelativeForce(Vector3.down * displayWaterPushDownForce, ForceMode.VelocityChange);
             waterSplashEffect.Stop();
+        }
+        else if (other.gameObject.CompareTag(Constants.LandingZoneTagName))
+        {
+            StopCoroutine(landingCountCoroutine);
         }
     }
 
@@ -450,6 +468,17 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
             yield return null;
         }
         changeCameraDistance.Invoke(Constants.CameraTrailingDistanceDefault);
+    }
+
+    private IEnumerator LandingCountdown() 
+    {
+        landingTimerCounter = Constants.LandingTimer;
+        while (landingTimerCounter != 0)
+        {
+            landingTimerCounter = Mathf.Clamp(landingTimerCounter - Time.deltaTime, 0, Constants.LandingTimer);
+            yield return null;
+        }
+        stageEndTrigger.Invoke(true);
     }
 
 
@@ -532,6 +561,17 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
             }
         }
 
+    }
+
+    public void StartPlaneInAir(float initSpeed)
+    {
+        isAirbourne = true;
+        engineStarted = true;
+        AllowThrottle(true);
+        propellerSpeed = Constants.MaxIdlePropellerSpeed;
+        planeBody.velocity = planeBody.transform.forward * initSpeed;
+        planeMagnitudeRounded = Mathf.RoundToInt(planeBody.velocity.magnitude);
+        ToggleAutoSpeed();
     }
 
     private void ToggleAutoSpeed()

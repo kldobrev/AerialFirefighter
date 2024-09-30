@@ -13,13 +13,18 @@ public class CameraController : MonoBehaviour
     private float smoothSpeed;
 
     private Vector3 targetPosition;
+    private Transform cameraTrns;
+    private IEnumerator trailingTransition;
+    private static bool trailingChangeInProgress;
 
 
     // Start is called before the first frame update
     void Start()
     {
+        cameraTrns = transform;
         targetPosition = Constants.CameraTrailingDistanceDefault;
-        transform.position = playerTransform.position + Constants.CameraTrailingDistanceDefault;
+        cameraTrns.position = playerTransform.position + Constants.CameraTrailingDistanceDefault;
+        trailingChangeInProgress = false;
     }
 
     // Update is called once per frame
@@ -27,41 +32,49 @@ public class CameraController : MonoBehaviour
     {
         if (playerTransform != null)
         {
-            transform.position = Vector3.Lerp(transform.position, playerTransform.TransformPoint(targetPosition), 
+            cameraTrns.position = Vector3.Lerp(cameraTrns.position, playerTransform.TransformPoint(targetPosition), 
                 smoothSpeed);
-            transform.LookAt(playerTransform);
+            cameraTrns.LookAt(playerTransform);
         }
     }
 
     public void StopFollowingPlayer(Vector3 crashLocation)
     {
         playerTransform = null;
-        targetPosition = transform.position + Constants.CameraCrashDistance;
+        if (trailingChangeInProgress)
+        {
+            StopCoroutine(trailingTransition);
+            trailingChangeInProgress = false;
+        }
+        targetPosition = cameraTrns.position + Constants.CameraCrashDistance;
         StartCoroutine(TransitionCamera(crashLocation));
     }
 
     public void ChangeCameraPosition(Vector3 newDistance)
     {
-        StartCoroutine(TransitionTrailingDistance(newDistance));
+        trailingTransition = TransitionTrailingDistance(newDistance);
+        StartCoroutine(trailingTransition);
     }
 
     private IEnumerator TransitionTrailingDistance(Vector3 newDistance)
     {
+        trailingChangeInProgress = true;
         while (targetPosition != newDistance)
         {
             targetPosition = Vector3.Lerp(targetPosition, newDistance, 
                 Constants.CameraTransitionSpeed);
             yield return null;
         }
+        trailingChangeInProgress = false;
     }
 
     private IEnumerator TransitionCamera(Vector3 followPosition)
     {
-        while (transform.position != targetPosition && followPosition != null)
+        while (cameraTrns.position != targetPosition && followPosition != null)
         {
-            transform.position = Vector3.Lerp(transform.position, targetPosition,
+            cameraTrns.position = Vector3.Lerp(cameraTrns.position, targetPosition,
                 Constants.CameraTransitionSpeed);
-            transform.LookAt(followPosition);
+            cameraTrns.LookAt(followPosition);
             yield return null;
         }
         targetPosition = Constants.CameraTrailingDistanceDefault;
