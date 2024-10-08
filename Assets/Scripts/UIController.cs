@@ -19,8 +19,6 @@ public class UIController : MonoBehaviour
     [SerializeField]
     private Camera mainCamera;
     [SerializeField]
-    private TextMeshProUGUI ammoLeftDisplay;
-    [SerializeField]
     private RawImage fadeEffectsPanel;
     [SerializeField]
     private TextMeshProUGUI firesLeftCounter;
@@ -34,6 +32,10 @@ public class UIController : MonoBehaviour
     private TextMeshProUGUI crashSign;
     [SerializeField]
     private TextMeshProUGUI clearSign;
+    [SerializeField]
+    private InGameMenuController inGameMenu;
+    [SerializeField]
+    private TextMeshProUGUI inGameMenuStatusSign;
 
 
     private int speedDisplayed;
@@ -45,7 +47,6 @@ public class UIController : MonoBehaviour
     private static byte clearSignAlpha;
     private static int numberOfFires;
     private float extingSignTimer;
-
 
 
 
@@ -121,12 +122,14 @@ public class UIController : MonoBehaviour
 
     public void ScreenFadeToBlack()
     {
-        StartCoroutine(ScreenFade(Constants.FadeScreenSpeed));
+        StartCoroutine(ScreenFade(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaMax,
+            Constants.FadeScreenSpeed));
     }
 
     public void ReverseScreenFadeToBlack()
     {
-        StartCoroutine(ScreenFade(-Constants.FadeScreenSpeed));
+        StartCoroutine(ScreenFade(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaMax,
+            -Constants.FadeScreenSpeed));
     }
 
     public void UpdateFireCount(int fireCount, int firesInCombo)
@@ -147,12 +150,12 @@ public class UIController : MonoBehaviour
         {
             extinguishedSign.text = Constants.ExtinguishSignAllExtinguishedText;
             extinguishedSign.color = Constants.ExtinguishSignColourAll;
-            StartCoroutine(FadeText(extinguishedSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
+            StartCoroutine(HelperMethods.FadeText(extinguishedSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
         }
         else if(numFiresCombo == 1)
         {
             extinguishedSign.text = Constants.ExtinguishSignDefaultText;
-            StartCoroutine(FadeText(extinguishedSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
+            StartCoroutine(HelperMethods.FadeText(extinguishedSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
         }
         else
         {
@@ -162,8 +165,8 @@ public class UIController : MonoBehaviour
 
     public void HideFireExtinguishedSign()
     {
-        StartCoroutine(FadeText(extinguishedSign, 0, Constants.UISignMaxAlpha, -Constants.UISignFadeSpeed));
-        StartCoroutine(TransitionTextSize(extinguishedSign, Constants.UISignDefaultFontSize, 
+        StartCoroutine(HelperMethods.FadeText(extinguishedSign, 0, Constants.UISignMaxAlpha, -Constants.UISignFadeSpeed));
+        StartCoroutine(HelperMethods.TransitionTextSize(extinguishedSign, Constants.UISignDefaultFontSize, 
             Constants.UISignMaxFontSize, 1));
     }
 
@@ -177,15 +180,8 @@ public class UIController : MonoBehaviour
         scoreToAddSign.text = "+" + score.ToString();
         if (scoreToAddSignAlpha != Constants.UISignMaxAlpha)
         {
-            StartCoroutine(FadeText(scoreToAddSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
+            StartCoroutine(HelperMethods.FadeText(scoreToAddSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
         }
-    }
-
-    public void PlayCrashSequence(string signText, Color32 signColour)
-    {
-        crashSign.text = signText;
-        crashSign.color = signColour;
-        StartCoroutine(CrashCoroutine());
     }
 
     public void PlayClearSequence(string signText)
@@ -194,58 +190,83 @@ public class UIController : MonoBehaviour
         StartCoroutine(ClearCoroutine());
     }
 
+    public void TogglePause()
+    {
+        StartCoroutine(AnimatePauseMenu());
+    }
+
+    public void ShowGameOverMenu(GameOverType type)
+    {
+        if (type == GameOverType.GroundCrash)
+        {
+            crashSign.text = Constants.CrashSignTextCrash;
+            crashSign.color = Constants.CrashSignColourGround;
+        }
+        else if (type == GameOverType.WaterCrash)
+        {
+            crashSign.text = Constants.CrashSignTextCrash;
+            crashSign.color = Constants.CrashSignColourWater;
+        }
+        else if (type == GameOverType.FuelDepleted)
+        {
+            crashSign.text = Constants.CrashSignTextEmpty;
+            crashSign.color = Constants.CrashSignColourFuel;
+        }
+
+        inGameMenu.SetGameOverMenu(type);
+        StartCoroutine(GameOverCoroutine());
+    }
+
+    private IEnumerator AnimatePauseMenu()
+    {
+        if (!inGameMenu.Visible)
+        {
+            yield return ScreenFade(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaPause, 
+                Constants.FadeAlphaSpeedPause);
+            StartCoroutine(inGameMenu.TogglePauseMenu());
+        }
+        else
+        {
+            StartCoroutine(inGameMenu.TogglePauseMenu());
+            yield return ScreenFade(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaPause, 
+                -Constants.FadeAlphaSpeedPause);
+        }
+
+    }
+
     private IEnumerator ClearCoroutine()
     {
         yield return new WaitForSeconds(0.5f);
-        yield return StartCoroutine(FadeText(clearSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
+        yield return StartCoroutine(HelperMethods.FadeText(clearSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
         yield return new WaitForSeconds(3);
-        yield return StartCoroutine(ScreenFade(Constants.FadeScreenSpeed));
+        yield return StartCoroutine(ScreenFade(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaMax,
+            Constants.FadeScreenSpeed));
     }
 
-    private IEnumerator CrashCoroutine()
+    private IEnumerator GameOverCoroutine()
     {
         yield return new WaitForSeconds(0.5f);
-        yield return StartCoroutine(FadeText(crashSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
+        yield return StartCoroutine(HelperMethods.FadeText(crashSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
         yield return new WaitForSeconds(1.5f);
-        yield return StartCoroutine(ScreenFade(Constants.FadeScreenSpeed));
+        yield return StartCoroutine(HelperMethods.FadeText(crashSign, 0, Constants.UISignMaxAlpha, -Constants.UISignFadeSpeed));
+        yield return ScreenFade(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaPause,
+                Constants.FadeAlphaSpeedPause);
+        StartCoroutine(inGameMenu.ShowGameOverMenu());
     }
 
     public void HideScoreToAddSign()
     {
-        StartCoroutine(FadeText(scoreToAddSign, 0, Constants.UISignMaxAlpha, -Constants.UISignFadeSpeed));
+        StartCoroutine(HelperMethods.FadeText(scoreToAddSign, 0, Constants.UISignMaxAlpha, -Constants.UISignFadeSpeed));
     }
 
-    private IEnumerator ScreenFade(float fadeSpeed)
+    private IEnumerator ScreenFade(byte minAlpha, byte maxAlpha, float fadeSpeed)
     {
-        float alphaTarget = fadeSpeed > 0 ? 255 : 0;
+        byte alphaTarget = fadeSpeed > 0 ? maxAlpha : minAlpha;
         while (screenAlpha != alphaTarget)
         {
-            screenAlpha = (byte) Math.Clamp(screenAlpha + fadeSpeed, 0, 255);
+            screenAlpha = (byte) Math.Clamp(screenAlpha + fadeSpeed, minAlpha, maxAlpha);
             fadeEffectsPanel.color = new Color32(Constants.FadePanelDefaultColour.r,
                 Constants.FadePanelDefaultColour.g, Constants.FadePanelDefaultColour.b, screenAlpha);
-            yield return null;
-        }
-    }
-
-    private IEnumerator FadeText(TextMeshProUGUI sign, float minAlpha, float maxAlpha, float fadeSpeed)
-    {
-        Color32 signColour = sign.color;
-        float signTargetAlpha = fadeSpeed > 0 ? maxAlpha : minAlpha;
-        while (signColour.a != signTargetAlpha)
-        {
-            signColour.a = (byte) Math.Clamp(signColour.a + fadeSpeed, minAlpha, maxAlpha);
-            sign.color = signColour;
-            yield return null;
-        }
-    }
-
-    private IEnumerator TransitionTextSize(TextMeshProUGUI sign, float signSizeMin, float signSizeMax,
-        float speed)
-    {
-        float signTargetSize = speed > 0 ? signSizeMax : signSizeMin;
-        while (sign.fontSize != signTargetSize)
-        {
-            extinguishedSign.fontSize = Mathf.Clamp(extinguishedSign.fontSize + speed, signSizeMin, signSizeMax);
             yield return null;
         }
     }

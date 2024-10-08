@@ -10,9 +10,8 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 //using static UnityEditor.VersionControl.Message;
 
-public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
+public class PlayerController : MonoBehaviour
 {
-    private PlayerControls controls;
     [SerializeField]
     private Transform bodyTransform;
     [SerializeField]
@@ -39,10 +38,6 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     private ParticleSystem crashEffect;
     [SerializeField]
     private ParticleSystem crashInWaterEffect;
-
-
-    public float displayWaterFloatForce = 0.12f;
-    public float displayWaterPushDownForce = 1;
 
 
 
@@ -75,7 +70,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
     [SerializeField]
     private UnityEvent<Vector3> detachCamera;
     [SerializeField]
-    private UnityEvent<string, Color32> showCrashSign;
+    private UnityEvent<GameOverType> signalGameOver;
     [SerializeField]
     private UnityEvent<Vector3> changeCameraDistance;
     [SerializeField]
@@ -120,20 +115,6 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
 
     private void Awake()
     {
-        controls = new PlayerControls();
-
-        controls.gameplay.startstopengine.canceled += OnStartstopengine;
-        controls.gameplay.pitchroll.performed += OnPitchroll;
-        controls.gameplay.pitchroll.canceled += OnCancelPitchroll;
-        controls.gameplay.yaw.performed += OnYaw;
-        controls.gameplay.yaw.canceled += OnCancelYaw;
-        controls.gameplay.accelerate.performed += OnAccelerate;
-        controls.gameplay.accelerate.canceled += context => throttleInput = 0f;
-        controls.gameplay.brake.performed += OnBrake;
-        controls.gameplay.brake.canceled += OnCancelBrake;
-        controls.gameplay.dropwater.canceled += OnDropwater;
-        controls.gameplay.toggleautospeed.performed += OnToggleautospeed;
-
         cachedTrns = transform;
     }
 
@@ -176,8 +157,6 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         {
             ground.GetChild(i).tag = Constants.TerrainTagName;
         }
-
-        StartPlaneInAir(150);
     }
 
     // Update is called once per frame
@@ -212,7 +191,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
                 engineStarted = false;
                 if (!isAirbourne)
                 {
-                    showCrashSign.Invoke(Constants.CrashSignTextEmpty, Constants.CrashSignColourFuel);
+                    signalGameOver.Invoke(GameOverType.FuelDepleted);
                 }
             }
             updateFuelGaugeQtity.Invoke(fuelQuantity);
@@ -335,13 +314,13 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         setSpeedometerActive.Invoke(allowVal);
     }
 
-    private void CrashPlane(ParticleSystem effect, Color32 signColour)
+    private void EndPlaySession(ParticleSystem effect, GameOverType gameOverReason)
     {
         effect.transform.position = planeBody.position;
         effect.Play();
         detachCamera.Invoke(effect.transform.position);
         Destroy(gameObject);
-        showCrashSign.Invoke(Constants.CrashSignTextCrash, signColour);
+        signalGameOver.Invoke(gameOverReason);
     }
 
     // Collisions/Triggers
@@ -357,7 +336,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
                 Constants.LandingPitchMin <= signedEulerPitch && signedEulerPitch <= Constants.LandingPitchMax &&
                 Constants.LandingBankMin < signedEulerBank && signedEulerBank < Constants.LandingBankMax))
             {
-                CrashPlane(crashEffect, Constants.CrashSignColourGround);
+                EndPlaySession(crashEffect, GameOverType.GroundCrash);
             }
         }
 
@@ -384,7 +363,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         {
             cameraTransitionTimer = 0;
             waterSplashEffect.Stop();
-            CrashPlane(crashInWaterEffect, Constants.CrashSignColourWater);
+            EndPlaySession(crashInWaterEffect, GameOverType.WaterCrash);
         }
         else if (other.gameObject.CompareTag(Constants.GoalSphereTag))
         {
@@ -405,7 +384,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
                 Constants.ScoopBankMin < signedEulerBank && signedEulerBank < Constants.ScoopBankMax)
             {
                 // Trying to keep plane afloat while scooping water
-                planeBody.AddRelativeForce(Vector3.up * displayWaterFloatForce, ForceMode.VelocityChange);
+                planeBody.AddRelativeForce(Vector3.up * Constants.WaterFloatForceUp, ForceMode.VelocityChange);
                 waterSplashEffect.Play();
                 if (cameraTransitionTimer == 0)
                 {
@@ -427,7 +406,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
             outsideFieldBounds = true;
         else if (other.gameObject.CompareTag(Constants.WaterSurfaceTagName))
         {
-            planeBody.AddRelativeForce(Vector3.down * displayWaterPushDownForce, ForceMode.VelocityChange);
+            planeBody.AddRelativeForce(Vector3.down * Constants.WaterFloatForceDown, ForceMode.VelocityChange);
             waterSplashEffect.Stop();
         }
         else if (other.gameObject.CompareTag(Constants.LandingZoneTagName))
@@ -436,19 +415,21 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         }
     }
 
-    private void OnEnable()
-    {
-        controls.gameplay.Enable();
-    }
-
-    private void OnDisable()
-    {
-        controls.gameplay.Disable();
-    }
 
     public static bool EngineStarted()
     {
         return engineStarted;
+    }
+
+    public void StartPlaneInAir(float initSpeed)
+    {
+        isAirbourne = true;
+        engineStarted = true;
+        AllowThrottle(true);
+        propellerSpeed = Constants.MaxIdlePropellerSpeed;
+        planeBody.velocity = planeBody.transform.forward * initSpeed;
+        planeMagnitudeRounded = Mathf.RoundToInt(planeBody.velocity.magnitude);
+        ToggleAutoSpeed();
     }
 
     private IEnumerator NullifyAngularSpeed()
@@ -484,7 +465,7 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
 
     // Controls section
 
-    public void OnStartstopengine(InputAction.CallbackContext context)
+    public void ToggleEngine()
     {
         if (!lockedControls && fuelQuantity > 0)
         {
@@ -493,16 +474,16 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         }
     }
 
-    public void OnPitchroll(InputAction.CallbackContext context)
+    public void PitchRoll(Vector2 direction)
     {
         if (!lockedControls)
         {
-            pitchRollInput = context.ReadValue<Vector2>();
+            pitchRollInput = direction;
             planeAngularDrag = Constants.PlTurnAngularDrag;
         }
     }
 
-    private void OnCancelPitchroll(InputAction.CallbackContext context)
+    public void CancelPitchroll()
     {
         pitchRollInput = Vector2.zero;
         if (yawInput == 0 && !nullifyingAngleEnabled)
@@ -512,16 +493,16 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         }
     }
 
-    public void OnYaw(InputAction.CallbackContext context)
+    public void Yaw(float input)
     {
         if (!lockedControls)
         {
-            yawInput = context.ReadValue<float>();
+            yawInput = input;
             planeAngularDrag = Constants.PlTurnAngularDrag;
         }
     }
 
-    private void OnCancelYaw(InputAction.CallbackContext context)
+    public void CancelYaw()
     {
         yawInput = 0f;
         if (pitchRollInput == Vector2.zero && !nullifyingAngleEnabled)
@@ -531,22 +512,27 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
         }
     }
 
-    public void OnAccelerate(InputAction.CallbackContext context)
+    public void Accelerate(float input)
     {
-        if (!lockedControls) throttleInput = context.ReadValue<float>();
+        if (!lockedControls) throttleInput = input;
     }
 
-    public void OnBrake(InputAction.CallbackContext context)
+    public void CancelAccelerate()
     {
-        if (!lockedControls) brakeInput = context.ReadValue<float>();
+        throttleInput = 0;
     }
 
-    public void OnCancelBrake(InputAction.CallbackContext context)
+    public void Brake(float input)
+    {
+        if (!lockedControls) brakeInput = input;
+    }
+
+    public void CancelBrake()
     {
         brakeInput = 0;
     }
 
-    public void OnDropwater(InputAction.CallbackContext context)
+    public void ToggleDropwater()
     {
         if (isAirbourne && waterQuantity > 0)
         {
@@ -563,27 +549,14 @@ public class PlayerController : MonoBehaviour, PlayerControls.IGameplayActions
 
     }
 
-    public void StartPlaneInAir(float initSpeed)
+    public void ToggleAutoSpeed()
     {
-        isAirbourne = true;
-        engineStarted = true;
-        AllowThrottle(true);
-        propellerSpeed = Constants.MaxIdlePropellerSpeed;
-        planeBody.velocity = planeBody.transform.forward * initSpeed;
-        planeMagnitudeRounded = Mathf.RoundToInt(planeBody.velocity.magnitude);
-        ToggleAutoSpeed();
-    }
-
-    private void ToggleAutoSpeed()
-    {
-        isAutoSpeedOn = !isAutoSpeedOn;
-        if (isAutoSpeedOn) autoSpeed = (float)planeMagnitudeRounded;
-        updateAutoSpeedIndicator.Invoke(isAutoSpeedOn, planeMagnitudeRounded);
-    }
-
-    public void OnToggleautospeed(InputAction.CallbackContext context)
-    {
-        if (!lockedControls && engineStarted) ToggleAutoSpeed();
+        if (!lockedControls && engineStarted)
+        {
+            isAutoSpeedOn = !isAutoSpeedOn;
+            if (isAutoSpeedOn) autoSpeed = (float)planeMagnitudeRounded;
+            updateAutoSpeedIndicator.Invoke(isAutoSpeedOn, planeMagnitudeRounded);
+        }
     }
 
 }

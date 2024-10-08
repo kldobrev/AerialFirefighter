@@ -89,6 +89,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""a0b36ba4-0bcc-4a40-8004-8ef0eee5298b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -256,6 +265,129 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""start/stop engine"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7c057aa1-0cad-4a60-8752-a7e6ba0806e9"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""menu"",
+            ""id"": ""8381c5be-7651-40af-bf86-a2b59802731d"",
+            ""actions"": [
+                {
+                    ""name"": ""confirm"",
+                    ""type"": ""Button"",
+                    ""id"": ""36f50359-07ce-4ba7-b11e-7982d045da20"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""back"",
+                    ""type"": ""Button"",
+                    ""id"": ""9cb6a43a-3d8f-46c3-b0bb-fdfbfd169eb8"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""navigation"",
+                    ""type"": ""Value"",
+                    ""id"": ""fe7ae012-f330-4626-9331-0f6cf4f65de7"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""86fa11c2-d533-47f7-8eda-373dbc033bb4"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""back"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""670477e2-2eb0-4605-ad04-108aade4d969"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""navigation"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""8391b3c8-a468-4e61-9ddf-f0449695fb56"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""navigation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""dad67967-8bcb-4cd6-8502-70a237a3f594"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""navigation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""1b8c7c42-1118-4e50-b408-0d41368aa30a"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""navigation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""524308fe-9af4-46c1-bfd2-4098320c7832"",
+                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""navigation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ba626d92-ca08-46a0-92c7-f1c955d4c6c6"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""confirm"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -283,6 +415,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_gameplay_pitchroll = m_gameplay.FindAction("pitch/roll", throwIfNotFound: true);
         m_gameplay_dropwater = m_gameplay.FindAction("drop water", throwIfNotFound: true);
         m_gameplay_toggleautospeed = m_gameplay.FindAction("toggle auto speed", throwIfNotFound: true);
+        m_gameplay_pause = m_gameplay.FindAction("pause", throwIfNotFound: true);
+        // menu
+        m_menu = asset.FindActionMap("menu", throwIfNotFound: true);
+        m_menu_confirm = m_menu.FindAction("confirm", throwIfNotFound: true);
+        m_menu_back = m_menu.FindAction("back", throwIfNotFound: true);
+        m_menu_navigation = m_menu.FindAction("navigation", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -351,6 +489,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_gameplay_pitchroll;
     private readonly InputAction m_gameplay_dropwater;
     private readonly InputAction m_gameplay_toggleautospeed;
+    private readonly InputAction m_gameplay_pause;
     public struct GameplayActions
     {
         private @PlayerControls m_Wrapper;
@@ -362,6 +501,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @pitchroll => m_Wrapper.m_gameplay_pitchroll;
         public InputAction @dropwater => m_Wrapper.m_gameplay_dropwater;
         public InputAction @toggleautospeed => m_Wrapper.m_gameplay_toggleautospeed;
+        public InputAction @pause => m_Wrapper.m_gameplay_pause;
         public InputActionMap Get() { return m_Wrapper.m_gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -392,6 +532,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @toggleautospeed.started += instance.OnToggleautospeed;
             @toggleautospeed.performed += instance.OnToggleautospeed;
             @toggleautospeed.canceled += instance.OnToggleautospeed;
+            @pause.started += instance.OnPause;
+            @pause.performed += instance.OnPause;
+            @pause.canceled += instance.OnPause;
         }
 
         private void UnregisterCallbacks(IGameplayActions instance)
@@ -417,6 +560,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @toggleautospeed.started -= instance.OnToggleautospeed;
             @toggleautospeed.performed -= instance.OnToggleautospeed;
             @toggleautospeed.canceled -= instance.OnToggleautospeed;
+            @pause.started -= instance.OnPause;
+            @pause.performed -= instance.OnPause;
+            @pause.canceled -= instance.OnPause;
         }
 
         public void RemoveCallbacks(IGameplayActions instance)
@@ -434,6 +580,68 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         }
     }
     public GameplayActions @gameplay => new GameplayActions(this);
+
+    // menu
+    private readonly InputActionMap m_menu;
+    private List<IMenuActions> m_MenuActionsCallbackInterfaces = new List<IMenuActions>();
+    private readonly InputAction m_menu_confirm;
+    private readonly InputAction m_menu_back;
+    private readonly InputAction m_menu_navigation;
+    public struct MenuActions
+    {
+        private @PlayerControls m_Wrapper;
+        public MenuActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @confirm => m_Wrapper.m_menu_confirm;
+        public InputAction @back => m_Wrapper.m_menu_back;
+        public InputAction @navigation => m_Wrapper.m_menu_navigation;
+        public InputActionMap Get() { return m_Wrapper.m_menu; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(MenuActions set) { return set.Get(); }
+        public void AddCallbacks(IMenuActions instance)
+        {
+            if (instance == null || m_Wrapper.m_MenuActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_MenuActionsCallbackInterfaces.Add(instance);
+            @confirm.started += instance.OnConfirm;
+            @confirm.performed += instance.OnConfirm;
+            @confirm.canceled += instance.OnConfirm;
+            @back.started += instance.OnBack;
+            @back.performed += instance.OnBack;
+            @back.canceled += instance.OnBack;
+            @navigation.started += instance.OnNavigation;
+            @navigation.performed += instance.OnNavigation;
+            @navigation.canceled += instance.OnNavigation;
+        }
+
+        private void UnregisterCallbacks(IMenuActions instance)
+        {
+            @confirm.started -= instance.OnConfirm;
+            @confirm.performed -= instance.OnConfirm;
+            @confirm.canceled -= instance.OnConfirm;
+            @back.started -= instance.OnBack;
+            @back.performed -= instance.OnBack;
+            @back.canceled -= instance.OnBack;
+            @navigation.started -= instance.OnNavigation;
+            @navigation.performed -= instance.OnNavigation;
+            @navigation.canceled -= instance.OnNavigation;
+        }
+
+        public void RemoveCallbacks(IMenuActions instance)
+        {
+            if (m_Wrapper.m_MenuActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IMenuActions instance)
+        {
+            foreach (var item in m_Wrapper.m_MenuActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_MenuActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public MenuActions @menu => new MenuActions(this);
     private int m_KeyboardSchemeIndex = -1;
     public InputControlScheme KeyboardScheme
     {
@@ -452,5 +660,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnPitchroll(InputAction.CallbackContext context);
         void OnDropwater(InputAction.CallbackContext context);
         void OnToggleautospeed(InputAction.CallbackContext context);
+        void OnPause(InputAction.CallbackContext context);
+    }
+    public interface IMenuActions
+    {
+        void OnConfirm(InputAction.CallbackContext context);
+        void OnBack(InputAction.CallbackContext context);
+        void OnNavigation(InputAction.CallbackContext context);
     }
 }

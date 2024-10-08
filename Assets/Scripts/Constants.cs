@@ -63,8 +63,8 @@ public static class Constants {
 
     // UI
 
-    public const string DefaultSpeedValueUI = "Speed: 0000 km/h";
-    public const string DefaultAutoSpeedValueUI = "Auto speed: 0000 km/h";
+    public const string DefaultSpeedValueUI = "Speed: 000 km/h";
+    public const string DefaultAutoSpeedValueUI = "Auto speed: 000 km/h";
     public const float AttitudeMeterMaxPitchShown = 45;
     public const float AlertHeightUI = 200;
     public static Color32 HeightAboveAlertColour = new Color32(80, 255, 0, 255);
@@ -89,6 +89,8 @@ public static class Constants {
     public const float UISignDefaultFontSize = 60;
     public const float UISignMaxFontSize = 80;
     public static Color32 ScoreToAddSignColour = new Color32(255, 255, 0, 0);
+    public static byte FadeScreenAlphaMin = 0;
+    public static byte FadeScreenAlphaMax = 255;
     public static float FadeScreenSpeed = 5;
     public static Color32 CrashSignColourGround = new Color32(237, 83, 0, 0);
     public static Color32 CrashSignColourWater = new Color32(0, 228, 227, 0);
@@ -100,6 +102,36 @@ public static class Constants {
     public const string TutorialClearSign = "TUTORIAL CLEAR";
     public static Vector3 DefaultLocatorIconPosition = new Vector3(0, 0, 0);
     public const string GoalSphereTag = "Goal";
+    public const byte PauseMenuAlphaDefault = 0;
+    public const byte PauseMenuAlphaVisible = 153;
+    public const byte PauseMenuItemBakcgroundAlphaDefault = 0;
+    public const byte PauseMenuItemBakcgroundAlphaVisible = 100;
+    public const byte FadeScreenAlphaPause = 180;
+    public const float FadeAlphaSpeedPause = 20;
+    public const float PauseMenuHeight = 600;
+    public const string RestartSignStage = "RESTART STAGE";
+    public const string RestartSignTutorial = "RESTART TUTORIAL";
+    public const string ContinueSignRegular = "CONTINUE";
+    public const string ContinueSignCheckpoint = "CONTINUE FROM CHECKPOINT";
+    public const string InGameMenuParamName = "Open";
+    public const string InGameMenuStateSignPause = "PAUSE";
+    public const string InGameMenuStateSignGameOver = "GAME OVER";
+    public static Color32 InGameMenuStateColorPause = new Color32(116, 255, 62, 0);
+    public const float MenuTextAlphaMin = 0;
+    public const float MenuTextAlphaMax = 255;
+    public const float MenuSelectorAlphaMin = 0;
+    public const float MenuSelectorAlphaMax = 92;
+    public const float MenuSelectorFadeSpeed = 20;
+    public const float InGameMenuBkgAlphaMin = 0;
+    public const float InGameMenuBkgAlphaMax = 600;
+    public const float InGameMenuBkgSizeChangeSpeed = 60;
+    public const float InGameMenuTextFadeSpeedPauseIn = 30;
+    public const float InGameMenuTextFadeSpeedPauseOut = 70;
+    public const float InGameMenuTextFadeSpeedGameOver = 20;
+    public const float InGameMenuTextTrigger = 440;
+    public const float InGameMenuSizeTrigger = 24;
+    public static Color32 MenuInactiveOptionColour = new Color32(143, 143, 143, 96);
+    public static Color32 InGameMenuOptionColourDefault = new Color32(255, 255, 255, 0);
 
     // Terrain interaction
 
@@ -122,5 +154,7 @@ public static class Constants {
     public static Vector3 FireScaleReduction = new Vector3(0, 0, 0.04f);
     public const int ClearSphereScore = 200;
     public const int LandingScore = 1000;
+    public const float WaterFloatForceUp = 0.12f;
+    public const float WaterFloatForceDown = 1;
 
 }
