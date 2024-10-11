@@ -119,9 +119,9 @@ public static class Constants {
     public static Color32 InGameMenuStateColorPause = new Color32(116, 255, 62, 0);
     public const float MenuTextAlphaMin = 0;
     public const float MenuTextAlphaMax = 255;
-    public const float MenuSelectorAlphaMin = 0;
-    public const float MenuSelectorAlphaMax = 92;
-    public const float MenuSelectorFadeSpeed = 20;
+    public const float MenuCursorAlphaMin = 0;
+    public const float MenuCursorAlphaMax = 92;
+    public const float MenuCursorFadeSpeed = 20;
     public const float InGameMenuBkgAlphaMin = 0;
     public const float InGameMenuBkgAlphaMax = 600;
     public const float InGameMenuBkgSizeChangeSpeed = 60;

@@ -15,7 +15,7 @@ public class InGameMenuController : PopupMenuController
     protected string continueSignGameOver;
     protected Color32 continueSignGameOverColour;
     protected bool continueActive;
-
+    private int gameOverStartIdx;
 
     private new void Awake()
     {
@@ -23,6 +23,7 @@ public class InGameMenuController : PopupMenuController
         continueActive = true;
         continueSignGameOver = Constants.ContinueSignRegular;
         optionsSigns[0].text = Constants.ContinueSignRegular;
+        gameOverStartIdx = 0;
     }
 
     // Start is called before the first frame update
@@ -44,35 +45,32 @@ public class InGameMenuController : PopupMenuController
         else if (mode == PlayMode.Tutorial)
         {
             continueActive = false;
-            selectorPos = optionsSigns[1].transform.localPosition;
+            startingcursorPos = optionsHolder.localPosition + optionsTransforms[1].localPosition;
             optionsSigns[1].text = Constants.RestartSignTutorial;
+            gameOverStartIdx = 1;
         }
         else if (mode == PlayMode.Generated)
         {
             continueActive = false;
-            selectorPos = optionsSigns[1].transform.localPosition;
+            startingcursorPos = optionsHolder.localPosition + optionsTransforms[1].localPosition;
             optionsSigns[1].text = Constants.RestartSignStage;
+            gameOverStartIdx = 1;
         }
     }
 
-    public IEnumerator TogglePauseMenu()
+    public void ShowPuseMenu()
     {
-        isOpened = !isOpened;
-        if (isOpened)
-        {
-            yield return StartCoroutine(FadeInMenu(Constants.InGameMenuTextTrigger, Constants.InGameMenuBkgAlphaMin, 
-                Constants.InGameMenuBkgAlphaMax, Constants.InGameMenuBkgSizeChangeSpeed, 
-                Constants.InGameMenuTextFadeSpeedPauseIn));
-            menuReady.Invoke();
-        }
-        else
-        {
-            yield return StartCoroutine(FadeOutMenu(Constants.InGameMenuSizeTrigger, Constants.InGameMenuBkgAlphaMin, 
-                Constants.InGameMenuBkgAlphaMax, Constants.InGameMenuBkgSizeChangeSpeed, 
-                Constants.InGameMenuTextFadeSpeedPauseOut));
-            menuReady.Invoke();
-        }
-        yield return null;
+        StartCoroutine(ToggleInGameMenu(true, Constants.InGameMenuTextFadeSpeedPauseIn));
+    }
+
+    public void HidePuseMenu()
+    {
+        StartCoroutine(ToggleInGameMenu(false, Constants.InGameMenuTextFadeSpeedPauseOut));
+    }
+
+    public void ShowGameOverMenu()
+    {
+        StartCoroutine(ToggleInGameMenu(true, Constants.InGameMenuTextFadeSpeedGameOver));
     }
 
     public void SetGameOverMenu(GameOverType type)
@@ -93,16 +91,29 @@ public class InGameMenuController : PopupMenuController
         stateSign.text = Constants.InGameMenuStateSignGameOver;
         optionsSigns[0].text = continueSignGameOver;
         optionsSigns[0].gameObject.SetActive(continueActive);
-        selectorTrns.localPosition = selectorPos;
+        cursorTrns.localPosition = startingcursorPos;
+        menuStartIndexVert = gameOverStartIdx;
     }
 
-    public IEnumerator ShowGameOverMenu()
+    public IEnumerator ToggleInGameMenu(bool activate, float textFadeSpeed)
     {
-        isOpened = true;
-        yield return StartCoroutine(FadeInMenu(Constants.InGameMenuTextTrigger, Constants.InGameMenuBkgAlphaMin,
-            Constants.InGameMenuBkgAlphaMax, Constants.InGameMenuBkgSizeChangeSpeed,
-            Constants.InGameMenuTextFadeSpeedGameOver));
-        menuReady.Invoke();
+        if (activate)
+        {
+            screenFadeEffect.Invoke(Constants.FadeScreenAlphaPause);
+            yield return StartCoroutine(FadeInMenu(Constants.InGameMenuTextTrigger, Constants.InGameMenuBkgAlphaMin, 
+                Constants.InGameMenuBkgAlphaMax, Constants.InGameMenuBkgSizeChangeSpeed, textFadeSpeed));
+            menuReady.Invoke();
+        }
+        else
+        {
+            yield return StartCoroutine(FadeOutMenu(Constants.InGameMenuSizeTrigger, Constants.InGameMenuBkgAlphaMin, 
+                Constants.InGameMenuBkgAlphaMax, Constants.InGameMenuBkgSizeChangeSpeed, textFadeSpeed));
+            menuReady.Invoke();
+            screenFadeEffect.Invoke(-Constants.FadeScreenAlphaPause);
+        }
+        isOpened = activate;
+        yield return null;
     }
+
 
 }

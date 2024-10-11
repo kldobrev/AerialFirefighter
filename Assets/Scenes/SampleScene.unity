@@ -6454,7 +6454,21 @@ MonoBehaviour:
   crashSign: {fileID: 1216169203}
   clearSign: {fileID: 1682323517}
   inGameMenu: {fileID: 1571838633}
-  inGameMenuStatusSign: {fileID: 2098865260}
+  crashComplete:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1423466447}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: ShowGameOver
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!222 &224394742
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6982,7 +6996,42 @@ PrefabInstance:
     - target: {fileID: 2641963603674214424, guid: a66e9eb9bf79d5a4684c6faec605e0da,
         type: 3}
       propertyPath: m_fontColor32.rgba
-      value: 1124073471
+      value: 16777215
+      objectReference: {fileID: 0}
+    - target: {fileID: 8214394751310214943, guid: a66e9eb9bf79d5a4684c6faec605e0da,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8214394751310214943, guid: a66e9eb9bf79d5a4684c6faec605e0da,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8214394751310214943, guid: a66e9eb9bf79d5a4684c6faec605e0da,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 224394741}
+    - target: {fileID: 8214394751310214943, guid: a66e9eb9bf79d5a4684c6faec605e0da,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8214394751310214943, guid: a66e9eb9bf79d5a4684c6faec605e0da,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: TogglePause
+      objectReference: {fileID: 0}
+    - target: {fileID: 8214394751310214943, guid: a66e9eb9bf79d5a4684c6faec605e0da,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: UIController, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 8214394751310214943, guid: a66e9eb9bf79d5a4684c6faec605e0da,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 8437374825909843735, guid: a66e9eb9bf79d5a4684c6faec605e0da,
         type: 3}
@@ -25095,21 +25144,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ui: {fileID: 224394736}
-  pauseMenu:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 224394741}
-        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
-        m_MethodName: TogglePause
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  inGameMenu: {fileID: 1571838633}
   initInGameMenu:
     m_PersistentCalls:
       m_Calls:
@@ -25125,12 +25160,12 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  initGameOver:
+  initCrash:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 224394741}
         m_TargetAssemblyTypeName: UIController, Assembly-CSharp
-        m_MethodName: ShowGameOverMenu
+        m_MethodName: CrashSequence
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -25183,13 +25218,43 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  prevGameState:
+  passBack:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1423466447}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
         m_MethodName: GoBack
         m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  passConfirm:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1423466447}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: ChooseMenuOption
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  passNavData:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1423466447}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: Navigate
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -25634,7 +25699,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   optionsHolder: {fileID: 979809115}
-  selector: {fileID: 891953238}
+  cursor: {fileID: 891953238}
+  screenFadeEffect:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 224394741}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+        m_MethodName: ScreenFadeInGame
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   stateSign: {fileID: 2098865260}
   menuReady:
     m_PersistentCalls:
@@ -32846,7 +32926,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1423466447}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: GameOver
+        m_MethodName: InitGameOver
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -34004,7 +34084,7 @@ PrefabInstance:
     - target: {fileID: 1669926778749615600, guid: 2f05b07fada3d00488c022ee450a9f31,
         type: 3}
       propertyPath: m_Name
-      value: Selector
+      value: Cursor
       objectReference: {fileID: 0}
     - target: {fileID: 5314755983800081276, guid: 2f05b07fada3d00488c022ee450a9f31,
         type: 3}
@@ -34014,7 +34094,7 @@ PrefabInstance:
     - target: {fileID: 5314755983800081276, guid: 2f05b07fada3d00488c022ee450a9f31,
         type: 3}
       propertyPath: m_Pivot.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5314755983800081276, guid: 2f05b07fada3d00488c022ee450a9f31,
         type: 3}
@@ -34024,7 +34104,7 @@ PrefabInstance:
     - target: {fileID: 5314755983800081276, guid: 2f05b07fada3d00488c022ee450a9f31,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5314755983800081276, guid: 2f05b07fada3d00488c022ee450a9f31,
         type: 3}
@@ -34034,7 +34114,7 @@ PrefabInstance:
     - target: {fileID: 5314755983800081276, guid: 2f05b07fada3d00488c022ee450a9f31,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5314755983800081276, guid: 2f05b07fada3d00488c022ee450a9f31,
         type: 3}
@@ -34089,7 +34169,7 @@ PrefabInstance:
     - target: {fileID: 5314755983800081276, guid: 2f05b07fada3d00488c022ee450a9f31,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 200
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5314755983800081276, guid: 2f05b07fada3d00488c022ee450a9f31,
         type: 3}
@@ -34514,13 +34594,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ui: {fileID: 0}
-  pauseMenu:
-    m_PersistentCalls:
-      m_Calls: []
+  inGameMenu: {fileID: 0}
   initInGameMenu:
     m_PersistentCalls:
       m_Calls: []
-  initGameOver:
+  initCrash:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1001 &6649924103497670814

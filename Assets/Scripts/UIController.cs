@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
@@ -35,7 +36,7 @@ public class UIController : MonoBehaviour
     [SerializeField]
     private InGameMenuController inGameMenu;
     [SerializeField]
-    private TextMeshProUGUI inGameMenuStatusSign;
+    private UnityEvent crashComplete;
 
 
     private int speedDisplayed;
@@ -190,12 +191,7 @@ public class UIController : MonoBehaviour
         StartCoroutine(ClearCoroutine());
     }
 
-    public void TogglePause()
-    {
-        StartCoroutine(AnimatePauseMenu());
-    }
-
-    public void ShowGameOverMenu(GameOverType type)
+    public void CrashSequence(GameOverType type)
     {
         if (type == GameOverType.GroundCrash)
         {
@@ -214,24 +210,12 @@ public class UIController : MonoBehaviour
         }
 
         inGameMenu.SetGameOverMenu(type);
-        StartCoroutine(GameOverCoroutine());
+        StartCoroutine(CrashCoroutine());
     }
 
-    private IEnumerator AnimatePauseMenu()
+    public void ScreenFadeInGame(float speed)
     {
-        if (!inGameMenu.Visible)
-        {
-            yield return ScreenFade(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaPause, 
-                Constants.FadeAlphaSpeedPause);
-            StartCoroutine(inGameMenu.TogglePauseMenu());
-        }
-        else
-        {
-            StartCoroutine(inGameMenu.TogglePauseMenu());
-            yield return ScreenFade(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaPause, 
-                -Constants.FadeAlphaSpeedPause);
-        }
-
+        StartCoroutine(ScreenFade(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaPause, speed));
     }
 
     private IEnumerator ClearCoroutine()
@@ -243,7 +227,7 @@ public class UIController : MonoBehaviour
             Constants.FadeScreenSpeed));
     }
 
-    private IEnumerator GameOverCoroutine()
+    private IEnumerator CrashCoroutine()
     {
         yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(HelperMethods.FadeText(crashSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
@@ -251,7 +235,7 @@ public class UIController : MonoBehaviour
         yield return StartCoroutine(HelperMethods.FadeText(crashSign, 0, Constants.UISignMaxAlpha, -Constants.UISignFadeSpeed));
         yield return ScreenFade(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaPause,
                 Constants.FadeAlphaSpeedPause);
-        StartCoroutine(inGameMenu.ShowGameOverMenu());
+        crashComplete.Invoke();
     }
 
     public void HideScoreToAddSign()

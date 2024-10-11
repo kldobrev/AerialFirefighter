@@ -9,13 +9,17 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private GameObject ui;
     [SerializeField]
-    private UnityEvent pauseMenu;
+    private InGameMenuController inGameMenu;
     [SerializeField]
     private UnityEvent<PlayMode> initInGameMenu;
     [SerializeField]
-    private UnityEvent<GameOverType> initGameOver;
-    private PlayerInputHandler input;
+    private UnityEvent<GameOverType> initCrash;
 
+    private MenuController currentMenu;
+    private UnityEvent<Vector2> navigateMenu;
+    private UnityEvent confirmOption;
+    private UnityEvent backMenu;
+    private PlayerInputHandler input;
     private static GameState state;
     private static PlayMode currentMode;
     public static GameState CurrentState => state;
@@ -33,32 +37,48 @@ public class GameManager : MonoBehaviour
         state = GameState.Playing;
         currentMode = PlayMode.FireMission;
         initInGameMenu.Invoke(currentMode);
+
+        if (state == GameState.Playing)
+        {
+            currentMenu = inGameMenu;
+        }
     }
 
     public void GoBack()
     {
         if (state == GameState.Pause)
         {
-            Unpause();
+            inGameMenu.HidePuseMenu();
         }
+    }
+
+    public void Navigate(Vector2 movement)
+    {
+        if (state == GameState.Pause || state == GameState.GameOver)
+        {
+            inGameMenu.NavigateMenu(Vector2Int.CeilToInt(movement));
+        }
+    }
+
+    public void ChooseMenuOption()
+    {
+        Debug.Log("Confirm option.");
     }
 
     public void Pause()
     {
-        pauseMenu.Invoke();
+        inGameMenu.ShowPuseMenu();
         state = GameState.Pause;
     }
 
-    public void Unpause()
-    {
-        state = GameState.Playing;
-        pauseMenu.Invoke();
-    }
-
-    public void GameOver(GameOverType type)
+    public void InitGameOver(GameOverType type)
     {
         state = GameState.GameOver;
-        initGameOver.Invoke(type);
+        initCrash.Invoke(type);
+    }
+    public void ShowGameOver()
+    {
+        inGameMenu.ShowGameOverMenu();
     }
 
     public void ToggleFreezeGameplay()

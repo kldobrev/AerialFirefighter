@@ -14,24 +14,24 @@ public class PopupMenuController : MenuController
         float textFadeSpeed)
     {
         StartCoroutine(HelperMethods.TransitionHeightUI(menuBkgRect, minBkgSize, maxBkgSize, bkgSizeChangeSpeed));
-        while (menuBkgRect.sizeDelta.y < menuBkgSizeTrigger)
-        {
-            yield return null;
-        }
+        yield return new WaitUntil(() => menuBkgRect.sizeDelta.y >= menuBkgSizeTrigger);
         StartCoroutine(FadeOptions(Constants.MenuTextAlphaMin, Constants.MenuTextAlphaMax, textFadeSpeed));
-        yield return StartCoroutine(HelperMethods.FadeRawImage(selector, Constants.MenuSelectorAlphaMin, Constants.MenuSelectorAlphaMax,
-            Constants.MenuSelectorFadeSpeed));
+        yield return new WaitUntil(() => menuBkgRect.sizeDelta.y == maxBkgSize);
+        cursorIndex = new Vector2Int(0, menuStartIndexVert);
+        UpdateCursorPosition();
+        yield return StartCoroutine(HelperMethods.FadeRawImage(cursor, Constants.MenuCursorAlphaMin, Constants.MenuCursorAlphaMax,
+            Constants.MenuCursorFadeSpeed));
         StartCoroutine(HelperMethods.FadeText(stateSign, Constants.MenuTextAlphaMin, Constants.MenuTextAlphaMax, textFadeSpeed));
     }
 
-    protected IEnumerator FadeOutMenu(float selectorAlphaTrigger, float minBkgSize, float maxBkgSize, float bkgSizeChangeSpeed,
+    protected IEnumerator FadeOutMenu(float cursorAlphaTrigger, float minBkgSize, float maxBkgSize, float bkgSizeChangeSpeed,
         float textFadeSpeed)
     {
         StartCoroutine(FadeOptions(Constants.MenuTextAlphaMin, Constants.MenuTextAlphaMax, -textFadeSpeed));
         StartCoroutine(HelperMethods.FadeText(stateSign, Constants.MenuTextAlphaMin, Constants.MenuTextAlphaMax, -textFadeSpeed));
-        StartCoroutine(HelperMethods.FadeRawImage(selector, Constants.MenuSelectorAlphaMin, Constants.MenuSelectorAlphaMax,
-            -Constants.MenuSelectorFadeSpeed));
-        while (selector.color.a > selectorAlphaTrigger)
+        StartCoroutine(HelperMethods.FadeRawImage(cursor, Constants.MenuCursorAlphaMin, Constants.MenuCursorAlphaMax,
+            -Constants.MenuCursorFadeSpeed));
+        while (cursor.color.a > cursorAlphaTrigger)
         {
             yield return null;
         }

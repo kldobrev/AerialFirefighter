@@ -13,7 +13,11 @@ public class PlayerInputHandler : MonoBehaviour, PlayerControls.IGameplayActions
     [SerializeField]
     private UnityEvent pauseGame;
     [SerializeField]
-    private UnityEvent prevGameState;
+    private UnityEvent passBack;
+    [SerializeField]
+    private UnityEvent passConfirm;
+    [SerializeField]
+    private UnityEvent<Vector2> passNavData;
 
     private PlayerControls controls;
 
@@ -131,17 +135,17 @@ public class PlayerInputHandler : MonoBehaviour, PlayerControls.IGameplayActions
 
     public void OnConfirm(InputAction.CallbackContext context)
     {
-        Debug.Log("Confirm");
+        passConfirm.Invoke();
     }
 
     public void OnBack(InputAction.CallbackContext context)
     {
-        prevGameState.Invoke();
+        passBack.Invoke();
     }
 
     public void OnNavigation(InputAction.CallbackContext context)
     {
-        Debug.Log("Navigation");
+        passNavData.Invoke(context.ReadValue<Vector2>());
     }
 
     private void OnEnable()
