@@ -132,6 +132,9 @@ public static class Constants {
     public const float InGameMenuSizeTrigger = 24;
     public static Color32 MenuInactiveOptionColour = new Color32(143, 143, 143, 96);
     public static Color32 InGameMenuOptionColourDefault = new Color32(255, 255, 255, 0);
+    public const string InGameUICanvasTagName = "InGameUI";
+    public const string InGameMenuTagNam = "InGameMenu";
+    public const string ConfirmPromptMenuTagName = "Confirm";
 
     // Terrain interaction
 
@@ -156,5 +159,6 @@ public static class Constants {
     public const int LandingScore = 1000;
     public const float WaterFloatForceUp = 0.12f;
     public const float WaterFloatForceDown = 1;
+    public const string Stage1SceneName = "Stage1";
 
 }

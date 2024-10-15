@@ -70,13 +70,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private UnityEvent<Vector3> detachCamera;
     [SerializeField]
-    private UnityEvent<GameOverType> signalGameOver;
-    [SerializeField]
     private UnityEvent<Vector3> changeCameraDistance;
     [SerializeField]
     private UnityEvent<bool> stageEndTrigger;
 
 
+
+    public UnityEvent<GameOverType> signalGameOver;
     private float accelerateValue;
     private float throttleInput;
     private float brakeInput;

@@ -13,6 +13,9 @@ TagManager:
   - Depths
   - Goal
   - LandingZone
+  - InGameUI
+  - InGameMenu
+  - Confirm
   layers:
   - Default
   - TransparentFX

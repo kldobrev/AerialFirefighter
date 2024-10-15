@@ -35,10 +35,8 @@ public class UIController : MonoBehaviour
     private TextMeshProUGUI clearSign;
     [SerializeField]
     private InGameMenuController inGameMenu;
-    [SerializeField]
-    private UnityEvent crashComplete;
 
-
+    public UnityEvent crashComplete;
     private int speedDisplayed;
     private Image heightMeterBkg;
     private int currentWeaponIconIdx;

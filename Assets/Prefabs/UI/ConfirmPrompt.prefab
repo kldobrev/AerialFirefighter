@@ -76,8 +76,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 16777215
+  m_fontColor: {r: 1, g: 1, b: 1, a: 0}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -230,7 +230,7 @@ GameObject:
   - component: {fileID: 4956058224533467454}
   m_Layer: 5
   m_Name: ConfirmPrompt
-  m_TagString: Untagged
+  m_TagString: Confirm
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -561,12 +561,12 @@ PrefabInstance:
     - target: {fileID: 1669926778749615600, guid: 2f05b07fada3d00488c022ee450a9f31,
         type: 3}
       propertyPath: m_Name
-      value: MenuSelector
+      value: Cursor
       objectReference: {fileID: 0}
     - target: {fileID: 2840023697532762091, guid: 2f05b07fada3d00488c022ee450a9f31,
         type: 3}
       propertyPath: m_Color.a
-      value: 0.3019608
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5314755983800081276, guid: 2f05b07fada3d00488c022ee450a9f31,
         type: 3}
@@ -576,7 +576,7 @@ PrefabInstance:
     - target: {fileID: 5314755983800081276, guid: 2f05b07fada3d00488c022ee450a9f31,
         type: 3}
       propertyPath: m_Pivot.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5314755983800081276, guid: 2f05b07fada3d00488c022ee450a9f31,
         type: 3}
@@ -586,7 +586,7 @@ PrefabInstance:
     - target: {fileID: 5314755983800081276, guid: 2f05b07fada3d00488c022ee450a9f31,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5314755983800081276, guid: 2f05b07fada3d00488c022ee450a9f31,
         type: 3}
@@ -596,7 +596,7 @@ PrefabInstance:
     - target: {fileID: 5314755983800081276, guid: 2f05b07fada3d00488c022ee450a9f31,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5314755983800081276, guid: 2f05b07fada3d00488c022ee450a9f31,
         type: 3}
@@ -651,7 +651,7 @@ PrefabInstance:
     - target: {fileID: 5314755983800081276, guid: 2f05b07fada3d00488c022ee450a9f31,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 90
+      value: 140
       objectReference: {fileID: 0}
     - target: {fileID: 5314755983800081276, guid: 2f05b07fada3d00488c022ee450a9f31,
         type: 3}

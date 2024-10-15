@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
@@ -7,9 +6,9 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     [SerializeField]
-    private GameObject ui;
-    [SerializeField]
     private InGameMenuController inGameMenu;
+    [SerializeField]
+    private ConfirmPromptController confirmPrompt;
     [SerializeField]
     private UnityEvent<PlayMode> initInGameMenu;
     [SerializeField]
@@ -20,6 +19,7 @@ public class GameManager : MonoBehaviour
     private UnityEvent confirmOption;
     private UnityEvent backMenu;
     private PlayerInputHandler input;
+    private UIController inGameUIController;
     private static GameState state;
     private static PlayMode currentMode;
     public static GameState CurrentState => state;
@@ -32,11 +32,11 @@ public class GameManager : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        state = GameState.Playing;
+        input.SwitchToGameplayControls();
+        StartCoroutine(LoadGameplayScene(Constants.Stage1SceneName));
         currentMode = PlayMode.FireMission;
-        initInGameMenu.Invoke(currentMode);
 
         if (state == GameState.Playing)
         {
@@ -48,7 +48,7 @@ public class GameManager : MonoBehaviour
     {
         if (state == GameState.Pause)
         {
-            inGameMenu.HidePuseMenu();
+            Unpause();
         }
     }
 
@@ -62,7 +62,32 @@ public class GameManager : MonoBehaviour
 
     public void ChooseMenuOption()
     {
-        Debug.Log("Confirm option.");
+        if (state == GameState.Pause || state == GameState.GameOver)
+        {
+            switch (inGameMenu.CursorIndex.y)
+            {
+                case 0:
+                    if (state == GameState.Pause)   // Continue
+                    {
+                        Unpause();
+                    }
+                    else if (state == GameState.GameOver && currentMode == PlayMode.FireMission)    // Continue from checkpoint
+                    {
+                        Debug.Log("To be implemented");
+                    }
+                    break;
+                case 1: // Restart stage/tutorial
+                    StartCoroutine(LoadGameplayScene(SceneManager.GetActiveScene().name));
+                    break;
+                case 2: // Back to main menu
+                    Debug.Log("To be implemented.");
+                    break;
+                case 3: // Exit game
+                    Application.Quit();
+                    break;
+            }
+        }
+        
     }
 
     public void Pause()
@@ -71,28 +96,64 @@ public class GameManager : MonoBehaviour
         state = GameState.Pause;
     }
 
+    public void Unpause()
+    {
+        inGameMenu.HidePuseMenu();
+        state = GameState.Playing;
+    }
+
     public void InitGameOver(GameOverType type)
     {
         state = GameState.GameOver;
         initCrash.Invoke(type);
     }
+
     public void ShowGameOver()
     {
         inGameMenu.ShowGameOverMenu();
     }
 
-    public void ToggleFreezeGameplay()
+    public void ToggleFreezeGameplay(bool freeze)
     {
-        if (Time.timeScale == 0)
-        {
-            Time.timeScale = 1;
-            input.SwitchToGameplayControls();
-        }
-        else
+        if (freeze)
         {
             Time.timeScale = 0;
             input.SwitchToMenuControls();
         }
+        else
+        {
+            Time.timeScale = 1;
+            input.SwitchToGameplayControls();
+        }
+    }
+
+    private IEnumerator LoadMainMenu()
+    {
+        Time.timeScale = 1;
+        input.SwitchToMenuControls();
+        // To be implemented
+        yield return null;
+    }
+
+    private IEnumerator LoadGameplayScene(string sceneName)
+    {
+        input.DisableInput();
+        SceneManager.LoadScene(sceneName);
+        yield return null;
+
+        inGameUIController = GameObject.FindWithTag(Constants.InGameUICanvasTagName).GetComponent<UIController>();
+        inGameMenu = GameObject.FindWithTag(Constants.InGameMenuTagNam).GetComponent<InGameMenuController>();
+        confirmPrompt = GameObject.FindWithTag(Constants.ConfirmPromptMenuTagName).GetComponent<ConfirmPromptController>();
+        input.player = GameObject.FindWithTag(Constants.PlayerTagName).GetComponent<PlayerController>();
+        initInGameMenu.AddListener(inGameMenu.SetInGameMenuForMode);
+        initCrash.AddListener(inGameUIController.CrashSequence);
+        inGameUIController.crashComplete.AddListener(ShowGameOver);
+        inGameMenu.menuReady.AddListener(ToggleFreezeGameplay);
+        input.player.signalGameOver.AddListener(InitGameOver);
+        initInGameMenu.Invoke(currentMode);
+
+        ToggleFreezeGameplay(false);
+        state = GameState.Playing;
     }
 
 }

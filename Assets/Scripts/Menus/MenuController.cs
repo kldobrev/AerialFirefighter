@@ -19,12 +19,13 @@ public class MenuController : MonoBehaviour
     protected TextMeshProUGUI[] optionsSigns;
     protected int optionsCount;
     protected RectTransform cursorTrns;
-    protected Vector3 startingcursorPos;
+    protected Vector3 startingCursorPos;
     protected bool isOpened;
-    protected Vector2Int cursorIndex;
+    protected Vector2Int cursorIdx;
     protected Transform[] optionsTransforms;
     protected int menuStartIndexVert;
     public bool Visible => isOpened;
+    public Vector2Int CursorIndex => cursorIdx;
 
 
     protected void Awake()
@@ -39,22 +40,22 @@ public class MenuController : MonoBehaviour
             optionsTransforms[i] = optionsSigns[i].transform;
         }
         cursorTrns = cursor.transform.GetComponent<RectTransform>();
-        cursorIndex = Vector2Int.zero;
+        cursorIdx = Vector2Int.zero;
         menuStartIndexVert = 0;
     }
 
     public virtual void NavigateMenu(Vector2Int direction)
     {
-        int nextIdx = cursorIndex.y + direction.y;
+        int nextIdx = cursorIdx.y + direction.y;
         if (nextIdx != (menuStartIndexVert - 1) && nextIdx != optionsCount) {
-            cursorIndex.y = nextIdx;
+            cursorIdx.y = nextIdx;
             UpdateCursorPosition();
         }
     }
 
     public void UpdateCursorPosition()
     {
-        cursorTrns.localPosition = optionsHolder.localPosition + optionsTransforms[cursorIndex.y].localPosition;
+        cursorTrns.localPosition = optionsHolder.localPosition + optionsTransforms[cursorIdx.y].localPosition;
     }
 
     protected IEnumerator FadeOptions(float minAlpha, float maxAlpha, float speed)

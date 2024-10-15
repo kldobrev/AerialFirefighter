@@ -9,8 +9,6 @@ using UnityEngine.InputSystem;
 public class PlayerInputHandler : MonoBehaviour, PlayerControls.IGameplayActions, PlayerControls.IMenuActions
 {
     [SerializeField]
-    private PlayerController player;
-    [SerializeField]
     private UnityEvent pauseGame;
     [SerializeField]
     private UnityEvent passBack;
@@ -19,6 +17,7 @@ public class PlayerInputHandler : MonoBehaviour, PlayerControls.IGameplayActions
     [SerializeField]
     private UnityEvent<Vector2> passNavData;
 
+    public PlayerController player;
     private PlayerControls controls;
 
     void Awake()
@@ -42,19 +41,6 @@ public class PlayerInputHandler : MonoBehaviour, PlayerControls.IGameplayActions
         controls.menu.navigation.performed += OnNavigation;
     }
 
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        SwitchToGameplayControls();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void SwitchToGameplayControls()
     {
         controls.menu.Disable();
@@ -65,6 +51,12 @@ public class PlayerInputHandler : MonoBehaviour, PlayerControls.IGameplayActions
     {
         controls.gameplay.Disable();
         controls.menu.Enable();
+    }
+
+    public void DisableInput()
+    {
+        controls.gameplay.Disable();
+        controls.menu.Disable();
     }
 
     public void OnStartstopengine(InputAction.CallbackContext context)
@@ -148,13 +140,4 @@ public class PlayerInputHandler : MonoBehaviour, PlayerControls.IGameplayActions
         passNavData.Invoke(context.ReadValue<Vector2>());
     }
 
-    private void OnEnable()
-    {
-        controls.gameplay.Enable();
-    }
-
-    private void OnDisable()
-    {
-        controls.gameplay.Disable();
-    }
 }

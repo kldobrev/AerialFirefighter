@@ -17,7 +17,7 @@ public class PopupMenuController : MenuController
         yield return new WaitUntil(() => menuBkgRect.sizeDelta.y >= menuBkgSizeTrigger);
         StartCoroutine(FadeOptions(Constants.MenuTextAlphaMin, Constants.MenuTextAlphaMax, textFadeSpeed));
         yield return new WaitUntil(() => menuBkgRect.sizeDelta.y == maxBkgSize);
-        cursorIndex = new Vector2Int(0, menuStartIndexVert);
+        cursorIdx = new Vector2Int(0, menuStartIndexVert);
         UpdateCursorPosition();
         yield return StartCoroutine(HelperMethods.FadeRawImage(cursor, Constants.MenuCursorAlphaMin, Constants.MenuCursorAlphaMax,
             Constants.MenuCursorFadeSpeed));
