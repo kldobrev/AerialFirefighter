@@ -2,51 +2,49 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using UnityEngine.Windows;
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField]
-    private InGameMenuController inGameMenu;
+    private InGameMenuController _inGameMenu;
     [SerializeField]
-    private ConfirmPromptController confirmPrompt;
+    private ConfirmPromptController _confirmPrompt;
     [SerializeField]
-    private UnityEvent<PlayMode> initInGameMenu;
+    private UnityEvent<PlayMode> _initInGameMenu;
     [SerializeField]
-    private UnityEvent<GameOverType> initCrash;
+    private UnityEvent<GameOverType> _initCrash;
 
-    private MenuController currentMenu;
-    private UnityEvent<Vector2> navigateMenu;
-    private UnityEvent confirmOption;
-    private UnityEvent backMenu;
-    private PlayerInputHandler input;
-    private UIController inGameUIController;
-    private static GameState state;
-    private static PlayMode currentMode;
-    public static GameState CurrentState => state;
-    public static PlayMode CurrentPlayMode => currentMode;
+    private MenuController _currentMenu;
+    private UnityEvent _confirmOption;
+    private UnityEvent _backMenu;
+    private PlayerInputHandler _input;
+    private UIController _inGameUIController;
+    public static GameState CurrentState { get; private set; }
+    public static PlayMode CurrentPlayMode { get; private set; }
 
     void Awake()
     {
         DontDestroyOnLoad(gameObject);
-        input = transform.GetComponent<PlayerInputHandler>();
+        _input = transform.GetComponent<PlayerInputHandler>();
     }
 
     // Start is called before the first frame update
     private void Start()
     {
-        input.SwitchToGameplayControls();
+        _input.SwitchToGameplayControls();
         StartCoroutine(LoadGameplayScene(Constants.Stage1SceneName));
-        currentMode = PlayMode.FireMission;
+        CurrentPlayMode = PlayMode.FireMission;
 
-        if (state == GameState.Playing)
+        if (CurrentState == GameState.Playing)
         {
-            currentMenu = inGameMenu;
+            _currentMenu = _inGameMenu;
         }
     }
 
     public void GoBack()
     {
-        if (state == GameState.Pause)
+        if (CurrentState == GameState.Pause)
         {
             Unpause();
         }
@@ -54,30 +52,37 @@ public class GameManager : MonoBehaviour
 
     public void Navigate(Vector2 movement)
     {
-        if (state == GameState.Pause || state == GameState.GameOver)
+        if (CurrentState == GameState.Pause || CurrentState == GameState.GameOver)
         {
-            inGameMenu.NavigateMenu(Vector2Int.CeilToInt(movement));
+            _inGameMenu.NavigateMenu(Vector2Int.CeilToInt(movement));
         }
     }
 
     public void ChooseMenuOption()
     {
-        if (state == GameState.Pause || state == GameState.GameOver)
+        if (CurrentState == GameState.Pause || CurrentState == GameState.GameOver)
         {
-            switch (inGameMenu.CursorIndex.y)
+            switch (_inGameMenu.CursorIndex.y)
             {
                 case 0:
-                    if (state == GameState.Pause)   // Continue
+                    if (CurrentState == GameState.Pause)   // Continue
                     {
                         Unpause();
                     }
-                    else if (state == GameState.GameOver && currentMode == PlayMode.FireMission)    // Continue from checkpoint
+                    else if (CurrentState == GameState.GameOver && CurrentPlayMode == PlayMode.FireMission)    // Continue from checkpoint
                     {
                         Debug.Log("To be implemented");
                     }
                     break;
                 case 1: // Restart stage/tutorial
-                    StartCoroutine(LoadGameplayScene(SceneManager.GetActiveScene().name));
+                    if (CurrentState == GameState.Pause)
+                    {
+                        StartCoroutine(ConfirmAndExecute(LoadGameplayScene(SceneManager.GetActiveScene().name)));
+                    }
+                    else
+                    {
+                        StartCoroutine(LoadGameplayScene(SceneManager.GetActiveScene().name));
+                    }
                     break;
                 case 2: // Back to main menu
                     Debug.Log("To be implemented.");
@@ -92,25 +97,25 @@ public class GameManager : MonoBehaviour
 
     public void Pause()
     {
-        inGameMenu.ShowPuseMenu();
-        state = GameState.Pause;
+        _inGameMenu.ShowPuseMenu();
+        CurrentState = GameState.Pause;
     }
 
     public void Unpause()
     {
-        inGameMenu.HidePuseMenu();
-        state = GameState.Playing;
+        _inGameMenu.HidePuseMenu();
+        CurrentState = GameState.Playing;
     }
 
     public void InitGameOver(GameOverType type)
     {
-        state = GameState.GameOver;
-        initCrash.Invoke(type);
+        CurrentState = GameState.GameOver;
+        _initCrash.Invoke(type);
     }
 
     public void ShowGameOver()
     {
-        inGameMenu.ShowGameOverMenu();
+        _inGameMenu.ShowGameOverMenu();
     }
 
     public void ToggleFreezeGameplay(bool freeze)
@@ -118,42 +123,54 @@ public class GameManager : MonoBehaviour
         if (freeze)
         {
             Time.timeScale = 0;
-            input.SwitchToMenuControls();
+            _input.SwitchToMenuControls();
         }
         else
         {
             Time.timeScale = 1;
-            input.SwitchToGameplayControls();
+            _input.SwitchToGameplayControls();
         }
     }
 
     private IEnumerator LoadMainMenu()
     {
         Time.timeScale = 1;
-        input.SwitchToMenuControls();
+        _input.SwitchToMenuControls();
         // To be implemented
         yield return null;
     }
 
     private IEnumerator LoadGameplayScene(string sceneName)
     {
-        input.DisableInput();
+        _input.DisableInput();
         SceneManager.LoadScene(sceneName);
         yield return null;
 
-        inGameUIController = GameObject.FindWithTag(Constants.InGameUICanvasTagName).GetComponent<UIController>();
-        inGameMenu = GameObject.FindWithTag(Constants.InGameMenuTagNam).GetComponent<InGameMenuController>();
-        confirmPrompt = GameObject.FindWithTag(Constants.ConfirmPromptMenuTagName).GetComponent<ConfirmPromptController>();
-        input.player = GameObject.FindWithTag(Constants.PlayerTagName).GetComponent<PlayerController>();
-        initInGameMenu.AddListener(inGameMenu.SetInGameMenuForMode);
-        initCrash.AddListener(inGameUIController.CrashSequence);
-        inGameUIController.crashComplete.AddListener(ShowGameOver);
-        inGameMenu.menuReady.AddListener(ToggleFreezeGameplay);
-        input.player.signalGameOver.AddListener(InitGameOver);
-        initInGameMenu.Invoke(currentMode);
+        _inGameUIController = GameObject.FindWithTag(Constants.InGameUICanvasTagName).GetComponent<UIController>();
+        _inGameMenu = GameObject.FindWithTag(Constants.InGameMenuTagNam).GetComponent<InGameMenuController>();
+        _confirmPrompt = GameObject.FindWithTag(Constants.ConfirmPromptMenuTagName).GetComponent<ConfirmPromptController>();
+        _input.Player = GameObject.FindWithTag(Constants.PlayerTagName).GetComponent<PlayerController>();
+        _initInGameMenu.AddListener(_inGameMenu.SetInGameMenuForMode);
+        _initCrash.AddListener(_inGameUIController.CrashSequence);
+        _inGameUIController.CrashComplete.AddListener(ShowGameOver);
+        _inGameMenu.MenuReady.AddListener(ToggleFreezeGameplay);
+        _input.Player.SignalGameOver.AddListener(InitGameOver);
+        _initInGameMenu.Invoke(CurrentPlayMode);
 
         ToggleFreezeGameplay(false);
-        state = GameState.Playing;
+        CurrentState = GameState.Playing;
+    }
+
+    private IEnumerator ConfirmAndExecute(IEnumerator action)
+    {
+        _confirmPrompt.Show();
+        yield return new WaitUntil(() => _confirmPrompt.Responded);
+        if (_confirmPrompt.Confirmed)
+        {
+            StartCoroutine(action);
+        }
+        /*executedMethod += menuAction;
+        executedMethod();*/
     }
 
 }

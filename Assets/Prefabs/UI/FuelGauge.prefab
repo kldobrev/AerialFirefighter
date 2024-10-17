@@ -315,7 +315,7 @@ RectTransform:
   m_GameObject: {fileID: 7518996935700022035}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.3, y: 1.3, z: 1.3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4712667756008608194}
@@ -340,7 +340,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31a5f23ed52cdec4f9005a7752715bda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  arrowTrns: {fileID: 3940511173731909484}
-  background: {fileID: 576303512853691201}
-  arrow: {fileID: 857740636965504159}
-  measurementsPanel: {fileID: 6822666391977812619}
+  _arrowTrns: {fileID: 3940511173731909484}
+  _background: {fileID: 576303512853691201}
+  _arrow: {fileID: 857740636965504159}
+  _measurementsPanel: {fileID: 6822666391977812619}

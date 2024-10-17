@@ -12,108 +12,103 @@ using UnityEngine.UIElements;
 public class LocatorController : MonoBehaviour
 {
     [SerializeField]
-    private RectTransform locatorRectTrns;
+    private RectTransform _locatorRectTransform;
     [SerializeField]
-    private Transform playerTrns;
+    private Transform _playerTransform;
     [SerializeField]
-    private Transform firesTrns;
+    private Transform _firesTransforms;
     [SerializeField]
-    private Transform airportTrns;
+    private Transform _airportTransform;
     [SerializeField]
-    private Transform goalSphereTrns;
+    private Transform _goalSphereTransform;
     [SerializeField]
-    private RectTransform barRectTrns;
+    private RectTransform _barRectTransform;
     [SerializeField]
-    private GameObject airportIconPrefab;
+    private GameObject _airportIconPrefab;
     [SerializeField]
-    private GameObject flagIconPrefab;
+    private GameObject _flagIconPrefab;
     [SerializeField]
-    private GameObject fireIconPrefab;
+    private GameObject _fireIconPrefab;
     [SerializeField]
-    private Transform iconsHolder;
+    private Transform _iconsHolder;
 
-    private float playerAngleY;
-    private float locatorAngle;
-    private float startBarPositionX;
-    private float startTargetIconPositionX;
-    private float playerTargetAngle;
-    private float locatorHalfWidth;
-    private Vector3 nextBarPosition;
-    private Vector3 nextTargetIconPosition;
-    private Vector3 direction;
-    private Vector3 playerForward;
+    private float _playerAngleY;
+    private float _locatorAngle;
+    private float _startBarPositionX;
+    private float _startTargetIconPositionX;
+    private float _playerTargetAngle;
+    private float _locatorHalfWidth;
+    private Vector3 _nextBarPosition;
+    private Vector3 _nextTargetIconPosition;
+    private Vector3 _direction;
+    private Vector3 _playerForward;
 
-    private static List<Transform> targets;
-    private static List<Transform> icons;
-    private static int removeIdx;
+    private static List<Transform> _targets;
+    private static List<Transform> _icons;
+    private static int _removeIdx;
 
     // Start is called before the first frame update
     void Start()
     {
-        playerAngleY = 0;
-        locatorAngle = 0;
-        removeIdx = -1;
-        locatorHalfWidth = locatorRectTrns.rect.size.x / 2;
-        startBarPositionX = barRectTrns.localPosition.x;
-        nextBarPosition = barRectTrns.localPosition;
-        startTargetIconPositionX = Constants.DefaultLocatorIconPosition.x;
-        nextTargetIconPosition = Constants.DefaultLocatorIconPosition;
+        _playerAngleY = 0;
+        _locatorAngle = 0;
+        _removeIdx = -1;
+        _locatorHalfWidth = _locatorRectTransform.rect.size.x / 2;
+        _startBarPositionX = _barRectTransform.localPosition.x;
+        _nextBarPosition = _barRectTransform.localPosition;
+        _startTargetIconPositionX = Constants.DefaultLocatorIconPosition.x;
+        _nextTargetIconPosition = Constants.DefaultLocatorIconPosition;
 
-        targets = new();
-        icons = new();
-        for (int i = 0; i < firesTrns.childCount; i++)
+        _targets = new();
+        _icons = new();
+        for (int i = 0; i < _firesTransforms.childCount; i++)
         {
-            Transform icon = Instantiate(fireIconPrefab, iconsHolder).transform;
-            icons.Add(icon);
-            targets.Add(firesTrns.GetChild(i));
+            Transform icon = Instantiate(_fireIconPrefab, _iconsHolder).transform;
+            _icons.Add(icon);
+            _targets.Add(_firesTransforms.GetChild(i));
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (playerTrns != null)
+        if (_playerTransform != null)
         {
-            locatorAngle = HelperMethods.GetSignedAngleFromEuler(playerAngleY);
-            nextBarPosition.x = startBarPositionX - locatorAngle;
-            if (locatorAngle < -Constants.BarResetBorder || locatorAngle > Constants.BarResetBorder)  // Resetting bar image position
+            _locatorAngle = HelperMethods.GetSignedAngleFromEuler(_playerAngleY);
+            _nextBarPosition.x = _startBarPositionX - _locatorAngle;
+            if (_locatorAngle < -Constants.BarResetBorder || _locatorAngle > Constants.BarResetBorder)  // Resetting bar image position
             {
-                nextBarPosition.x += (locatorAngle > Constants.BarResetBorder ? -Constants.BarResetBorder : Constants.BarResetBorder);
+                _nextBarPosition.x += (_locatorAngle > Constants.BarResetBorder ? -Constants.BarResetBorder : Constants.BarResetBorder);
             }
-            barRectTrns.localPosition = nextBarPosition;
+            _barRectTransform.localPosition = _nextBarPosition;
 
-            if (targets.Count != 0)
+            if (_targets.Count != 0)
             {
-                for (int i = 0; i < targets.Count; i++)
+                for (int i = 0; i < _targets.Count; i++)
                 {
-                    if (i == removeIdx) continue;   // Current element is being removed
-                    Transform tracked = targets[i];
+                    if (i == _removeIdx) continue;   // Current element is being removed
+                    Transform tracked = _targets[i];
                     if (!tracked.IsUnityNull())
                     {
                         MoveIcon(tracked, i);
                     }
                 }
             }
-            /*else
-            {
-                MoveIcon(airportTrns, 0);
-                MoveIcon(goalSphereTrns, 1);
-            }*/
-            playerAngleY = playerTrns.rotation.eulerAngles.y;
+            _playerAngleY = _playerTransform.rotation.eulerAngles.y;
         }
     }
 
     private void MoveIcon(Transform target, int iconIdx)
     {
-        direction = target.position - playerTrns.position;
-        playerForward = playerTrns.forward;
-        direction.y = playerForward.y = 0;  // Excluding vertical coordinates from calculations
-        playerTargetAngle = Vector3.SignedAngle(direction, playerForward, Vector3.up);
-        nextTargetIconPosition.x = startTargetIconPositionX - ((playerTargetAngle / 180) * locatorHalfWidth);
-        nextTargetIconPosition.x = Mathf.Clamp(nextTargetIconPosition.x, locatorRectTrns.rect.xMin, locatorRectTrns.rect.xMax);
+        _direction = target.position - _playerTransform.position;
+        _playerForward = _playerTransform.forward;
+        _direction.y = _playerForward.y = 0;  // Excluding vertical coordinates from calculations
+        _playerTargetAngle = Vector3.SignedAngle(_direction, _playerForward, Vector3.up);
+        _nextTargetIconPosition.x = _startTargetIconPositionX - ((_playerTargetAngle / 180) * _locatorHalfWidth);
+        _nextTargetIconPosition.x = Mathf.Clamp(_nextTargetIconPosition.x, _locatorRectTransform.rect.xMin, _locatorRectTransform.rect.xMax);
         try
         {
-            icons[iconIdx].localPosition = nextTargetIconPosition;
+            _icons[iconIdx].localPosition = _nextTargetIconPosition;
         }
         catch (ArgumentOutOfRangeException)
         {
@@ -123,12 +118,12 @@ public class LocatorController : MonoBehaviour
 
     public void AddGoalIcons()
     {
-        Transform airportIcon = Instantiate(airportIconPrefab, iconsHolder).transform;
-        icons.Add(airportIcon);
-        targets.Add(airportTrns);
-        Transform flagIcon = Instantiate(flagIconPrefab, iconsHolder).transform;
-        icons.Add(flagIcon);
-        targets.Add(goalSphereTrns);
+        Transform airportIcon = Instantiate(_airportIconPrefab, _iconsHolder).transform;
+        _icons.Add(airportIcon);
+        _targets.Add(_airportTransform);
+        Transform flagIcon = Instantiate(_flagIconPrefab, _iconsHolder).transform;
+        _icons.Add(flagIcon);
+        _targets.Add(_goalSphereTransform);
     }
 
     public void RemoveIcon(int iconIdx)
@@ -149,11 +144,11 @@ public class LocatorController : MonoBehaviour
 
     private IEnumerator RemoveIconCoroutine(int idx)
     {
-        removeIdx = idx;
-        Destroy(icons.ElementAt(idx).gameObject);
-        icons.RemoveAt(idx);
-        targets.RemoveAt(idx);
-        removeIdx = -1;
+        _removeIdx = idx;
+        Destroy(_icons.ElementAt(idx).gameObject);
+        _icons.RemoveAt(idx);
+        _targets.RemoveAt(idx);
+        _removeIdx = -1;
         yield return null;
     }
 

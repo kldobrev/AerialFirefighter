@@ -6,27 +6,27 @@ using UnityEngine.Events;
 public class FireMissionController : MissionController
 {
     [SerializeField]
-    private UnityEvent<int, int> updateFireCounter;
+    private UnityEvent<int, int> _updateFireCounter;
     [SerializeField]
-    private UnityEvent hideExtinguishedSign;
+    private UnityEvent _hideExtinguishedSign;
     [SerializeField]
-    private UnityEvent<int> updateScoreSign;
+    private UnityEvent<int> _updateScoreSign;
     [SerializeField]
-    private UnityEvent<int> updateAddedScoreSign;
+    private UnityEvent<int> _updateAddedScoreSign;
     [SerializeField]
-    private UnityEvent hideAddToScoreSign;
+    private UnityEvent _hideAddToScoreSign;
     [SerializeField]
-    private UnityEvent showGoalIcons;
+    private UnityEvent _showGoalIcons;
     [SerializeField]
-    private UnityEvent removeGoalIcons;
+    private UnityEvent _removeGoalIcons;
     [SerializeField]
-    private UnityEvent<string> initStageClear;
+    private UnityEvent<string> _initStageClear;
     [SerializeField]
-    private UnityEvent<int> removeGroupFormLocator;
+    private UnityEvent<int> _removeGroupFormLocator;
 
-    private int numberFiresLeft;
-    private int firesExtinguishedInCombo;
-    private int comboScore;
+    private int _numberFiresLeft;
+    private int _firesExtinguishedInCombo;
+    private int _comboScore;
 
     // Start is called before the first frame update
     protected override void Start()
@@ -35,17 +35,19 @@ public class FireMissionController : MissionController
         for (int i = 0; i < transform.childCount; i++)
         {
             Transform group = transform.GetChild(i);
-            numberFiresLeft += group.childCount;
+            _numberFiresLeft += group.childCount;
             for (int j = 0; j < group.childCount; j++)
             {
-                group.GetChild(j).GetComponent<FireController>().removeFire.AddListener(RemoveActiveFire);
+                UnityEvent<Transform> removeFire = new();
+                removeFire.AddListener(RemoveActiveFire);
+                group.GetChild(j).GetComponent<FireController>().RemoveFire = removeFire;
             }
 
         }
 
-        updateFireCounter.Invoke(numberFiresLeft, 0);
-        firesExtinguishedInCombo = 0;
-        comboScore = 0;
+        _updateFireCounter.Invoke(_numberFiresLeft, 0);
+        _firesExtinguishedInCombo = 0;
+        _comboScore = 0;
         landingGuide.SetActive(false);
         landingField.SetActive(false);
         goalSphere.SetActive(false);
@@ -53,15 +55,15 @@ public class FireMissionController : MissionController
 
     private void RemoveActiveFire(Transform fire)
     {
-        firesExtinguishedInCombo++;
-        AddScore(firesExtinguishedInCombo * Constants.SingleExtinguishScore);
-        numberFiresLeft--;
-        updateFireCounter.Invoke(numberFiresLeft, firesExtinguishedInCombo);
+        _firesExtinguishedInCombo++;
+        AddScore(_firesExtinguishedInCombo * Constants.SingleExtinguishScore);
+        _numberFiresLeft--;
+        _updateFireCounter.Invoke(_numberFiresLeft, _firesExtinguishedInCombo);
 
         Transform fireGroup = fire.parent;
         if(fireGroup.childCount == 1)   // The only fire left in the fire group
         {
-            removeGroupFormLocator.Invoke(fireGroup.GetSiblingIndex());
+            _removeGroupFormLocator.Invoke(fireGroup.GetSiblingIndex());
             Destroy(fireGroup.gameObject);
         }
         else
@@ -69,7 +71,7 @@ public class FireMissionController : MissionController
             Destroy(fire.gameObject);
         }
 
-        if (numberFiresLeft == 0)
+        if (_numberFiresLeft == 0)
         {
             missionPassed = true;
             EnableGoalTargets();
@@ -79,9 +81,9 @@ public class FireMissionController : MissionController
     public override void EndMission(bool landed)
     {
         AddScore(landed ? Constants.LandingScore : Constants.ClearSphereScore);
-        removeGoalIcons.Invoke();
+        _removeGoalIcons.Invoke();
         Destroy(goalSphere);
-        initStageClear.Invoke(Constants.StageClearSign);
+        _initStageClear.Invoke(Constants.StageClearSign);
     }
 
     private void EnableGoalTargets()
@@ -89,28 +91,28 @@ public class FireMissionController : MissionController
         landingGuide.SetActive(true);
         landingField.SetActive(true);
         goalSphere.SetActive(true);
-        showGoalIcons.Invoke();
+        _showGoalIcons.Invoke();
     }
 
     private void AddScore(int amount)
     {
-        if (firesExtinguishedInCombo < 2)
+        if (_firesExtinguishedInCombo < 2)
         {
             StartCoroutine(StartComboTimer());
         }
-        comboScore += amount;
-        updateAddedScoreSign.Invoke(comboScore);
+        _comboScore += amount;
+        _updateAddedScoreSign.Invoke(_comboScore);
     }
 
     private IEnumerator StartComboTimer()
     {
         yield return new WaitForSeconds(Constants.ExtinguishedComboTime);
-        firesExtinguishedInCombo = 0;
-        score += comboScore;
-        updateScoreSign.Invoke(score);
-        comboScore = 0;
-        hideExtinguishedSign.Invoke();
-        hideAddToScoreSign.Invoke();
+        _firesExtinguishedInCombo = 0;
+        score += _comboScore;
+        _updateScoreSign.Invoke(score);
+        _comboScore = 0;
+        _hideExtinguishedSign.Invoke();
+        _hideAddToScoreSign.Invoke();
     }
 
 }

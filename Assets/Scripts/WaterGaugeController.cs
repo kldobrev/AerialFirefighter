@@ -9,23 +9,23 @@ using UnityEngine.UI;
 public class WaterGaugeController : MonoBehaviour
 {
     [SerializeField]
-    private Image fill;
+    private Image _fill;
 
-    private float capacity;
-    private float quantity;
-    private float capToQtityRatio;
+    private float _capacity;
+    private float _quantity;
+    private float _capToQuantityRatio;
 
 
-    public void SetWaterCapacity(float cap)
+    public void SetWater_capacity(float cap)
     {
-        capacity = cap > 0 ? cap : 0;
+        _capacity = cap > 0 ? cap : 0;
     }
 
-    public void UpdateWaterQuantity(float qtity)
+    public void UpdateWater_quantity(float qtity)
     {
-        quantity = Mathf.Clamp(qtity, 0, capacity);
-        capToQtityRatio = quantity / capacity;
-        fill.fillAmount = capToQtityRatio;
+        _quantity = Mathf.Clamp(qtity, 0, _capacity);
+        _capToQuantityRatio = _quantity / _capacity;
+        _fill.fillAmount = _capToQuantityRatio;
     }
 
 }

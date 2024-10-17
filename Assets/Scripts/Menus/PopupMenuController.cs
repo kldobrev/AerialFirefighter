@@ -6,8 +6,8 @@ using UnityEngine;
 public class PopupMenuController : MenuController
 {
 
-    [SerializeField]
-    protected TextMeshProUGUI stateSign;
+    [field: SerializeField]
+    protected TextMeshProUGUI stateSign { get; set; }
 
 
     protected IEnumerator FadeInMenu(float menuBkgSizeTrigger, float minBkgSize, float maxBkgSize, float bkgSizeChangeSpeed,
@@ -17,7 +17,7 @@ public class PopupMenuController : MenuController
         yield return new WaitUntil(() => menuBkgRect.sizeDelta.y >= menuBkgSizeTrigger);
         StartCoroutine(FadeOptions(Constants.MenuTextAlphaMin, Constants.MenuTextAlphaMax, textFadeSpeed));
         yield return new WaitUntil(() => menuBkgRect.sizeDelta.y == maxBkgSize);
-        cursorIdx = new Vector2Int(0, menuStartIndexVert);
+        CursorIndex = new Vector2Int(0, menuStartIndexVert);
         UpdateCursorPosition();
         yield return StartCoroutine(HelperMethods.FadeRawImage(cursor, Constants.MenuCursorAlphaMin, Constants.MenuCursorAlphaMax,
             Constants.MenuCursorFadeSpeed));

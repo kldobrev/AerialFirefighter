@@ -8,48 +8,47 @@ using UnityEngine.UI;
 public class FuelGaugeController : MonoBehaviour
 {
     [SerializeField]
-    private RectTransform arrowTrns;
+    private RectTransform _arrowTrns;
     [SerializeField]
-    private RawImage background;
+    private RawImage _background;
     [SerializeField]
-    private RawImage arrow;
+    private RawImage _arrow;
     [SerializeField]
-    private RawImage measurementsPanel;
+    private RawImage _measurementsPanel;
 
-    private float capacity;
-    private float quantity;
-    private float capToQtityRatio;
-    private byte [] currentBkgColour;
-    private IEnumerator fuelAlert;
+    private float _capacity;
+    private float _quantity;
+    private float _capToQtityRatio;
+    private byte _currentBkgAlpha;
+    private IEnumerator _fuelAlert;
+    private bool _alertActivated;
 
 
     public void SetFuelCapacity(float cap)
     {
-        capacity = cap > 0 ? cap : 0;
+        _capacity = cap > 0 ? cap : 0;
+        _alertActivated = false;
     }
 
     public void UpdateFuelQuantity(float qtity)
     {
-        quantity = Mathf.Clamp(qtity, 0, capacity);
-        capToQtityRatio = quantity / capacity;
-        arrowTrns.rotation = Quaternion.Euler(0, 0, -180 * capToQtityRatio);
+        _quantity = Mathf.Clamp(qtity, 0, _capacity);
+        _capToQtityRatio = _quantity / _capacity;
+        _arrowTrns.rotation = Quaternion.Euler(0, 0, -180 * _capToQtityRatio);
 
-        if(capToQtityRatio == 0)
+        if(_capToQtityRatio == 0)
         {
-            StopCoroutine(fuelAlert);
-            background.color = new Color32(0, 0, 0, 0);
-            measurementsPanel.color = Constants.FuelGaugeEmptyColour;
-            arrow.color = Constants.FuelGaugeEmptyColour;
+            StopCoroutine(_fuelAlert);
+            _background.color = new Color32(0, 0, 0, 0);
+            _measurementsPanel.color = Constants.FuelGaugeEmptyColour;
+            _arrow.color = Constants.FuelGaugeEmptyColour;
         }
-        else if (capToQtityRatio < 0.25 && currentBkgColour.IsUnityNull())
+        else if (_capToQtityRatio < 0.25 && !_alertActivated)
         {
-            currentBkgColour = new Byte[4];
-            currentBkgColour[0] = Constants.FuelGaugeColor.r;
-            currentBkgColour[1] = Constants.FuelGaugeColor.g;
-            currentBkgColour[2] = Constants.FuelGaugeColor.b;
-            currentBkgColour[3] = Constants.FuelGaugeColor.a;
-            fuelAlert = LowFuelAlertFlash();
-            StartCoroutine(fuelAlert);
+            _currentBkgAlpha = Constants.FuelGaugeColor.a;
+            _fuelAlert = LowFuelAlertFlash();
+            _alertActivated = true;
+            StartCoroutine(_fuelAlert);
         }
     }
 
@@ -58,13 +57,14 @@ public class FuelGaugeController : MonoBehaviour
         byte alphaModifier = 1;
         while (true)
         {
-            currentBkgColour[3] += alphaModifier;
-            background.color = new Color32(currentBkgColour[0], currentBkgColour[1], currentBkgColour[2], currentBkgColour[3]);
-            if (currentBkgColour[3] == Constants.FuelGaugeAlertAlpha)
+            _currentBkgAlpha += alphaModifier;
+            _background.color = new Color32(Constants.FuelGaugeColor.r, Constants.FuelGaugeColor.g, 
+                Constants.FuelGaugeColor.b, _currentBkgAlpha);
+            if (_currentBkgAlpha == Constants.FuelGaugeAlertAlpha)
             {
                 alphaModifier = 255;
             }
-            else if (currentBkgColour[3] == Constants.FuelGaugeNormalAlpha)
+            else if (_currentBkgAlpha == Constants.FuelGaugeNormalAlpha)
             {
                 alphaModifier = 1;
             }

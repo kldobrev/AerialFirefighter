@@ -171,13 +171,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 356b9a2c878bf0440bf2b85fd3d9048f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f105543ab78b618478a9e359b13d5861, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -262,7 +262,7 @@ RectTransform:
   m_GameObject: {fileID: 4685132875671649589}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4044216295066661257}
@@ -285,10 +285,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a0dadd29f28ff642920e829c40ef79f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerTrns: {fileID: 0}
-  bankPitchContainerTrns: {fileID: 8645445585091072594}
-  pitchSlider: {fileID: 8089150855322756816}
-  pitchCalibration: 0
+  _playerTrns: {fileID: 0}
+  _bankPitchContainer: {fileID: 8645445585091072594}
+  _pitchSlider: {fileID: 8089150855322756816}
 --- !u!1 &5280738195762192139
 GameObject:
   m_ObjectHideFlags: 0
@@ -426,7 +425,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 0.7607843}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -440,7 +439,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 789264989350917484}
   m_FillRect: {fileID: 0}
   m_HandleRect: {fileID: 6206990821668624625}
@@ -513,7 +512,7 @@ MonoBehaviour:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
+  m_Maskable: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []

@@ -8,24 +8,22 @@ using UnityEngine.UI;
 
 public class MenuController : MonoBehaviour
 {
-    [SerializeField]
-    protected Transform optionsHolder;
-    [SerializeField]
-    protected RawImage cursor;
-    [SerializeField]
-    protected UnityEvent<float> screenFadeEffect;
+    [field: SerializeField]
+    protected Transform optionsHolder { get; set; }
+    [field: SerializeField]
+    protected RawImage cursor { get; set; }
+    [field: SerializeField]
+    protected UnityEvent<float> screenFadeEffect { get; set; }
 
-    protected RectTransform menuBkgRect;
-    protected TextMeshProUGUI[] optionsSigns;
-    protected int optionsCount;
-    protected RectTransform cursorTrns;
-    protected Vector3 startingCursorPos;
-    protected bool isOpened;
-    protected Vector2Int cursorIdx;
-    protected Transform[] optionsTransforms;
-    protected int menuStartIndexVert;
-    public bool Visible => isOpened;
-    public Vector2Int CursorIndex => cursorIdx;
+    protected RectTransform menuBkgRect { get; set; }
+    protected TextMeshProUGUI[] optionsSigns { get; set; }
+    protected int optionsCount { get; set; }
+    protected RectTransform cursorTrns { get; set; }
+    protected Vector3 startingCursorPos { get; set; }
+    protected bool isOpened { get; set; }
+    public Vector2Int CursorIndex { get; protected set; }
+    protected Transform[] optionsTransforms { get; set; }
+    protected int menuStartIndexVert { get; set; }
 
 
     protected void Awake()
@@ -40,22 +38,22 @@ public class MenuController : MonoBehaviour
             optionsTransforms[i] = optionsSigns[i].transform;
         }
         cursorTrns = cursor.transform.GetComponent<RectTransform>();
-        cursorIdx = Vector2Int.zero;
+        CursorIndex = Vector2Int.zero;
         menuStartIndexVert = 0;
     }
 
     public virtual void NavigateMenu(Vector2Int direction)
     {
-        int nextIdx = cursorIdx.y + direction.y;
+        int nextIdx = CursorIndex.y + direction.y;
         if (nextIdx != (menuStartIndexVert - 1) && nextIdx != optionsCount) {
-            cursorIdx.y = nextIdx;
+            CursorIndex = new Vector2Int(0, nextIdx);
             UpdateCursorPosition();
         }
     }
 
     public void UpdateCursorPosition()
     {
-        cursorTrns.localPosition = optionsHolder.localPosition + optionsTransforms[cursorIdx.y].localPosition;
+        cursorTrns.localPosition = optionsHolder.localPosition + optionsTransforms[CursorIndex.y].localPosition;
     }
 
     protected IEnumerator FadeOptions(float minAlpha, float maxAlpha, float speed)

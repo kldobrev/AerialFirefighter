@@ -6,22 +6,22 @@ using UnityEngine.Events;
 public class RadarCameraController : MonoBehaviour
 {
     [SerializeField]
-    private UnityEvent<float> cameraEulerAngle;
-    private Vector3 newPosition;
-    private Transform cachedTrns;
+    private UnityEvent<float> _cameraEulerAngle;
+    private Vector3 _newPosition;
+    private Transform _cachedTransform;
 
     // Start is called before the first frame update
     void Start()
     {
-        cachedTrns = transform;
-        newPosition = cachedTrns.position;
+        _cachedTransform = transform;
+        _newPosition = _cachedTransform.position;
     }
 
     public void UpdateRadarCameraTransform(Vector2 playerPosition, float horizontalRotation)
     {
-        newPosition.x = playerPosition.x;
-        newPosition.z = playerPosition.y;
-        cachedTrns.SetPositionAndRotation(newPosition, Quaternion.Euler(90, horizontalRotation, 0f));
-        cameraEulerAngle.Invoke(horizontalRotation);
+        _newPosition.x = playerPosition.x;
+        _newPosition.z = playerPosition.y;
+        _cachedTransform.SetPositionAndRotation(_newPosition, Quaternion.Euler(90, horizontalRotation, 0f));
+        _cameraEulerAngle.Invoke(horizontalRotation);
     }
 }

@@ -6,19 +6,19 @@ using UnityEngine.Events;
 public class FireController : MonoBehaviour
 {
     [SerializeField]
-    private float intensity = Constants.FireDefaultIntensity;
+    private float _intensity = Constants.FireDefaultIntensity;
     [SerializeField]
-    private ParticleSystem fireEffect;
-    public UnityEvent<Transform> removeFire;
+    private ParticleSystem _fireEffect;
+    public UnityEvent<Transform> RemoveFire { get; set; }
 
     private void OnParticleCollision(GameObject other)
     {
-        intensity -= Constants.FireParticleDamage;
+        _intensity -= Constants.FireParticleDamage;
         transform.localScale -= Constants.FireScaleReduction;
-        if(intensity == 0)
+        if(_intensity == 0)
         {
-            fireEffect.Stop();
-            removeFire.Invoke(transform);
+            _fireEffect.Stop();
+            RemoveFire.Invoke(transform);
         }
     }
 

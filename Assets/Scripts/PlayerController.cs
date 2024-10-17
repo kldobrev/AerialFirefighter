@@ -13,143 +13,140 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]
-    private Transform bodyTransform;
+    private Transform _bodyTransform;
     [SerializeField]
-    private Rigidbody planeBody;
+    private Rigidbody _planeBody;
     [SerializeField]
-    private Transform propeller;
+    private Transform _propeller;
     [SerializeField]
-    private float throttleAcceleration;
+    private float _throttleAcceleration;
     [SerializeField]
-    private float pitchFactor;
+    private float _pitchFactor;
     [SerializeField]
-    private float yawFactor;
+    private float _yawFactor;
     [SerializeField]
-    private float rollFactor;
+    private float _rollFactor;
     [SerializeField]
-    private float liftForce = 3.1f;
+    private float _liftForce = 3.1f;
     [SerializeField]
-    private float pitchLiftFactor = 2;
+    private float _pitchLiftFactor = 2;
     [SerializeField]
-    private ParticleSystem dropWaterEffect;
+    private ParticleSystem _dropWaterEffect;
     [SerializeField]
-    private ParticleSystem waterSplashEffect;
+    private ParticleSystem _waterSplashEffect;
     [SerializeField]
-    private ParticleSystem crashEffect;
+    private ParticleSystem _crashEffect;
     [SerializeField]
-    private ParticleSystem crashInWaterEffect;
+    private ParticleSystem _crashInWaterEffect;
 
 
 
     [SerializeField]
-    private UnityEvent<bool> setSpeedometerActive;
+    private UnityEvent<bool> _setSpeedometerActive;
     [SerializeField]
-    private UnityEvent<int> setSpeedometerSpeed;
+    private UnityEvent<int> _setSpeedometerSpeed;
     [SerializeField]
-    private UnityEvent<bool, int> updateAutoSpeedIndicator;
+    private UnityEvent<bool, int> _updateAutoSpeedIndicator;
     [SerializeField]
-    private UnityEvent<float> updateHeightMeter;
+    private UnityEvent<float> _updateHeightMeter;
     [SerializeField]
-    private UnityEvent<Vector2, float> updateRadarCamera;
+    private UnityEvent<Vector2, float> _updateRadarCamera;
     [SerializeField]
-    private UnityEvent toggleUITracker;
+    private UnityEvent<float> _setFuelGaugeCap;
     [SerializeField]
-    private UnityEvent<bool, float, float> sendWeaponDataToTracker;
+    private UnityEvent<float> _updateFuelGaugeQuantity;
     [SerializeField]
-    private UnityEvent<float> setFuelGaugeCap;
+    private UnityEvent _startFadeOut;
     [SerializeField]
-    private UnityEvent<float> updateFuelGaugeQtity;
+    private UnityEvent _startFadeIn;
     [SerializeField]
-    private UnityEvent startFadeOut;
+    private UnityEvent<float> _setWaterGaugeCap;
     [SerializeField]
-    private UnityEvent startFadeIn;
+    private UnityEvent<float> _updateWaterGaugeQuantity;
     [SerializeField]
-    private UnityEvent<float> setWaterGaugeCap;
+    private UnityEvent<Vector3> _detachCamera;
     [SerializeField]
-    private UnityEvent<float> updateWaterGaugeQtity;
+    private UnityEvent<Vector3> _changeCameraDistance;
     [SerializeField]
-    private UnityEvent<Vector3> detachCamera;
-    [SerializeField]
-    private UnityEvent<Vector3> changeCameraDistance;
-    [SerializeField]
-    private UnityEvent<bool> stageEndTrigger;
+    private UnityEvent<bool> _stageEndTrigger;
 
 
 
-    public UnityEvent<GameOverType> signalGameOver;
-    private float accelerateValue;
-    private float throttleInput;
-    private float brakeInput;
-    private Vector2 pitchRollInput;
-    private float yawInput;
-    private float autoSpeed;
-    private bool isAirbourne;
-    private bool isAutoSpeedOn;
-    private float airbourneThresholdY;
-    private float planeDrag;
-    private float planeAngularDrag;
-    private int planeMagnitudeRounded;
-    private FrameRule sendHeightRule;
-    private FrameRule sendCoordsRule;
-    private FrameRule sendSpeedRule;
-    private FrameRule spinPropellerRule;
-    public static Transform PlayerBodyTransform;
-    private float signedEulerPitch;
-    private float planeSpeed;
-    private static bool engineStarted;
-    private float propellerSpeed;
-    private float fuelQuantity;
-    private bool outsideFieldBounds;
-    private bool lockedControls;
-    private bool nullifyingAngleEnabled;
-    private bool waterTankOpened;
-    private float waterQuantity;
-    private float bankAngle;
-    private float liftValue;
-    private bool throttleAllowed;
-    private float cameraTransitionTimer;
-    private Transform cachedTrns;
-    private float landingTimerCounter;
-    private IEnumerator landingCountCoroutine;
+    public UnityEvent<GameOverType> SignalGameOver { get; set; }
+    private float _accelerateValue;
+    private float _throttleInput;
+    private float _brakeInput;
+    private Vector2 _pitchRollInput;
+    private float _yawInput;
+    private float _autoSpeed;
+    private bool _isAirbourne;
+    private bool _isAutoSpeedOn;
+    private float _airbourneThresholdY;
+    private float _planeDrag;
+    private float _planeAngularDrag;
+    private int _planeMagnitudeRounded;
+    private FrameRule _sendHeightRule;
+    private FrameRule _sendCoordsRule;
+    private FrameRule _sendSpeedRule;
+    private FrameRule _spinPropellerRule;
+    public static Transform PlayerBodyTransform { get; set; }
+    private float _signedEulerPitch;
+    private float _planeSpeed;
+    private static bool _engineStarted;
+    private float _propellerSpeed;
+    private float _fuelQuantity;
+    private bool _outsideFieldBounds;
+    private bool _lockedControls;
+    private bool _nullifyingAngleEnabled;
+    private bool _waterTankOpened;
+    private float _waterQuantity;
+    private float _bankAngle;
+    private float _liftValue;
+    private bool _throttleAllowed;
+    private float _cameraTransitionTimer;
+    private Transform _cachedTransform;
+    private float _landingTimerCounter;
+    private IEnumerator _landingCountCoroutine;
 
 
     private void Awake()
     {
-        cachedTrns = transform;
+        _cachedTransform = transform;
+        SignalGameOver = new();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        isAirbourne = false;
-        isAutoSpeedOn = false;
-        airbourneThresholdY = cachedTrns.position.y + 1;
-        autoSpeed = 0;
-        planeMagnitudeRounded = 0;
-        planeDrag = Constants.PlDefaultDrag;
-        planeAngularDrag = Constants.PlDefaultAngularDrag;
-        sendHeightRule = new FrameRule(Constants.SendHeightFramerule);
-        sendCoordsRule = new FrameRule(Constants.SendCoordsFramerule);
-        sendSpeedRule = new FrameRule(Constants.SendSpeedFramerule);
-        spinPropellerRule = new FrameRule(Constants.SpinPropellerFramerule);
-        PlayerBodyTransform = bodyTransform;
-        propellerSpeed = 0;
-        engineStarted = false;
-        setFuelGaugeCap.Invoke(Constants.FuelCapacity);
-        setWaterGaugeCap.Invoke(Constants.WaterCapacity);
-        fuelQuantity = 10000;    // Will be set from game settings
-        waterQuantity = 1000;
-        planeBody.mass = Mathf.Clamp(Constants.WeightPlaneNoLoad + (waterQuantity * Constants.WaterQuantityToWeightRatio),
+        _isAirbourne = false;
+        _isAutoSpeedOn = false;
+        _airbourneThresholdY = _cachedTransform.position.y + 1;
+        _autoSpeed = 0;
+        _planeMagnitudeRounded = 0;
+        _planeDrag = Constants.PlDefaultDrag;
+        _planeAngularDrag = Constants.PlDefaultAngularDrag;
+        _sendHeightRule = new FrameRule(Constants.SendHeightFramerule);
+        _sendCoordsRule = new FrameRule(Constants.SendCoordsFramerule);
+        _sendSpeedRule = new FrameRule(Constants.SendSpeedFramerule);
+        _spinPropellerRule = new FrameRule(Constants.SpinPropellerFramerule);
+        PlayerBodyTransform = _bodyTransform;
+        _propellerSpeed = 0;
+        _engineStarted = false;
+        _setFuelGaugeCap.Invoke(Constants.FuelCapacity);
+        _setWaterGaugeCap.Invoke(Constants.WaterCapacity);
+        _fuelQuantity = 10000;    // Will be set from game settings
+        _waterQuantity = 1000;
+        _planeBody.mass = Mathf.Clamp(Constants.WeightPlaneNoLoad + (_waterQuantity * Constants.WaterQuantityToWeightRatio),
             Constants.WeightPlaneNoLoad, Constants.MaxWeightPlaneFullyLoaded);   // Should be executed only when attempting firefighter missions
-        outsideFieldBounds = false;
-        lockedControls = false;
-        nullifyingAngleEnabled = false;
-        waterTankOpened = false;
-        throttleAllowed = false;
-        cameraTransitionTimer = 0;
-        landingTimerCounter = 0;
-        landingCountCoroutine = LandingCountdown();
-        updateFuelGaugeQtity.Invoke(fuelQuantity);
+        _outsideFieldBounds = false;
+        _lockedControls = false;
+        _nullifyingAngleEnabled = false;
+        _waterTankOpened = false;
+        _throttleAllowed = false;
+        _cameraTransitionTimer = 0;
+        _landingTimerCounter = 0;
+        _landingCountCoroutine = LandingCountdown();
+        _updateFuelGaugeQuantity.Invoke(_fuelQuantity);
 
         // Move to game manager script the logic below
         Transform ground = GameObject.Find("Ground").transform;
@@ -162,89 +159,89 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!isAirbourne && cachedTrns.position.y > airbourneThresholdY)
+        if (!_isAirbourne && _cachedTransform.position.y > _airbourneThresholdY)
         {
-            isAirbourne = true;
+            _isAirbourne = true;
         }
 
         // Updating UI elements
-        if (sendHeightRule.CheckFrameRule()) updateHeightMeter.Invoke(cachedTrns.position.y);
-        sendHeightRule.AdvanceCounter();
+        if (_sendHeightRule.CheckFrameRule()) _updateHeightMeter.Invoke(_cachedTransform.position.y);
+        _sendHeightRule.AdvanceCounter();
 
-        if (sendCoordsRule.CheckFrameRule()) updateRadarCamera.Invoke(new Vector2(cachedTrns.position.x, 
-            cachedTrns.position.z), cachedTrns.rotation.eulerAngles.y);
-        sendCoordsRule.AdvanceCounter();
+        if (_sendCoordsRule.CheckFrameRule()) _updateRadarCamera.Invoke(new Vector2(_cachedTransform.position.x, 
+            _cachedTransform.position.z), _cachedTransform.rotation.eulerAngles.y);
+        _sendCoordsRule.AdvanceCounter();
 
-        if (sendSpeedRule.CheckFrameRule())
+        if (_sendSpeedRule.CheckFrameRule())
         {
-            planeMagnitudeRounded = Mathf.RoundToInt(planeSpeed);
-            setSpeedometerSpeed.Invoke(planeMagnitudeRounded);
+            _planeMagnitudeRounded = Mathf.RoundToInt(_planeSpeed);
+            _setSpeedometerSpeed.Invoke(_planeMagnitudeRounded);
         }
-        sendSpeedRule.AdvanceCounter();
+        _sendSpeedRule.AdvanceCounter();
 
         // Fuel management
-        if (engineStarted)
+        if (_engineStarted)
         {
-            fuelQuantity -= (Constants.EngineRunningFuelWaste + (0.001f * planeSpeed));
-            if (fuelQuantity <= 0)
+            _fuelQuantity -= (Constants.EngineRunningFuelWaste + (0.001f * _planeSpeed));
+            if (_fuelQuantity <= 0)
             {
-                engineStarted = false;
-                if (!isAirbourne)
+                _engineStarted = false;
+                if (!_isAirbourne)
                 {
-                    signalGameOver.Invoke(GameOverType.FuelDepleted);
+                    SignalGameOver.Invoke(GameOverType.FuelDepleted);
                 }
             }
-            updateFuelGaugeQtity.Invoke(fuelQuantity);
+            _updateFuelGaugeQuantity.Invoke(_fuelQuantity);
         }
 
         // Water management
-        if (waterTankOpened)
+        if (_waterTankOpened)
         {
-            bankAngle = HelperMethods.GetSignedAngleFromEuler(planeBody.rotation.eulerAngles.z);
-            if (waterQuantity <= 0 || bankAngle < -Constants.PourWaterBankAngleMinMax || 
-                bankAngle > Constants.PourWaterBankAngleMinMax)
+            _bankAngle = HelperMethods.GetSignedAngleFromEuler(_planeBody.rotation.eulerAngles.z);
+            if (_waterQuantity <= 0 || _bankAngle < -Constants.PourWaterBankAngleMinMax || 
+                _bankAngle > Constants.PourWaterBankAngleMinMax)
             {
-                waterTankOpened = false;
-                dropWaterEffect.Stop();
+                _waterTankOpened = false;
+                _dropWaterEffect.Stop();
             }
-            waterQuantity = Mathf.Clamp(waterQuantity - Constants.WaterWasteRate, 0, Constants.WaterCapacity);
-            planeBody.mass = Mathf.Clamp(planeBody.mass - (Constants.WaterWasteRate * Constants.WaterQuantityToWeightRatio),
+            _waterQuantity = Mathf.Clamp(_waterQuantity - Constants.WaterWasteRate, 0, Constants.WaterCapacity);
+            _planeBody.mass = Mathf.Clamp(_planeBody.mass - (Constants.WaterWasteRate * Constants.WaterQuantityToWeightRatio),
                 Constants.WeightPlaneNoLoad, Constants.MaxWeightPlaneFullyLoaded);
-            updateWaterGaugeQtity.Invoke(waterQuantity);
+            _updateWaterGaugeQuantity.Invoke(_waterQuantity);
         }
 
-        // Propeller spinning
-        if (engineStarted || propellerSpeed > 0)
+        // _propeller spinning
+        if (_engineStarted || _propellerSpeed > 0)
         {
-            propeller.Rotate(propellerSpeed, 0, 0);
-            if (propellerSpeed < Constants.MaxIdlePropellerSpeed || !engineStarted)
+            _propeller.Rotate(_propellerSpeed, 0, 0);
+            if (_propellerSpeed < Constants.MaxIdlePropellerSpeed || !_engineStarted)
             {
-                if (spinPropellerRule.CheckFrameRule()) propellerSpeed += (engineStarted ? 2 : -2);
+                if (_spinPropellerRule.CheckFrameRule()) _propellerSpeed += (_engineStarted ? 2 : -2);
                 AllowThrottle(false);
-                spinPropellerRule.AdvanceCounter();
+                _spinPropellerRule.AdvanceCounter();
             }
-            else if (propellerSpeed >= Constants.MaxIdlePropellerSpeed)
+            else if (_propellerSpeed >= Constants.MaxIdlePropellerSpeed)
             {
-                propellerSpeed = Constants.MaxIdlePropellerSpeed + (0.1f * planeSpeed);
+                _propellerSpeed = Constants.MaxIdlePropellerSpeed + (0.1f * _planeSpeed);
                 AllowThrottle(true);
             }
         }
 
-        if (outsideFieldBounds)
+        if (_outsideFieldBounds)
         {
             if (UIController.GetScreenTransparency() == 0)
             {
-                lockedControls = true;
-                startFadeOut.Invoke();
+                _lockedControls = true;
+                _startFadeOut.Invoke();
             }
-            else if (UIController.GetScreenTransparency() == 255 && lockedControls)
+            else if (UIController.GetScreenTransparency() == 255 && _lockedControls)
             {
                 // Reversing plane direction and speed after passing stage boundary
-                cachedTrns.Rotate(new Vector3(2 * cachedTrns.rotation.eulerAngles.x, 180, 0));
-                Vector3 currentDirection = -planeBody.velocity.normalized;
-                planeBody.velocity = currentDirection * planeBody.velocity.magnitude;
+                _cachedTransform.Rotate(new Vector3(2 * _cachedTransform.rotation.eulerAngles.x, 180, 0));
+                Vector3 currentDirection = -_planeBody.velocity.normalized;
+                _planeBody.velocity = currentDirection * _planeBody.velocity.magnitude;
                 Physics.SyncTransforms();
-                lockedControls = false;
+                _lockedControls = false;
             }
         }
 
@@ -252,91 +249,91 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        accelerateValue = 0;
-        planeSpeed = planeBody.velocity.magnitude;
-        planeDrag = Constants.PlDefaultDrag;
+        _accelerateValue = 0;
+        _planeSpeed = _planeBody.velocity.magnitude;
+        _planeDrag = Constants.PlDefaultDrag;
 
-        if (throttleAllowed)
+        if (_throttleAllowed)
         {
-            if (throttleInput != 0)  // Accelerate using player input ignoring auto speed value
+            if (_throttleInput != 0)  // Accelerate using player input ignoring auto speed value
             {
-                accelerateValue = throttleInput * throttleAcceleration;
+                _accelerateValue = _throttleInput * _throttleAcceleration;
             }
             else
             {
-                if (isAutoSpeedOn) // Maintain constant speed if enabled
-                    accelerateValue = planeSpeed < autoSpeed ? throttleAcceleration : 0;
+                if (_isAutoSpeedOn) // Maintain constant speed if enabled
+                    _accelerateValue = _planeSpeed < _autoSpeed ? _throttleAcceleration : 0;
             }
 
-            if (planeSpeed > Constants.PlaneMaxSpeed) planeDrag += (Constants.HighSpeedDrag * planeSpeed);
-            signedEulerPitch = HelperMethods.GetSignedAngleFromEuler(planeBody.rotation.eulerAngles.x);
+            if (_planeSpeed > Constants.PlaneMaxSpeed) _planeDrag += (Constants.HighSpeedDrag * _planeSpeed);
+            _signedEulerPitch = HelperMethods.GetSignedAngleFromEuler(_planeBody.rotation.eulerAngles.x);
         }
 
-        liftValue = (planeSpeed - (planeSpeed * signedEulerPitch * pitchLiftFactor)) * liftForce;
-        planeBody.AddRelativeForce(Vector3.up * liftValue, ForceMode.Impulse);
+        _liftValue = (_planeSpeed - (_planeSpeed * _signedEulerPitch * _pitchLiftFactor)) * _liftForce;
+        _planeBody.AddRelativeForce(Vector3.up * _liftValue, ForceMode.Impulse);
 
-        if (brakeInput != 0)    // Brake engaged
+        if (_brakeInput != 0)    // Brake engaged
         {
-            planeDrag += Constants.PlBrakeDrag;
+            _planeDrag += Constants.PlBrakeDrag;
         }
-        else if (signedEulerPitch >= -Constants.PitchDragAngle && planeBody.position.y < Constants.MaxHeightAllowed)
+        else if (_signedEulerPitch >= -Constants.PitchDragAngle && _planeBody.position.y < Constants.MaxHeightAllowed)
         {
-            planeBody.AddRelativeForce(Vector3.forward * accelerateValue, ForceMode.Acceleration);
+            _planeBody.AddRelativeForce(Vector3.forward * _accelerateValue, ForceMode.Acceleration);
         }
         else
         {
-            planeDrag += (Constants.HighPitchDrag * (-signedEulerPitch));
+            _planeDrag += (Constants.HighPitchDrag * (-_signedEulerPitch));
         }
 
-        if (planeBody.position.y >= Constants.MaxHeightAllowed)    // Height ceiling check
-            planeDrag += Constants.HeightDrag;
+        if (_planeBody.position.y >= Constants.MaxHeightAllowed)    // Height ceiling check
+            _planeDrag += Constants.HeightDrag;
 
-        if (pitchRollInput != Vector2.zero && planeSpeed > 1)
+        if (_pitchRollInput != Vector2.zero && _planeSpeed > 1)
         {
-            if (pitchRollInput.y != 0 && isAirbourne) planeDrag += (Constants.PlTurnDrag * planeSpeed);
-            planeBody.AddRelativeTorque(pitchRollInput.y * pitchFactor * Vector3.right, ForceMode.Acceleration);
-            planeBody.AddRelativeTorque(pitchRollInput.x * rollFactor * Vector3.forward, ForceMode.Acceleration);
+            if (_pitchRollInput.y != 0 && _isAirbourne) _planeDrag += (Constants.PlTurnDrag * _planeSpeed);
+            _planeBody.AddRelativeTorque(_pitchRollInput.y * _pitchFactor * Vector3.right, ForceMode.Acceleration);
+            _planeBody.AddRelativeTorque(_pitchRollInput.x * _rollFactor * Vector3.forward, ForceMode.Acceleration);
         }
 
-        if (isAirbourne && yawInput != 0f)
+        if (_isAirbourne && _yawInput != 0f)
         {
-            if (throttleInput == 0) planeDrag += Constants.PlTurnDrag; 
-            planeBody.AddRelativeTorque(yawInput * yawFactor * Vector3.up, ForceMode.Acceleration);
+            if (_throttleInput == 0) _planeDrag += Constants.PlTurnDrag; 
+            _planeBody.AddRelativeTorque(_yawInput * _yawFactor * Vector3.up, ForceMode.Acceleration);
         }
 
-        if (planeBody.drag != planeDrag) planeBody.drag = planeDrag;
-        if(planeBody.angularDrag != planeAngularDrag) planeBody.angularDrag = planeAngularDrag;
+        if (_planeBody.drag != _planeDrag) _planeBody.drag = _planeDrag;
+        if(_planeBody.angularDrag != _planeAngularDrag) _planeBody.angularDrag = _planeAngularDrag;
     }
 
     private void AllowThrottle(bool allowVal)
     {
-        if (throttleAllowed != allowVal) throttleAllowed = allowVal;
-        setSpeedometerActive.Invoke(allowVal);
+        if (_throttleAllowed != allowVal) _throttleAllowed = allowVal;
+        _setSpeedometerActive.Invoke(allowVal);
     }
 
     private void EndPlaySession(ParticleSystem effect, GameOverType gameOverReason)
     {
-        effect.transform.position = planeBody.position;
+        effect.transform.position = _planeBody.position;
         effect.Play();
-        detachCamera.Invoke(effect.transform.position);
+        _detachCamera.Invoke(effect.transform.position);
         Destroy(gameObject);
-        signalGameOver.Invoke(gameOverReason);
+        SignalGameOver.Invoke(gameOverReason);
     }
 
     // Collisions/Triggers
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag(Constants.TerrainTagName) && isAirbourne)
+        if (collision.gameObject.CompareTag(Constants.TerrainTagName) && _isAirbourne)
         {
-            isAirbourne = false;
-            float signedEulerBank = HelperMethods.GetSignedAngleFromEuler(cachedTrns.rotation.eulerAngles.z);
+            _isAirbourne = false;
+            float signedEulerBank = HelperMethods.GetSignedAngleFromEuler(_cachedTransform.rotation.eulerAngles.z);
             ContactPoint collisionPoint = collision.GetContact(0);
             if (!(collisionPoint.normal == Vector3.up && collisionPoint.impulse.y == 0 &&
-                Constants.LandingPitchMin <= signedEulerPitch && signedEulerPitch <= Constants.LandingPitchMax &&
+                Constants.LandingPitchMin <= _signedEulerPitch && _signedEulerPitch <= Constants.LandingPitchMax &&
                 Constants.LandingBankMin < signedEulerBank && signedEulerBank < Constants.LandingBankMax))
             {
-                EndPlaySession(crashEffect, GameOverType.GroundCrash);
+                EndPlaySession(_crashEffect, GameOverType.GroundCrash);
             }
         }
 
@@ -344,34 +341,34 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("StageBounds") && outsideFieldBounds)
+        if (other.gameObject.CompareTag("StageBounds") && _outsideFieldBounds)
         {
-            outsideFieldBounds = false;
-            startFadeIn.Invoke();
+            _outsideFieldBounds = false;
+            _startFadeIn.Invoke();
         }
         else if (other.gameObject.CompareTag(Constants.WaterSurfaceTagName))
         {
-            if (waterQuantity < Constants.WaterCapacity)
+            if (_waterQuantity < Constants.WaterCapacity)
             {
-                waterQuantity = Mathf.Clamp(waterQuantity + Constants.WaterScoopRate, 0, Constants.WaterCapacity);
-                planeBody.mass = Mathf.Clamp(planeBody.mass + (Constants.WaterScoopRate * Constants.WaterQuantityToWeightRatio),
+                _waterQuantity = Mathf.Clamp(_waterQuantity + Constants.WaterScoopRate, 0, Constants.WaterCapacity);
+                _planeBody.mass = Mathf.Clamp(_planeBody.mass + (Constants.WaterScoopRate * Constants.WaterQuantityToWeightRatio),
                     Constants.WeightPlaneNoLoad, Constants.MaxWeightPlaneFullyLoaded);
-                updateWaterGaugeQtity.Invoke(waterQuantity);
+                _updateWaterGaugeQuantity.Invoke(_waterQuantity);
             }
         }
         else if (other.gameObject.CompareTag(Constants.WaterDepthsTagName))
         {
-            cameraTransitionTimer = 0;
-            waterSplashEffect.Stop();
-            EndPlaySession(crashInWaterEffect, GameOverType.WaterCrash);
+            _cameraTransitionTimer = 0;
+            _waterSplashEffect.Stop();
+            EndPlaySession(_crashInWaterEffect, GameOverType.WaterCrash);
         }
         else if (other.gameObject.CompareTag(Constants.GoalSphereTag))
         {
-            stageEndTrigger.Invoke(false);
+            _stageEndTrigger.Invoke(false);
         }
         else if (other.gameObject.CompareTag(Constants.LandingZoneTagName))
         {
-            StartCoroutine(landingCountCoroutine);
+            StartCoroutine(_landingCountCoroutine);
         }
     }
 
@@ -379,87 +376,81 @@ public class PlayerController : MonoBehaviour
     {
         if (other.gameObject.CompareTag(Constants.WaterSurfaceTagName))
         {
-            float signedEulerBank = HelperMethods.GetSignedAngleFromEuler(cachedTrns.rotation.eulerAngles.z);
-            if (Constants.ScoopPitchMin <= signedEulerPitch && signedEulerPitch <= Constants.ScoopPitchMax &&
+            float signedEulerBank = HelperMethods.GetSignedAngleFromEuler(_cachedTransform.rotation.eulerAngles.z);
+            if (Constants.ScoopPitchMin <= _signedEulerPitch && _signedEulerPitch <= Constants.ScoopPitchMax &&
                 Constants.ScoopBankMin < signedEulerBank && signedEulerBank < Constants.ScoopBankMax)
             {
                 // Trying to keep plane afloat while scooping water
-                planeBody.AddRelativeForce(Vector3.up * Constants.WaterFloatForceUp, ForceMode.VelocityChange);
-                waterSplashEffect.Play();
-                if (cameraTransitionTimer == 0)
+                _planeBody.AddRelativeForce(Vector3.up * Constants.WaterFloatForceUp, ForceMode.VelocityChange);
+                _waterSplashEffect.Play();
+                if (_cameraTransitionTimer == 0)
                 {
-                    changeCameraDistance.Invoke(Constants.CameraTrailingDistanceWater);
+                    _changeCameraDistance.Invoke(Constants.CameraTrailingDistanceWater);
                     StartCoroutine(CameraTimerCountdown());
                 }
-                cameraTransitionTimer = Constants.CameraTimeLimit;
+                _cameraTransitionTimer = Constants.CameraTimeLimit;
             }
         }
-        else if(other.gameObject.CompareTag(Constants.LandingZoneTagName) && (engineStarted || planeMagnitudeRounded != 0))
+        else if(other.gameObject.CompareTag(Constants.LandingZoneTagName) && (_engineStarted || _planeMagnitudeRounded != 0))
         {
-            landingTimerCounter = Constants.LandingTimer;   // Reset timer if player moves
+            _landingTimerCounter = Constants.LandingTimer;   // Reset timer if player moves
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.CompareTag(Constants.StageBoundsTagName) && !outsideFieldBounds)
-            outsideFieldBounds = true;
+        if (other.gameObject.CompareTag(Constants.StageBoundsTagName) && !_outsideFieldBounds)
+            _outsideFieldBounds = true;
         else if (other.gameObject.CompareTag(Constants.WaterSurfaceTagName))
         {
-            planeBody.AddRelativeForce(Vector3.down * Constants.WaterFloatForceDown, ForceMode.VelocityChange);
-            waterSplashEffect.Stop();
+            _planeBody.AddRelativeForce(Vector3.down * Constants.WaterFloatForceDown, ForceMode.VelocityChange);
+            _waterSplashEffect.Stop();
         }
         else if (other.gameObject.CompareTag(Constants.LandingZoneTagName))
         {
-            StopCoroutine(landingCountCoroutine);
+            StopCoroutine(_landingCountCoroutine);
         }
-    }
-
-
-    public static bool EngineStarted()
-    {
-        return engineStarted;
     }
 
     public void StartPlaneInAir(float initSpeed)
     {
-        isAirbourne = true;
-        engineStarted = true;
+        _isAirbourne = true;
+        _engineStarted = true;
         AllowThrottle(true);
-        propellerSpeed = Constants.MaxIdlePropellerSpeed;
-        planeBody.velocity = planeBody.transform.forward * initSpeed;
-        planeMagnitudeRounded = Mathf.RoundToInt(planeBody.velocity.magnitude);
+        _propellerSpeed = Constants.MaxIdlePropellerSpeed;
+        _planeBody.velocity = _planeBody.transform.forward * initSpeed;
+        _planeMagnitudeRounded = Mathf.RoundToInt(_planeBody.velocity.magnitude);
         ToggleAutoSpeed();
     }
 
     private IEnumerator NullifyAngularSpeed()
     {
-        nullifyingAngleEnabled = true;
+        _nullifyingAngleEnabled = true;
         yield return new WaitForSeconds(0.8f);
-        if(pitchRollInput == Vector2.zero && yawInput == 0) planeBody.angularVelocity = Vector3.zero;
-        nullifyingAngleEnabled = false;
+        if(_pitchRollInput == Vector2.zero && _yawInput == 0) _planeBody.angularVelocity = Vector3.zero;
+        _nullifyingAngleEnabled = false;
     }
 
     private IEnumerator CameraTimerCountdown()
     {
-        cameraTransitionTimer = Constants.CameraTimeLimit;
-        while (cameraTransitionTimer != 0)
+        _cameraTransitionTimer = Constants.CameraTimeLimit;
+        while (_cameraTransitionTimer != 0)
         {
-            cameraTransitionTimer = Mathf.Clamp(cameraTransitionTimer - Time.deltaTime, 0, Constants.CameraTimeLimit);
+            _cameraTransitionTimer = Mathf.Clamp(_cameraTransitionTimer - Time.deltaTime, 0, Constants.CameraTimeLimit);
             yield return null;
         }
-        changeCameraDistance.Invoke(Constants.CameraTrailingDistanceDefault);
+        _changeCameraDistance.Invoke(Constants.CameraTrailingDistanceDefault);
     }
 
     private IEnumerator LandingCountdown() 
     {
-        landingTimerCounter = Constants.LandingTimer;
-        while (landingTimerCounter != 0)
+        _landingTimerCounter = Constants.LandingTimer;
+        while (_landingTimerCounter != 0)
         {
-            landingTimerCounter = Mathf.Clamp(landingTimerCounter - Time.deltaTime, 0, Constants.LandingTimer);
+            _landingTimerCounter = Mathf.Clamp(_landingTimerCounter - Time.deltaTime, 0, Constants.LandingTimer);
             yield return null;
         }
-        stageEndTrigger.Invoke(true);
+        _stageEndTrigger.Invoke(true);
     }
 
 
@@ -467,83 +458,83 @@ public class PlayerController : MonoBehaviour
 
     public void ToggleEngine()
     {
-        if (!lockedControls && fuelQuantity > 0)
+        if (!_lockedControls && _fuelQuantity > 0)
         {
-            engineStarted = !engineStarted;
-            if (!engineStarted && isAutoSpeedOn) ToggleAutoSpeed();
+            _engineStarted = !_engineStarted;
+            if (!_engineStarted && _isAutoSpeedOn) ToggleAutoSpeed();
         }
     }
 
     public void PitchRoll(Vector2 direction)
     {
-        if (!lockedControls)
+        if (!_lockedControls)
         {
-            pitchRollInput = direction;
-            planeAngularDrag = Constants.PlTurnAngularDrag;
+            _pitchRollInput = direction;
+            _planeAngularDrag = Constants.PlTurnAngularDrag;
         }
     }
 
     public void CancelPitchroll()
     {
-        pitchRollInput = Vector2.zero;
-        if (yawInput == 0 && !nullifyingAngleEnabled)
+        _pitchRollInput = Vector2.zero;
+        if (_yawInput == 0 && !_nullifyingAngleEnabled)
         {
-            planeAngularDrag = Constants.PlDefaultAngularDrag;
+            _planeAngularDrag = Constants.PlDefaultAngularDrag;
             StartCoroutine(NullifyAngularSpeed());
         }
     }
 
     public void Yaw(float input)
     {
-        if (!lockedControls)
+        if (!_lockedControls)
         {
-            yawInput = input;
-            planeAngularDrag = Constants.PlTurnAngularDrag;
+            _yawInput = input;
+            _planeAngularDrag = Constants.PlTurnAngularDrag;
         }
     }
 
     public void CancelYaw()
     {
-        yawInput = 0f;
-        if (pitchRollInput == Vector2.zero && !nullifyingAngleEnabled)
+        _yawInput = 0f;
+        if (_pitchRollInput == Vector2.zero && !_nullifyingAngleEnabled)
         {
-            planeAngularDrag = Constants.PlDefaultAngularDrag;
+            _planeAngularDrag = Constants.PlDefaultAngularDrag;
             StartCoroutine(NullifyAngularSpeed());
         }
     }
 
     public void Accelerate(float input)
     {
-        if (!lockedControls) throttleInput = input;
+        if (!_lockedControls) _throttleInput = input;
     }
 
     public void CancelAccelerate()
     {
-        throttleInput = 0;
+        _throttleInput = 0;
     }
 
     public void Brake(float input)
     {
-        if (!lockedControls) brakeInput = input;
+        if (!_lockedControls) _brakeInput = input;
     }
 
     public void CancelBrake()
     {
-        brakeInput = 0;
+        _brakeInput = 0;
     }
 
     public void ToggleDropwater()
     {
-        if (isAirbourne && waterQuantity > 0)
+        if (_isAirbourne && _waterQuantity > 0)
         {
-            waterTankOpened = !waterTankOpened;
-            if (waterTankOpened)
+            _waterTankOpened = !_waterTankOpened;
+            if (_waterTankOpened)
             {
-                dropWaterEffect.Play();
+                _dropWaterEffect.Play();
             }
             else
             {
-                dropWaterEffect.Stop();
+                _dropWaterEffect.Stop();
             }
         }
 
@@ -551,11 +542,11 @@ public class PlayerController : MonoBehaviour
 
     public void ToggleAutoSpeed()
     {
-        if (!lockedControls && engineStarted)
+        if (!_lockedControls && _engineStarted)
         {
-            isAutoSpeedOn = !isAutoSpeedOn;
-            if (isAutoSpeedOn) autoSpeed = (float)planeMagnitudeRounded;
-            updateAutoSpeedIndicator.Invoke(isAutoSpeedOn, planeMagnitudeRounded);
+            _isAutoSpeedOn = !_isAutoSpeedOn;
+            if (_isAutoSpeedOn) _autoSpeed = (float)_planeMagnitudeRounded;
+            _updateAutoSpeedIndicator.Invoke(_isAutoSpeedOn, _planeMagnitudeRounded);
         }
     }
 

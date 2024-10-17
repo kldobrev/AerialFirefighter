@@ -10,83 +10,85 @@ using UnityEngine.UI;
 public class UIController : MonoBehaviour
 {
     [SerializeField]
-    private TextMeshProUGUI speedometer;
+    private TextMeshProUGUI _speedometer;
     [SerializeField]
-    private TextMeshProUGUI autoSpeedIndicator;
+    private TextMeshProUGUI _autoSpeedIndicator;
     [SerializeField]
-    private Slider heightMeter;
+    private Slider _heightMeter;
     [SerializeField]
-    private TextMeshProUGUI heightNumeric;
+    private TextMeshProUGUI _heightNumeric;
     [SerializeField]
-    private Camera mainCamera;
+    private RawImage _fadeEffectsPanel;
     [SerializeField]
-    private RawImage fadeEffectsPanel;
+    private TextMeshProUGUI _firesLeftCounter;
     [SerializeField]
-    private TextMeshProUGUI firesLeftCounter;
+    private TextMeshProUGUI _extinguishedSign;
     [SerializeField]
-    private TextMeshProUGUI extinguishedSign;
+    private TextMeshProUGUI _scoreSign;
     [SerializeField]
-    private TextMeshProUGUI scoreSign;
+    private TextMeshProUGUI _scoreToAddSign;
     [SerializeField]
-    private TextMeshProUGUI scoreToAddSign;
+    private TextMeshProUGUI _crashSign;
     [SerializeField]
-    private TextMeshProUGUI crashSign;
+    private TextMeshProUGUI _clearSign;
     [SerializeField]
-    private TextMeshProUGUI clearSign;
-    [SerializeField]
-    private InGameMenuController inGameMenu;
+    private InGameMenuController _inGameMenu;
 
-    public UnityEvent crashComplete;
-    private int speedDisplayed;
-    private Image heightMeterBkg;
-    private int currentWeaponIconIdx;
-    private static byte screenAlpha;
-    private static byte extinguishSignAlpha;
-    private static byte scoreToAddSignAlpha;
-    private static byte clearSignAlpha;
-    private static int numberOfFires;
-    private float extingSignTimer;
+    public UnityEvent CrashComplete { get; set; }
+    private int _speedDisplayed;
+    private Image _heightMeterBkg;
+    private int _currentWeaponIconIndex;
+    private static byte _screenAlpha;
+    private static byte _extinguishSignAlpha;
+    private static byte _scoreToAddSignAlpha;
+    private static byte _clearSignAlpha;
+    private static int _numberOfFires;
+    private float _extingSignTimer;
 
 
 
+    void Awake()
+    {
+        CrashComplete = new();
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        speedometer.text = Constants.DefaultSpeedValueUI;
-        autoSpeedIndicator.text = Constants.DefaultAutoSpeedValueUI;
-        speedDisplayed = 0;
-        speedometer.color = Constants.SpeedColourInactive;
-        autoSpeedIndicator.color = Constants.SpeedColourInactive;
-        heightMeter.value = 0f;
-        heightMeter.minValue = Constants.MinHeightAllowed;
-        heightMeter.maxValue = Constants.MaxHeightAllowed;
-        heightMeterBkg = heightMeter.GetComponentInChildren<Image>();
-        heightMeterBkg.color = Constants.HeightBelowAlertColour;
-        currentWeaponIconIdx = 0;
-        fadeEffectsPanel.color = Constants.FadePanelDefaultColour;
-        screenAlpha = Constants.FadePanelDefaultColour.a;
-        extinguishSignAlpha = Constants.ExtinguishSignColour.a;
-        extinguishedSign.color = Constants.ExtinguishSignColour;
-        extinguishedSign.fontSize = Constants.UISignDefaultFontSize;
-        scoreToAddSignAlpha = Constants.ScoreToAddSignColour.a;
-        scoreToAddSign.color = Constants.ScoreToAddSignColour;
-        clearSignAlpha = Constants.ClearSignColour.a;
-        clearSign.color = Constants.ClearSignColour;
-        extinguishedSign.transform.parent.gameObject.SetActive(true);
+        _speedometer.text = Constants.DefaultSpeedValueUI;
+        _autoSpeedIndicator.text = Constants.DefaultAutoSpeedValueUI;
+        _speedDisplayed = 0;
+        _speedometer.color = Constants.SpeedColourInactive;
+        _autoSpeedIndicator.color = Constants.SpeedColourInactive;
+        _heightMeter.value = 0f;
+        _heightMeter.minValue = Constants.MinHeightAllowed;
+        _heightMeter.maxValue = Constants.MaxHeightAllowed;
+        _heightMeterBkg = _heightMeter.GetComponentInChildren<Image>();
+        _heightMeterBkg.color = Constants.HeightBelowAlertColour;
+        _currentWeaponIconIndex = 0;
+        _fadeEffectsPanel.color = Constants.FadePanelDefaultColour;
+        _screenAlpha = Constants.FadePanelDefaultColour.a;
+        _extinguishSignAlpha = Constants.ExtinguishSignColour.a;
+        _extinguishedSign.color = Constants.ExtinguishSignColour;
+        _extinguishedSign.fontSize = Constants.UISignDefaultFontSize;
+        _scoreToAddSignAlpha = Constants.ScoreToAddSignColour.a;
+        _scoreToAddSign.color = Constants.ScoreToAddSignColour;
+        _clearSignAlpha = Constants.ClearSignColour.a;
+        _clearSign.color = Constants.ClearSignColour;
+        _extinguishedSign.transform.parent.gameObject.SetActive(true);
     }
 
     public void SetSpeedometerColour(bool active)
     {
-        speedometer.color = active ? Constants.SpeedColourIndicatorOn : Constants.SpeedColourInactive;
+        _speedometer.color = active ? Constants.SpeedColourIndicatorOn : Constants.SpeedColourInactive;
     }
 
     public void UpdateSpeedometer(int newSpeed)
     {
-        if(newSpeed != speedDisplayed)
+        if(newSpeed != _speedDisplayed)
         {
-            speedDisplayed = newSpeed;
-            speedometer.text = "Speed: " + newSpeed.ToString().PadLeft(3, '0') + " km/h";
+            _speedDisplayed = newSpeed;
+            _speedometer.text = "Speed: " + newSpeed.ToString().PadLeft(3, '0') + " km/h";
         }
     }
 
@@ -94,29 +96,29 @@ public class UIController : MonoBehaviour
     {
         if(isTurnedOn)
         {
-            autoSpeedIndicator.text = "Auto speed: " + newAutoSpeed.ToString().PadLeft(3, '0') + " km/h";
-            autoSpeedIndicator.color = Constants.AutoSpeedColourOn;
+            _autoSpeedIndicator.text = "Auto speed: " + newAutoSpeed.ToString().PadLeft(3, '0') + " km/h";
+            _autoSpeedIndicator.color = Constants.AutoSpeedColourOn;
         }
         else
         {
-            autoSpeedIndicator.color = Constants.SpeedColourInactive;
+            _autoSpeedIndicator.color = Constants.SpeedColourInactive;
         }
     }
 
     public void UpdateHeightMeter(float height)
     {
-        if (height <= Constants.AlertHeightUI && heightNumeric.color != Constants.HeightBelowAlertColour)
+        if (height <= Constants.AlertHeightUI && _heightNumeric.color != Constants.HeightBelowAlertColour)
         {
-            heightMeterBkg.color = Constants.HeightBelowAlertColour;
-            heightNumeric.color = Constants.HeightBelowAlertColour;
+            _heightMeterBkg.color = Constants.HeightBelowAlertColour;
+            _heightNumeric.color = Constants.HeightBelowAlertColour;
         }
-        else if (height > Constants.AlertHeightUI && heightNumeric.color != Constants.HeightAboveAlertColour)
+        else if (height > Constants.AlertHeightUI && _heightNumeric.color != Constants.HeightAboveAlertColour)
         {
-            heightMeterBkg.color = Constants.HeightAboveAlertColour;
-            heightNumeric.color = Constants.HeightAboveAlertColour;
+            _heightMeterBkg.color = Constants.HeightAboveAlertColour;
+            _heightNumeric.color = Constants.HeightAboveAlertColour;
         }
-        heightMeter.value = Mathf.Clamp(height, Constants.MinHeightAllowed, Constants.MaxHeightAllowed);
-        heightNumeric.text = ((int) height).ToString().PadLeft(4, '0') + " m";
+        _heightMeter.value = Mathf.Clamp(height, Constants.MinHeightAllowed, Constants.MaxHeightAllowed);
+        _heightNumeric.text = ((int) height).ToString().PadLeft(4, '0') + " m";
     }
 
     public void ScreenFadeToBlack()
@@ -133,59 +135,59 @@ public class UIController : MonoBehaviour
 
     public void UpdateFireCount(int fireCount, int firesInCombo)
     {
-        firesLeftCounter.text = fireCount.ToString();
+        _firesLeftCounter.text = fireCount.ToString();
         ShowExtinguishedSign(fireCount, firesInCombo);
     }
 
     public static float GetScreenTransparency()
     {
-        return screenAlpha;
+        return _screenAlpha;
     }
 
     public void ShowExtinguishedSign(int numFiresLeft, int numFiresCombo)
     {
-        extinguishedSign.fontSize = Constants.UISignDefaultFontSize;
+        _extinguishedSign.fontSize = Constants.UISignDefaultFontSize;
         if (numFiresLeft == 0)
         {
-            extinguishedSign.text = Constants.ExtinguishSignAllExtinguishedText;
-            extinguishedSign.color = Constants.ExtinguishSignColourAll;
-            StartCoroutine(HelperMethods.FadeText(extinguishedSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
+            _extinguishedSign.text = Constants.ExtinguishSignAllExtinguishedText;
+            _extinguishedSign.color = Constants.ExtinguishSignColourAll;
+            StartCoroutine(HelperMethods.FadeText(_extinguishedSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
         }
         else if(numFiresCombo == 1)
         {
-            extinguishedSign.text = Constants.ExtinguishSignDefaultText;
-            StartCoroutine(HelperMethods.FadeText(extinguishedSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
+            _extinguishedSign.text = Constants.ExtinguishSignDefaultText;
+            StartCoroutine(HelperMethods.FadeText(_extinguishedSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
         }
         else
         {
-            extinguishedSign.text = Constants.ExtinguishSignDefaultText + " x" + numFiresCombo.ToString();
+            _extinguishedSign.text = Constants.ExtinguishSignDefaultText + " x" + numFiresCombo.ToString();
         }
     }
 
     public void HideFireExtinguishedSign()
     {
-        StartCoroutine(HelperMethods.FadeText(extinguishedSign, 0, Constants.UISignMaxAlpha, -Constants.UISignFadeSpeed));
-        StartCoroutine(HelperMethods.TransitionTextSize(extinguishedSign, Constants.UISignDefaultFontSize, 
+        StartCoroutine(HelperMethods.FadeText(_extinguishedSign, 0, Constants.UISignMaxAlpha, -Constants.UISignFadeSpeed));
+        StartCoroutine(HelperMethods.TransitionTextSize(_extinguishedSign, Constants.UISignDefaultFontSize, 
             Constants.UISignMaxFontSize, 1));
     }
 
     public void UpdateScoreSign(int score)
     {
-        scoreSign.text = "Score: " + score.ToString().PadLeft(7, '0');
+        _scoreSign.text = "Score: " + score.ToString().PadLeft(7, '0');
     }
 
     public void UpdateScoreToAddSign(int score)
     {
-        scoreToAddSign.text = "+" + score.ToString();
-        if (scoreToAddSignAlpha != Constants.UISignMaxAlpha)
+        _scoreToAddSign.text = "+" + score.ToString();
+        if (_scoreToAddSignAlpha != Constants.UISignMaxAlpha)
         {
-            StartCoroutine(HelperMethods.FadeText(scoreToAddSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
+            StartCoroutine(HelperMethods.FadeText(_scoreToAddSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
         }
     }
 
     public void PlayClearSequence(string signText)
     {
-        clearSign.text = signText;
+        _clearSign.text = signText;
         StartCoroutine(ClearCoroutine());
     }
 
@@ -193,21 +195,21 @@ public class UIController : MonoBehaviour
     {
         if (type == GameOverType.GroundCrash)
         {
-            crashSign.text = Constants.CrashSignTextCrash;
-            crashSign.color = Constants.CrashSignColourGround;
+            _crashSign.text = Constants.CrashSignTextCrash;
+            _crashSign.color = Constants.CrashSignColourGround;
         }
         else if (type == GameOverType.WaterCrash)
         {
-            crashSign.text = Constants.CrashSignTextCrash;
-            crashSign.color = Constants.CrashSignColourWater;
+            _crashSign.text = Constants.CrashSignTextCrash;
+            _crashSign.color = Constants.CrashSignColourWater;
         }
         else if (type == GameOverType.FuelDepleted)
         {
-            crashSign.text = Constants.CrashSignTextEmpty;
-            crashSign.color = Constants.CrashSignColourFuel;
+            _crashSign.text = Constants.CrashSignTextEmpty;
+            _crashSign.color = Constants.CrashSignColourFuel;
         }
 
-        inGameMenu.SetGameOverMenu(type);
+        _inGameMenu.SetGameOverMenu(type);
         StartCoroutine(CrashCoroutine());
     }
 
@@ -219,7 +221,7 @@ public class UIController : MonoBehaviour
     private IEnumerator ClearCoroutine()
     {
         yield return new WaitForSeconds(0.5f);
-        yield return StartCoroutine(HelperMethods.FadeText(clearSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
+        yield return StartCoroutine(HelperMethods.FadeText(_clearSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
         yield return new WaitForSeconds(3);
         yield return StartCoroutine(ScreenFade(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaMax,
             Constants.FadeScreenSpeed));
@@ -228,27 +230,27 @@ public class UIController : MonoBehaviour
     private IEnumerator CrashCoroutine()
     {
         yield return new WaitForSeconds(0.5f);
-        yield return StartCoroutine(HelperMethods.FadeText(crashSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
+        yield return StartCoroutine(HelperMethods.FadeText(_crashSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
         yield return new WaitForSeconds(1.5f);
-        yield return StartCoroutine(HelperMethods.FadeText(crashSign, 0, Constants.UISignMaxAlpha, -Constants.UISignFadeSpeed));
+        yield return StartCoroutine(HelperMethods.FadeText(_crashSign, 0, Constants.UISignMaxAlpha, -Constants.UISignFadeSpeed));
         yield return ScreenFade(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaPause,
                 Constants.FadeAlphaSpeedPause);
-        crashComplete.Invoke();
+        CrashComplete.Invoke();
     }
 
     public void HideScoreToAddSign()
     {
-        StartCoroutine(HelperMethods.FadeText(scoreToAddSign, 0, Constants.UISignMaxAlpha, -Constants.UISignFadeSpeed));
+        StartCoroutine(HelperMethods.FadeText(_scoreToAddSign, 0, Constants.UISignMaxAlpha, -Constants.UISignFadeSpeed));
     }
 
     private IEnumerator ScreenFade(byte minAlpha, byte maxAlpha, float fadeSpeed)
     {
         byte alphaTarget = fadeSpeed > 0 ? maxAlpha : minAlpha;
-        while (screenAlpha != alphaTarget)
+        while (_screenAlpha != alphaTarget)
         {
-            screenAlpha = (byte) Math.Clamp(screenAlpha + fadeSpeed, minAlpha, maxAlpha);
-            fadeEffectsPanel.color = new Color32(Constants.FadePanelDefaultColour.r,
-                Constants.FadePanelDefaultColour.g, Constants.FadePanelDefaultColour.b, screenAlpha);
+            _screenAlpha = (byte) Math.Clamp(_screenAlpha + fadeSpeed, minAlpha, maxAlpha);
+            _fadeEffectsPanel.color = new Color32(Constants.FadePanelDefaultColour.r,
+                Constants.FadePanelDefaultColour.g, Constants.FadePanelDefaultColour.b, _screenAlpha);
             yield return null;
         }
     }

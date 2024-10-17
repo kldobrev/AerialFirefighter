@@ -6,78 +6,78 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     [SerializeField]
-    private Transform playerTransform;
+    private Transform _playerTransform;
     [SerializeField]
-    private Vector3 crashDistance;
+    private Vector3 _crashDistance;
     [SerializeField]
-    private float smoothSpeed;
+    private float _smoothSpeed;
 
-    private Vector3 targetPosition;
-    private Transform cameraTrns;
-    private IEnumerator trailingTransition;
-    private static bool trailingChangeInProgress;
+    private Vector3 _targetPosition;
+    private Transform _cameraTrns;
+    private IEnumerator _trailingTransition;
+    private static bool _trailingChangeInProgress;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        cameraTrns = transform;
-        targetPosition = Constants.CameraTrailingDistanceDefault;
-        cameraTrns.position = playerTransform.position + Constants.CameraTrailingDistanceDefault;
-        trailingChangeInProgress = false;
+        _cameraTrns = transform;
+        _targetPosition = Constants.CameraTrailingDistanceDefault;
+        _cameraTrns.position = _playerTransform.position + Constants.CameraTrailingDistanceDefault;
+        _trailingChangeInProgress = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (playerTransform != null)
+        if (_playerTransform != null)
         {
-            cameraTrns.position = Vector3.Lerp(cameraTrns.position, playerTransform.TransformPoint(targetPosition), 
-                smoothSpeed);
-            cameraTrns.LookAt(playerTransform);
+            _cameraTrns.position = Vector3.Lerp(_cameraTrns.position, _playerTransform.TransformPoint(_targetPosition), 
+                _smoothSpeed);
+            _cameraTrns.LookAt(_playerTransform);
         }
     }
 
     public void StopFollowingPlayer(Vector3 crashLocation)
     {
-        playerTransform = null;
-        if (trailingChangeInProgress)
+        _playerTransform = null;
+        if (_trailingChangeInProgress)
         {
-            StopCoroutine(trailingTransition);
-            trailingChangeInProgress = false;
+            StopCoroutine(_trailingTransition);
+            _trailingChangeInProgress = false;
         }
-        targetPosition = cameraTrns.position + Constants.CameraCrashDistance;
+        _targetPosition = _cameraTrns.position + Constants.CameraCrashDistance;
         StartCoroutine(TransitionCamera(crashLocation));
     }
 
     public void ChangeCameraPosition(Vector3 newDistance)
     {
-        trailingTransition = TransitionTrailingDistance(newDistance);
-        StartCoroutine(trailingTransition);
+        _trailingTransition = TransitionTrailingDistance(newDistance);
+        StartCoroutine(_trailingTransition);
     }
 
     private IEnumerator TransitionTrailingDistance(Vector3 newDistance)
     {
-        trailingChangeInProgress = true;
-        while (targetPosition != newDistance)
+        _trailingChangeInProgress = true;
+        while (_targetPosition != newDistance)
         {
-            targetPosition = Vector3.Lerp(targetPosition, newDistance, 
+            _targetPosition = Vector3.Lerp(_targetPosition, newDistance, 
                 Constants.CameraTransitionSpeed);
             yield return null;
         }
-        trailingChangeInProgress = false;
+        _trailingChangeInProgress = false;
     }
 
     private IEnumerator TransitionCamera(Vector3 followPosition)
     {
-        while (cameraTrns.position != targetPosition && followPosition != null)
+        while (_cameraTrns.position != _targetPosition && followPosition != null)
         {
-            cameraTrns.position = Vector3.Lerp(cameraTrns.position, targetPosition,
+            _cameraTrns.position = Vector3.Lerp(_cameraTrns.position, _targetPosition,
                 Constants.CameraTransitionSpeed);
-            cameraTrns.LookAt(followPosition);
+            _cameraTrns.LookAt(followPosition);
             yield return null;
         }
-        targetPosition = Constants.CameraTrailingDistanceDefault;
+        _targetPosition = Constants.CameraTrailingDistanceDefault;
     }
 
 }

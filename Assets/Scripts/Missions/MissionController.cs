@@ -5,21 +5,21 @@ using UnityEngine.Events;
 
 public class MissionController : MonoBehaviour
 {
-    [SerializeField]
-    protected GameObject landingGuide;
-    [SerializeField]
-    protected GameObject goalSphere;
-    [SerializeField]
-    protected GameObject landingField;
-    [SerializeField]
-    protected UnityEvent<bool> updateMissionResults;
-    [SerializeField]
-    protected UnityEvent startFadeOut;
+    [field: SerializeField]
+    protected GameObject landingGuide { get; set; }
+    [field: SerializeField]
+    protected GameObject goalSphere { get; set; }
+    [field: SerializeField]
+    protected GameObject landingField { get; set; }
+    [field: SerializeField]
+    protected UnityEvent<bool> updateMissionResults { get; set; }
+    [field: SerializeField]
+    protected UnityEvent startFadeOut { get; set; }
 
-    protected float missionTimer;
-    protected int score;
-    protected IEnumerator timeTracker;
-    protected bool missionPassed;
+    protected float missionTimer { get; set; }
+    protected int score { get; set; }
+    protected IEnumerator timeTracker { get; set; }
+    protected bool missionPassed { get; set; }
 
     // Start is called before the first frame update
     protected virtual void Start()
@@ -39,7 +39,6 @@ public class MissionController : MonoBehaviour
     {
         StopCoroutine(timeTracker);
         updateMissionResults?.Invoke(missionPassed);
-        //startFadeOut.Invoke();
     }
 
     protected IEnumerator TrackTime()

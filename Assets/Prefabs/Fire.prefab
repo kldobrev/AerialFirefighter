@@ -4866,11 +4866,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e26108d29870336469068ff0ecd9eed1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  intensity: 60
-  fireEffect: {fileID: 8347580577788967952}
-  removeFire:
-    m_PersistentCalls:
-      m_Calls: []
+  _intensity: 60
+  _fireEffect: {fileID: 8347580577788967952}
 --- !u!1001 &644118905783086135
 PrefabInstance:
   m_ObjectHideFlags: 0

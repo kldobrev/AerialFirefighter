@@ -550,38 +550,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98f63cf60fb02b844b25eab7d18aff94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inGameMenu: {fileID: 0}
-  confirmPrompt: {fileID: 0}
-  initInGameMenu:
+  _inGameMenu: {fileID: 0}
+  _confirmPrompt: {fileID: 0}
+  _initInGameMenu:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: PauseMenuController, Assembly-CSharp
-        m_MethodName: SetInGameMenuForMode
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  initCrash:
+      m_Calls: []
+  _initCrash:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
-        m_MethodName: CrashSequence
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!4 &1423466448
 Transform:
   m_ObjectHideFlags: 0
@@ -609,7 +585,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22b22357e2cc70742a938f1505e15b97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pauseGame:
+  _pauseGame:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1423466447}
@@ -624,7 +600,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  passBack:
+  _passBack:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1423466447}
@@ -639,7 +615,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  passConfirm:
+  _passConfirm:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1423466447}
@@ -654,7 +630,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  passNavData:
+  _passNavData:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1423466447}
@@ -669,7 +645,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  player: {fileID: 0}
 --- !u!1 &1586016434
 GameObject:
   m_ObjectHideFlags: 0

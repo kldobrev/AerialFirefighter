@@ -177,19 +177,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7210fd51fe2c79b489ac61903126db7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  locatorRectTrns: {fileID: 3658760933336875529}
-  playerTrns: {fileID: 0}
-  firesTrns: {fileID: 0}
-  airportTrns: {fileID: 0}
-  goalSphereTrns: {fileID: 0}
-  barRectTrns: {fileID: 1010144741833704300}
-  airportIconPrefab: {fileID: 2680890889099146587, guid: 0328753db02fb754192fce7940b73de5,
+  _locatorRectTransform: {fileID: 3658760933336875529}
+  _playerTransform: {fileID: 0}
+  _firesTransforms: {fileID: 0}
+  _airportTransform: {fileID: 0}
+  _goalSphereTransform: {fileID: 0}
+  _barRectTransform: {fileID: 1010144741833704300}
+  _airportIconPrefab: {fileID: 2680890889099146587, guid: 0328753db02fb754192fce7940b73de5,
     type: 3}
-  flagIconPrefab: {fileID: 2680890889099146587, guid: be30f13b1a567b542b3e4f932646434a,
+  _flagIconPrefab: {fileID: 2680890889099146587, guid: be30f13b1a567b542b3e4f932646434a,
     type: 3}
-  fireIconPrefab: {fileID: 8169599021956570268, guid: d93fa60c1db86984dac4b0319511f2de,
+  _fireIconPrefab: {fileID: 8169599021956570268, guid: d93fa60c1db86984dac4b0319511f2de,
     type: 3}
-  iconsHolder: {fileID: 2478485113953789584}
+  _iconsHolder: {fileID: 2478485113953789584}
 --- !u!1 &7495544896450237608
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,19 +9,20 @@ using UnityEngine.UI;
 
 public class InGameMenuController : PopupMenuController
 {
-    public UnityEvent<bool> menuReady;
-    protected string continueSignGameOver;
-    protected Color32 continueSignGameOverColour;
-    protected bool continueActive;
-    private int gameOverStartIdx;
+    public UnityEvent<bool> MenuReady { set; get; }
+    private string _continueSignGameOver;
+    private Color32 _continueSignGameOverColour;
+    private bool _continueActive;
+    private int _gameOverStartIdx;
 
     private new void Awake()
     {
         base.Awake();
-        continueActive = true;
-        continueSignGameOver = Constants.ContinueSignRegular;
+        _continueActive = true;
+        _continueSignGameOver = Constants.ContinueSignRegular;
         optionsSigns[0].text = Constants.ContinueSignRegular;
-        gameOverStartIdx = 0;
+        _gameOverStartIdx = 0;
+        MenuReady = new();
     }
 
     // Start is called before the first frame update
@@ -30,29 +31,29 @@ public class InGameMenuController : PopupMenuController
         isOpened = false;
         stateSign.color = Constants.InGameMenuStateColorPause;
         stateSign.text = Constants.InGameMenuStateSignPause;
-        continueSignGameOverColour = Constants.InGameMenuOptionColourDefault;
+        _continueSignGameOverColour = Constants.InGameMenuOptionColourDefault;
     }
 
     public void SetInGameMenuForMode(PlayMode mode)
     {
         if (mode == PlayMode.FireMission)
         {
-            continueSignGameOver = Constants.ContinueSignCheckpoint;
+            _continueSignGameOver = Constants.ContinueSignCheckpoint;
             optionsSigns[1].text = Constants.RestartSignStage;
         }
         else if (mode == PlayMode.Tutorial)
         {
-            continueActive = false;
+            _continueActive = false;
             startingCursorPos = optionsHolder.localPosition + optionsTransforms[1].localPosition;
             optionsSigns[1].text = Constants.RestartSignTutorial;
-            gameOverStartIdx = 1;
+            _gameOverStartIdx = 1;
         }
         else if (mode == PlayMode.Generated)
         {
-            continueActive = false;
+            _continueActive = false;
             startingCursorPos = optionsHolder.localPosition + optionsTransforms[1].localPosition;
             optionsSigns[1].text = Constants.RestartSignStage;
-            gameOverStartIdx = 1;
+            _gameOverStartIdx = 1;
         }
     }
 
@@ -87,10 +88,10 @@ public class InGameMenuController : PopupMenuController
         }
 
         stateSign.text = Constants.InGameMenuStateSignGameOver;
-        optionsSigns[0].text = continueSignGameOver;
-        optionsSigns[0].gameObject.SetActive(continueActive);
+        optionsSigns[0].text = _continueSignGameOver;
+        optionsSigns[0].gameObject.SetActive(_continueActive);
         cursorTrns.localPosition = startingCursorPos;
-        menuStartIndexVert = gameOverStartIdx;
+        menuStartIndexVert = _gameOverStartIdx;
     }
 
     public IEnumerator ToggleInGameMenu(bool activate, float textFadeSpeed)
@@ -100,13 +101,13 @@ public class InGameMenuController : PopupMenuController
             screenFadeEffect.Invoke(Constants.FadeScreenAlphaPause);
             yield return StartCoroutine(FadeInMenu(Constants.InGameMenuTextTrigger, Constants.InGameMenuBkgAlphaMin, 
                 Constants.InGameMenuBkgAlphaMax, Constants.InGameMenuBkgSizeChangeSpeed, textFadeSpeed));
-            menuReady.Invoke(true);
+            MenuReady.Invoke(true);
         }
         else
         {
             yield return StartCoroutine(FadeOutMenu(Constants.InGameMenuSizeTrigger, Constants.InGameMenuBkgAlphaMin, 
                 Constants.InGameMenuBkgAlphaMax, Constants.InGameMenuBkgSizeChangeSpeed, textFadeSpeed));
-            menuReady.Invoke(false);
+            MenuReady.Invoke(false);
             screenFadeEffect.Invoke(-Constants.FadeScreenAlphaPause);
         }
         isOpened = activate;

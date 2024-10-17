@@ -1,27 +1,27 @@
 public class FrameRule
 {
-    private uint frameCounter;
-    private uint checkFrame;
+    private uint _frameCounter;
+    private uint _checkFrame;
 
     public FrameRule(uint check)
     {
-        checkFrame = check;
+        _checkFrame = check;
         ResetCounter();
     }
 
     public void ResetCounter()
     {
-        frameCounter = 0;
+        _frameCounter = 0;
     }
 
     public void AdvanceCounter()
     {
-        frameCounter = frameCounter == checkFrame ? 1 : frameCounter + 1;
+        _frameCounter = _frameCounter == _checkFrame ? 1 : _frameCounter + 1;
     }
 
     public bool CheckFrameRule()
     {
-        return frameCounter == checkFrame;
+        return _frameCounter == _checkFrame;
     }
 
 }

@@ -259,9 +259,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b15e74aa1c0266945963496063508502, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerTransform: {fileID: 275042}
-  crashDistance: {x: 30, y: 15, z: 0}
-  smoothSpeed: 1.5
+  _playerTransform: {fileID: 275042}
+  _crashDistance: {x: 30, y: 15, z: 0}
+  _smoothSpeed: 1.5
 --- !u!114 &71625090
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6441,34 +6441,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b18bad4ef73cb5e46bcd64be8474d522, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedometer: {fileID: 800305920}
-  autoSpeedIndicator: {fileID: 214764968}
-  heightMeter: {fileID: 1120036998}
-  heightNumeric: {fileID: 241572243}
-  mainCamera: {fileID: 71625092}
-  fadeEffectsPanel: {fileID: 1569841533}
-  firesLeftCounter: {fileID: 506362001}
-  extinguishedSign: {fileID: 153941670}
-  scoreSign: {fileID: 742034467}
-  scoreToAddSign: {fileID: 243043219}
-  crashSign: {fileID: 1216169203}
-  clearSign: {fileID: 1682323517}
-  inGameMenu: {fileID: 1571838633}
-  crashComplete:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: ShowGameOver
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  _speedometer: {fileID: 800305920}
+  _autoSpeedIndicator: {fileID: 214764968}
+  _heightMeter: {fileID: 1120036998}
+  _heightNumeric: {fileID: 241572243}
+  _fadeEffectsPanel: {fileID: 1569841533}
+  _firesLeftCounter: {fileID: 506362001}
+  _extinguishedSign: {fileID: 153941670}
+  _scoreSign: {fileID: 742034467}
+  _scoreToAddSign: {fileID: 243043219}
+  _crashSign: {fileID: 1216169203}
+  _clearSign: {fileID: 1682323517}
+  _inGameMenu: {fileID: 1571838633}
 --- !u!222 &224394742
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7707,11 +7691,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afcea9e1c69a1e440bdff3a62d313339, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraEulerAngle:
+  _cameraEulerAngle:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1567514168}
-        m_TargetAssemblyTypeName: NewRadarController, Assembly-CSharp
+        m_TargetAssemblyTypeName: RadarRendererController, Assembly-CSharp
         m_MethodName: UpdateRadarRotation
         m_Mode: 0
         m_Arguments:
@@ -7906,7 +7890,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19c93e6bbc59f7c409ccce725a22bab0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fill: {fileID: 1187961958}
+  _fill: {fileID: 1187961958}
 --- !u!1 &506361999
 GameObject:
   m_ObjectHideFlags: 0
@@ -25386,7 +25370,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e91c38b7a7c16c7458819eea86c52ad5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  directionsTransform: {fileID: 1232578081}
+  _directionsTransform: {fileID: 1232578081}
 --- !u!1 &1569841531
 GameObject:
   m_ObjectHideFlags: 0
@@ -25548,39 +25532,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d0d5d2f96ea0a84fa446b227f65ced4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  optionsHolder: {fileID: 979809115}
-  cursor: {fileID: 891953238}
-  screenFadeEffect:
+  <optionsHolder>k__BackingField: {fileID: 979809115}
+  <cursor>k__BackingField: {fileID: 891953238}
+  <screenFadeEffect>k__BackingField:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 224394741}
-        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
-        m_MethodName: ScreenFadeInGame
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  stateSign: {fileID: 2098865260}
-  menuReady:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: ToggleFreezeGameplay
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
+  <stateSign>k__BackingField: {fileID: 2098865260}
 --- !u!1 &1604302639
 GameObject:
   m_ObjectHideFlags: 0
@@ -32548,20 +32505,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1891b7ff0c5055479e07562e6bb314d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bodyTransform: {fileID: 4155046195940137136}
-  planeBody: {fileID: 3182071990185465855}
-  propeller: {fileID: 654008710}
-  throttleAcceleration: 25
-  pitchFactor: 0.18
-  yawFactor: 0.05
-  rollFactor: 1.4
-  liftForce: 2.22
-  pitchLiftFactor: 0.12
-  dropWaterEffect: {fileID: 155048161}
-  waterSplashEffect: {fileID: 849852183}
-  crashEffect: {fileID: 815817367}
-  crashInWaterEffect: {fileID: 809082554}
-  setSpeedometerActive:
+  _bodyTransform: {fileID: 4155046195940137136}
+  _planeBody: {fileID: 3182071990185465855}
+  _propeller: {fileID: 654008710}
+  _throttleAcceleration: 25
+  _pitchFactor: 0.18
+  _yawFactor: 0.05
+  _rollFactor: 1.4
+  _liftForce: 2.22
+  _pitchLiftFactor: 0.12
+  _dropWaterEffect: {fileID: 155048161}
+  _waterSplashEffect: {fileID: 849852183}
+  _crashEffect: {fileID: 815817367}
+  _crashInWaterEffect: {fileID: 809082554}
+  _setSpeedometerActive:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 224394741}
@@ -32576,7 +32533,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  setSpeedometerSpeed:
+  _setSpeedometerSpeed:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 224394741}
@@ -32591,7 +32548,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  updateAutoSpeedIndicator:
+  _updateAutoSpeedIndicator:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 224394741}
@@ -32606,7 +32563,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  updateHeightMeter:
+  _updateHeightMeter:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 224394741}
@@ -32621,7 +32578,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  updateRadarCamera:
+  _updateRadarCamera:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 417138032}
@@ -32636,37 +32593,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  toggleUITracker:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2092771976}
-        m_TargetAssemblyTypeName: TrackerController, Assembly-CSharp
-        m_MethodName: ToggleTracker
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  sendWeaponDataToTracker:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2092771976}
-        m_TargetAssemblyTypeName: TrackerController, Assembly-CSharp
-        m_MethodName: SyncWithWeapon
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  setFuelGaugeCap:
+  _setFuelGaugeCap:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1999971989}
@@ -32681,7 +32608,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  updateFuelGaugeQtity:
+  _updateFuelGaugeQuantity:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1999971989}
@@ -32696,7 +32623,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  startFadeOut:
+  _startFadeOut:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 224394741}
@@ -32711,7 +32638,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  startFadeIn:
+  _startFadeIn:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 224394741}
@@ -32726,7 +32653,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  setWaterGaugeCap:
+  _setWaterGaugeCap:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 468863061}
@@ -32741,7 +32668,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  updateWaterGaugeQtity:
+  _updateWaterGaugeQuantity:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 468863061}
@@ -32756,7 +32683,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  detachCamera:
+  _detachCamera:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 71625089}
@@ -32771,7 +32698,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  changeCameraDistance:
+  _changeCameraDistance:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 71625089}
@@ -32786,27 +32713,12 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  stageEndTrigger:
+  _stageEndTrigger:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 5863029410803188406}
         m_TargetAssemblyTypeName: FireMissionController, Assembly-CSharp
         m_MethodName: EndMission
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  signalGameOver:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: InitGameOver
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -33567,33 +33479,13 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1011569757684487604, guid: 6f97bb580adf3d844abfea45dd718211,
         type: 3}
-      propertyPath: playerTrns
+      propertyPath: _playerTrns
       value: 
       objectReference: {fileID: 4155046195940137136}
-    - target: {fileID: 4380116714308446464, guid: 6f97bb580adf3d844abfea45dd718211,
-        type: 3}
-      propertyPath: m_Color.a
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4380116714308446464, guid: 6f97bb580adf3d844abfea45dd718211,
-        type: 3}
-      propertyPath: m_Maskable
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4685132875671649589, guid: 6f97bb580adf3d844abfea45dd718211,
         type: 3}
       propertyPath: m_Name
       value: AttitudeMeter
-      objectReference: {fileID: 0}
-    - target: {fileID: 5351137265655265400, guid: 6f97bb580adf3d844abfea45dd718211,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5385846464945019136, guid: 6f97bb580adf3d844abfea45dd718211,
-        type: 3}
-      propertyPath: m_ShowMaskGraphic
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6206990821668624625, guid: 6f97bb580adf3d844abfea45dd718211,
         type: 3}
@@ -33609,36 +33501,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchorMin.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8089150855322756816, guid: 6f97bb580adf3d844abfea45dd718211,
-        type: 3}
-      propertyPath: m_FillRect
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8089150855322756816, guid: 6f97bb580adf3d844abfea45dd718211,
-        type: 3}
-      propertyPath: m_Interactable
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8089150855322756816, guid: 6f97bb580adf3d844abfea45dd718211,
-        type: 3}
-      propertyPath: m_Colors.m_DisabledColor.a
-      value: 0.7607843
-      objectReference: {fileID: 0}
-    - target: {fileID: 8089150855322756816, guid: 6f97bb580adf3d844abfea45dd718211,
-        type: 3}
-      propertyPath: m_Colors.m_DisabledColor.b
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8089150855322756816, guid: 6f97bb580adf3d844abfea45dd718211,
-        type: 3}
-      propertyPath: m_Colors.m_DisabledColor.g
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8089150855322756816, guid: 6f97bb580adf3d844abfea45dd718211,
-        type: 3}
-      propertyPath: m_Colors.m_DisabledColor.r
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8359514170308649735, guid: 6f97bb580adf3d844abfea45dd718211,
         type: 3}
@@ -33679,16 +33541,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SizeDelta.y
       value: 250
-      objectReference: {fileID: 0}
-    - target: {fileID: 8359514170308649735, guid: 6f97bb580adf3d844abfea45dd718211,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 8359514170308649735, guid: 6f97bb580adf3d844abfea45dd718211,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 8359514170308649735, guid: 6f97bb580adf3d844abfea45dd718211,
         type: 3}
@@ -33748,57 +33600,6 @@ PrefabInstance:
     - target: {fileID: 8359514170308649735, guid: 6f97bb580adf3d844abfea45dd718211,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8718189546798307996, guid: 6f97bb580adf3d844abfea45dd718211,
-        type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: f105543ab78b618478a9e359b13d5861,
-        type: 3}
-    - target: {fileID: 8718189546798307996, guid: 6f97bb580adf3d844abfea45dd718211,
-        type: 3}
-      propertyPath: m_Color.a
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8718189546798307996, guid: 6f97bb580adf3d844abfea45dd718211,
-        type: 3}
-      propertyPath: m_Color.b
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8718189546798307996, guid: 6f97bb580adf3d844abfea45dd718211,
-        type: 3}
-      propertyPath: m_Color.g
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8718189546798307996, guid: 6f97bb580adf3d844abfea45dd718211,
-        type: 3}
-      propertyPath: m_Color.r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8718189546798307996, guid: 6f97bb580adf3d844abfea45dd718211,
-        type: 3}
-      propertyPath: m_Maskable
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8718189546798307996, guid: 6f97bb580adf3d844abfea45dd718211,
-        type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8718189546798307996, guid: 6f97bb580adf3d844abfea45dd718211,
-        type: 3}
-      propertyPath: m_RaycastTarget
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8718189546798307996, guid: 6f97bb580adf3d844abfea45dd718211,
-        type: 3}
-      propertyPath: m_UseSpriteMesh
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8718189546798307996, guid: 6f97bb580adf3d844abfea45dd718211,
-        type: 3}
-      propertyPath: m_PreserveAspect
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -34068,13 +33869,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fd3e5c562da81743873dd3a799164a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  landingGuide: {fileID: 252046581}
-  goalSphere: {fileID: 1659659019}
-  landingField: {fileID: 1604375308}
-  updateMissionResults:
+  <landingGuide>k__BackingField: {fileID: 252046581}
+  <goalSphere>k__BackingField: {fileID: 1659659019}
+  <landingField>k__BackingField: {fileID: 1604375308}
+  <updateMissionResults>k__BackingField:
     m_PersistentCalls:
-      m_Calls: []
-  startFadeOut:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  <startFadeOut>k__BackingField:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 224394741}
@@ -34089,7 +33902,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  updateFireCounter:
+  _updateFireCounter:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 224394741}
@@ -34104,7 +33917,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  hideExtinguishedSign:
+  _hideExtinguishedSign:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 224394741}
@@ -34119,7 +33932,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  updateScoreSign:
+  _updateScoreSign:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 224394741}
@@ -34134,7 +33947,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  updateAddedScoreSign:
+  _updateAddedScoreSign:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 224394741}
@@ -34149,7 +33962,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  hideAddToScoreSign:
+  _hideAddToScoreSign:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 224394741}
@@ -34164,7 +33977,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  showGoalIcons:
+  _showGoalIcons:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1881228335}
@@ -34179,7 +33992,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  removeGoalIcons:
+  _removeGoalIcons:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1881228335}
@@ -34194,7 +34007,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  initStageClear:
+  _initStageClear:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 224394741}
@@ -34209,7 +34022,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  removeGroupFormLocator:
+  _removeGroupFormLocator:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1881228335}
@@ -34772,16 +34585,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Fire
       objectReference: {fileID: 0}
-    - target: {fileID: 4461416577755545456, guid: 724e02b322d42ea41a09cbe529fe88b8,
-        type: 3}
-      propertyPath: removeFire.m_PersistentCalls.m_Calls.Array.size
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4461416577755545456, guid: 724e02b322d42ea41a09cbe529fe88b8,
-        type: 3}
-      propertyPath: removeFire.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 5863029410803188406}
     - target: {fileID: 5021238923978562012, guid: 724e02b322d42ea41a09cbe529fe88b8,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -34887,21 +34690,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 175503540993987999, guid: c4dd3d25271a6b4429c47dda0e7c5c09,
         type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 175503540993987999, guid: c4dd3d25271a6b4429c47dda0e7c5c09,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 175503540993987999, guid: c4dd3d25271a6b4429c47dda0e7c5c09,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 175503540993987999, guid: c4dd3d25271a6b4429c47dda0e7c5c09,
-        type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -34958,11 +34746,6 @@ PrefabInstance:
     - target: {fileID: 175503540993987999, guid: c4dd3d25271a6b4429c47dda0e7c5c09,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 576303512853691201, guid: c4dd3d25271a6b4429c47dda0e7c5c09,
-        type: 3}
-      propertyPath: m_Color.a
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7518996935700022035, guid: c4dd3d25271a6b4429c47dda0e7c5c09,
@@ -35168,22 +34951,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4990107919764146025, guid: 8d2e5d25a7ca7ea4097eb5e803f18b84,
         type: 3}
-      propertyPath: firesTrns
+      propertyPath: _firesTransforms
       value: 
       objectReference: {fileID: 6641709332538926847}
     - target: {fileID: 4990107919764146025, guid: 8d2e5d25a7ca7ea4097eb5e803f18b84,
         type: 3}
-      propertyPath: playerTrns
+      propertyPath: _playerTransform
       value: 
       objectReference: {fileID: 4155046195940137136}
     - target: {fileID: 4990107919764146025, guid: 8d2e5d25a7ca7ea4097eb5e803f18b84,
         type: 3}
-      propertyPath: airportTrns
+      propertyPath: _airportTransform
       value: 
       objectReference: {fileID: 439408488}
     - target: {fileID: 4990107919764146025, guid: 8d2e5d25a7ca7ea4097eb5e803f18b84,
         type: 3}
-      propertyPath: goalSphereTrns
+      propertyPath: _goalSphereTransform
       value: 
       objectReference: {fileID: 1659659023}
     m_RemovedComponents: []

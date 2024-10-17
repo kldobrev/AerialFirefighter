@@ -5,10 +5,10 @@ using UnityEngine;
 public class RadarRendererController : MonoBehaviour
 {
     [SerializeField]
-    private Transform directionsTransform;
+    private Transform _directionsTransform;
 
     public void UpdateRadarRotation(float horizontalRotation)
     {
-        directionsTransform.rotation = Quaternion.Euler(0, 0, horizontalRotation);
+        _directionsTransform.rotation = Quaternion.Euler(0, 0, horizontalRotation);
     }
 }

@@ -9,135 +9,135 @@ using UnityEngine.InputSystem;
 public class PlayerInputHandler : MonoBehaviour, PlayerControls.IGameplayActions, PlayerControls.IMenuActions
 {
     [SerializeField]
-    private UnityEvent pauseGame;
+    private UnityEvent _pauseGame;
     [SerializeField]
-    private UnityEvent passBack;
+    private UnityEvent _passBack;
     [SerializeField]
-    private UnityEvent passConfirm;
+    private UnityEvent _passConfirm;
     [SerializeField]
-    private UnityEvent<Vector2> passNavData;
+    private UnityEvent<Vector2> _passNavData;
 
-    public PlayerController player;
-    private PlayerControls controls;
+    public PlayerController Player { get; set; }
+    private PlayerControls _controls;
 
     void Awake()
     {
-        controls = new PlayerControls();
+        _controls = new PlayerControls();
 
-        controls.gameplay.startstopengine.canceled += OnStartstopengine;
-        controls.gameplay.pitchroll.performed += OnPitchroll;
-        controls.gameplay.pitchroll.canceled += OnCancelPitchroll;
-        controls.gameplay.yaw.performed += OnYaw;
-        controls.gameplay.yaw.canceled += OnCancelYaw;
-        controls.gameplay.accelerate.performed += OnAccelerate;
-        controls.gameplay.accelerate.canceled += OnCancelAccelerate;
-        controls.gameplay.brake.performed += OnBrake;
-        controls.gameplay.brake.canceled += OnCancelBrake;
-        controls.gameplay.dropwater.canceled += OnDropwater;
-        controls.gameplay.toggleautospeed.performed += OnToggleautospeed;
-        controls.gameplay.pause.performed += OnPause;
-        controls.menu.confirm.canceled += OnConfirm;
-        controls.menu.back.canceled += OnBack;
-        controls.menu.navigation.performed += OnNavigation;
+        _controls.gameplay.startstopengine.canceled += OnStartstopengine;
+        _controls.gameplay.pitchroll.performed += OnPitchroll;
+        _controls.gameplay.pitchroll.canceled += OnCancelPitchroll;
+        _controls.gameplay.yaw.performed += OnYaw;
+        _controls.gameplay.yaw.canceled += OnCancelYaw;
+        _controls.gameplay.accelerate.performed += OnAccelerate;
+        _controls.gameplay.accelerate.canceled += OnCancelAccelerate;
+        _controls.gameplay.brake.performed += OnBrake;
+        _controls.gameplay.brake.canceled += OnCancelBrake;
+        _controls.gameplay.dropwater.canceled += OnDropwater;
+        _controls.gameplay.toggleautospeed.performed += OnToggleautospeed;
+        _controls.gameplay.pause.performed += OnPause;
+        _controls.menu.confirm.canceled += OnConfirm;
+        _controls.menu.back.canceled += OnBack;
+        _controls.menu.navigation.performed += OnNavigation;
     }
 
     public void SwitchToGameplayControls()
     {
-        controls.menu.Disable();
-        controls.gameplay.Enable();
+        _controls.menu.Disable();
+        _controls.gameplay.Enable();
     }
 
     public void SwitchToMenuControls()
     {
-        controls.gameplay.Disable();
-        controls.menu.Enable();
+        _controls.gameplay.Disable();
+        _controls.menu.Enable();
     }
 
     public void DisableInput()
     {
-        controls.gameplay.Disable();
-        controls.menu.Disable();
+        _controls.gameplay.Disable();
+        _controls.menu.Disable();
     }
 
     public void OnStartstopengine(InputAction.CallbackContext context)
     {
-        player.ToggleEngine();
+        Player.ToggleEngine();
     }
 
     public void OnPitchroll(InputAction.CallbackContext context)
     {
-        player.PitchRoll(context.ReadValue<Vector2>());
+        Player.PitchRoll(context.ReadValue<Vector2>());
     }
 
     private void OnCancelPitchroll(InputAction.CallbackContext context)
     {
-        if (!player.IsUnityNull())
+        if (!Player.IsUnityNull())
         {
-            player.CancelPitchroll();
+            Player.CancelPitchroll();
         }
     }
 
     public void OnYaw(InputAction.CallbackContext context)
     {
-        player.Yaw(context.ReadValue<float>());
+        Player.Yaw(context.ReadValue<float>());
     }
 
     private void OnCancelYaw(InputAction.CallbackContext context)
     {
-        if (!player.IsUnityNull())
+        if (!Player.IsUnityNull())
         {
-            player.CancelYaw();
+            Player.CancelYaw();
         }
     }
 
     public void OnAccelerate(InputAction.CallbackContext context)
     {
-        player.Accelerate(context.ReadValue<float>());
+        Player.Accelerate(context.ReadValue<float>());
     }
 
     public void OnCancelAccelerate(InputAction.CallbackContext context)
     {
-        player.CancelAccelerate();
+        Player.CancelAccelerate();
     }
 
     public void OnBrake(InputAction.CallbackContext context)
     {
-        player.Brake(context.ReadValue<float>());
+        Player.Brake(context.ReadValue<float>());
     }
 
     public void OnCancelBrake(InputAction.CallbackContext context)
     {
-        player.CancelBrake();
+        Player.CancelBrake();
     }
 
     public void OnDropwater(InputAction.CallbackContext context)
     {
-        player.ToggleDropwater();
+        Player.ToggleDropwater();
     }
 
     public void OnToggleautospeed(InputAction.CallbackContext context)
     {
-        player.ToggleAutoSpeed();
+        Player.ToggleAutoSpeed();
     }
 
     public void OnPause(InputAction.CallbackContext context)
     {
-        pauseGame.Invoke();
+        _pauseGame.Invoke();
     }
 
     public void OnConfirm(InputAction.CallbackContext context)
     {
-        passConfirm.Invoke();
+        _passConfirm.Invoke();
     }
 
     public void OnBack(InputAction.CallbackContext context)
     {
-        passBack.Invoke();
+        _passBack.Invoke();
     }
 
     public void OnNavigation(InputAction.CallbackContext context)
     {
-        passNavData.Invoke(context.ReadValue<Vector2>());
+        _passNavData.Invoke(context.ReadValue<Vector2>());
     }
 
 }
