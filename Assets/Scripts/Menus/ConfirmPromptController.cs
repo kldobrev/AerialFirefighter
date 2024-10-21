@@ -10,24 +10,28 @@ public class ConfirmPromptController : PopupMenuController
     // Start is called before the first frame update
     void Start()
     {
-        Responded = true;
+        Responded = false;
+        Opened = false;
+        stateSign.text = Constants.LeaveStagePromptText;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public void Show()
+    public void Open()
     {
         Responded = false;
-        Debug.Log("Show prompt");
+        StartCoroutine(FadeInMenu(Constants.ConfirmPromptTextTrigger, Constants.InGameMenuBkgAlphaMin, Constants.ConfirmPromptBkgAlphaMax, 
+            Constants.InGameMenuBkgSizeChangeSpeed, Constants.InGameMenuTextFadeSpeedPauseIn));
     }
 
-    public void ChooseOption()
+    public void Close()
     {
-        Debug.Log("Hide prompt");
+        StartCoroutine(FadeOutMenu(Constants.InGameMenuSizeTrigger, Constants.InGameMenuBkgAlphaMin, Constants.InGameMenuBkgAlphaMax, 
+            Constants.InGameMenuBkgSizeChangeSpeed, Constants.InGameMenuTextFadeSpeedPauseOut));
+    }
+
+    public void GiveResponse()
+    {
+        Confirmed = CursorIndex.y == 0 ? true : false;
         Responded = true;
     }
+
 }

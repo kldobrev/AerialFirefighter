@@ -12,18 +12,16 @@ public class MenuController : MonoBehaviour
     protected Transform optionsHolder { get; set; }
     [field: SerializeField]
     protected RawImage cursor { get; set; }
-    [field: SerializeField]
-    protected UnityEvent<float> screenFadeEffect { get; set; }
 
     protected RectTransform menuBkgRect { get; set; }
     protected TextMeshProUGUI[] optionsSigns { get; set; }
     protected int optionsCount { get; set; }
     protected RectTransform cursorTrns { get; set; }
     protected Vector3 startingCursorPos { get; set; }
-    protected bool isOpened { get; set; }
     public Vector2Int CursorIndex { get; protected set; }
     protected Transform[] optionsTransforms { get; set; }
     protected int menuStartIndexVert { get; set; }
+    public bool Opened { get; protected set; }
 
 
     protected void Awake()
@@ -49,6 +47,11 @@ public class MenuController : MonoBehaviour
             CursorIndex = new Vector2Int(0, nextIdx);
             UpdateCursorPosition();
         }
+    }
+
+    public void ResetCursorPosition()
+    {
+        CursorIndex = new Vector2Int(0, menuStartIndexVert);
     }
 
     public void UpdateCursorPosition()

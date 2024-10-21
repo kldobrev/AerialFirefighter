@@ -4,7 +4,8 @@ public enum GameState
     Options,
     Playing,
     Pause,
-    GameOver
+    GameOver,
+    Confirmation
 }
 
 public enum GameOverType

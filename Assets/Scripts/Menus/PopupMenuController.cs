@@ -17,11 +17,11 @@ public class PopupMenuController : MenuController
         yield return new WaitUntil(() => menuBkgRect.sizeDelta.y >= menuBkgSizeTrigger);
         StartCoroutine(FadeOptions(Constants.MenuTextAlphaMin, Constants.MenuTextAlphaMax, textFadeSpeed));
         yield return new WaitUntil(() => menuBkgRect.sizeDelta.y == maxBkgSize);
-        CursorIndex = new Vector2Int(0, menuStartIndexVert);
         UpdateCursorPosition();
         yield return StartCoroutine(HelperMethods.FadeRawImage(cursor, Constants.MenuCursorAlphaMin, Constants.MenuCursorAlphaMax,
             Constants.MenuCursorFadeSpeed));
         StartCoroutine(HelperMethods.FadeText(stateSign, Constants.MenuTextAlphaMin, Constants.MenuTextAlphaMax, textFadeSpeed));
+        Opened = true;
     }
 
     protected IEnumerator FadeOutMenu(float cursorAlphaTrigger, float minBkgSize, float maxBkgSize, float bkgSizeChangeSpeed,
@@ -35,7 +35,8 @@ public class PopupMenuController : MenuController
         {
             yield return null;
         }
-        StartCoroutine(HelperMethods.TransitionHeightUI(menuBkgRect, minBkgSize, maxBkgSize, -bkgSizeChangeSpeed));
+        yield return StartCoroutine(HelperMethods.TransitionHeightUI(menuBkgRect, minBkgSize, maxBkgSize, -bkgSizeChangeSpeed));
+        Opened = false;
     }
 
 }

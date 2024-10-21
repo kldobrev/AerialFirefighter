@@ -6422,6 +6422,7 @@ RectTransform:
   - {fileID: 248528763}
   - {fileID: 1569841532}
   - {fileID: 1571838630}
+  - {fileID: 300300814}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -7154,7 +7155,7 @@ PrefabInstance:
     - target: {fileID: 2641963603674214424, guid: a66e9eb9bf79d5a4684c6faec605e0da,
         type: 3}
       propertyPath: m_fontColor32.rgba
-      value: 1124073471
+      value: 16777215
       objectReference: {fileID: 0}
     - target: {fileID: 8437374825909843735, guid: a66e9eb9bf79d5a4684c6faec605e0da,
         type: 3}
@@ -8311,7 +8312,7 @@ PrefabInstance:
     - target: {fileID: 2641963603674214424, guid: a66e9eb9bf79d5a4684c6faec605e0da,
         type: 3}
       propertyPath: m_fontColor32.rgba
-      value: 1124073471
+      value: 16777215
       objectReference: {fileID: 0}
     - target: {fileID: 8437374825909843735, guid: a66e9eb9bf79d5a4684c6faec605e0da,
         type: 3}
@@ -25421,7 +25422,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.015686275}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 0
@@ -25477,7 +25478,6 @@ RectTransform:
   - {fileID: 2098865259}
   - {fileID: 891953237}
   - {fileID: 979809115}
-  - {fileID: 300300814}
   m_Father: {fileID: 224394740}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
@@ -25534,10 +25534,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <optionsHolder>k__BackingField: {fileID: 979809115}
   <cursor>k__BackingField: {fileID: 891953238}
-  <screenFadeEffect>k__BackingField:
-    m_PersistentCalls:
-      m_Calls: []
   <stateSign>k__BackingField: {fileID: 2098865260}
+  _screenFadeEffect:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 224394741}
+        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
+        m_MethodName: ScreenFadeInGame
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1604302639
 GameObject:
   m_ObjectHideFlags: 0
@@ -31632,7 +31644,7 @@ PrefabInstance:
     - target: {fileID: 2641963603674214424, guid: a66e9eb9bf79d5a4684c6faec605e0da,
         type: 3}
       propertyPath: m_fontColor32.rgba
-      value: 1124073471
+      value: 16777215
       objectReference: {fileID: 0}
     - target: {fileID: 8437374825909843735, guid: a66e9eb9bf79d5a4684c6faec605e0da,
         type: 3}
@@ -34093,7 +34105,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1571838630}
+    m_TransformParent: {fileID: 224394740}
     m_Modifications:
     - target: {fileID: 3874034702284038581, guid: 18dac3c5f60384c439dbd5ea03a8dcd9,
         type: 3}
@@ -34163,17 +34175,17 @@ PrefabInstance:
     - target: {fileID: 7472833909316954389, guid: 18dac3c5f60384c439dbd5ea03a8dcd9,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7472833909316954389, guid: 18dac3c5f60384c439dbd5ea03a8dcd9,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7472833909316954389, guid: 18dac3c5f60384c439dbd5ea03a8dcd9,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7472833909316954389, guid: 18dac3c5f60384c439dbd5ea03a8dcd9,
         type: 3}

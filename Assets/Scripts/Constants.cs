@@ -29,9 +29,9 @@ public static class Constants {
     public const float PlaneMaxSpeed = 210;
     public const float WeightPlaneNoLoad = 2000;
     public const float MaxWeightPlaneFullyLoaded = 3000;
-    public static Vector3 CameraTrailingDistanceDefault = new Vector3(5.75f,1.29f,0);
-    public static Vector3 CameraTrailingDistanceWater = new Vector3(6f, 2.3f, 0);
-    public static Vector3 CameraCrashDistance = new Vector3(30, 15, 0);
+    public static Vector3 CameraTrailingDistanceDefault = new(5.75f,1.29f,0);
+    public static Vector3 CameraTrailingDistanceWater = new(6f, 2.3f, 0);
+    public static Vector3 CameraCrashDistance = new(30, 15, 0);
     public const float CameraTransitionSpeed = 0.05f;
     public const float CameraTimeLimit = 3;
 
@@ -55,9 +55,9 @@ public static class Constants {
     public const string EnemyPointTagName = "RadarPointEnemy";
     public const string RadarPointLayerName = "RadarTracked";
     public const float CoveredDistance = 30000;
-    public static Color32 OutOfRangeColour = new Color32(140, 140, 140, 255);
-    public static Color32 EnemyColour = new Color32(255, 66, 0, 255);
-    public static Color32 AllyColour = new Color32(0, 255, 7, 255);
+    public static Color32 OutOfRangeColour = new(140, 140, 140, 255);
+    public static Color32 EnemyColour = new(255, 66, 0, 255);
+    public static Color32 AllyColour = new(0, 255, 7, 255);
     public const float MissileBarUpdBoundLow = 0.3f;
     public const float MissileBarUpdBoundHigh = 0.7f;
 
@@ -67,41 +67,46 @@ public static class Constants {
     public const string DefaultAutoSpeedValueUI = "Auto speed: 000 km/h";
     public const float AttitudeMeterMaxPitchShown = 45;
     public const float AlertHeightUI = 200;
-    public static Color32 HeightAboveAlertColour = new Color32(80, 255, 0, 255);
-    public static Color32 HeightBelowAlertColour = new Color32(255, 141, 0, 255);
-    public static Color32 SpeedColourInactive = new Color32(130, 130, 130, 190);
-    public static Color32 SpeedColourIndicatorOn = new Color32(255, 130, 0, 255);
-    public static Color32 AutoSpeedColourOn = new Color32(53, 255, 0, 255);
-    public static Color32 WeaponEmptyIconColour = new Color32(78, 78, 78, 178);
+    public static Color32 HeightAboveAlertColour = new(80, 255, 0, 255);
+    public static Color32 HeightBelowAlertColour = new(255, 141, 0, 255);
+    public static Color32 SpeedColourInactive = new(130, 130, 130, 190);
+    public static Color32 SpeedColourIndicatorOn = new(255, 130, 0, 255);
+    public static Color32 AutoSpeedColourOn = new(53, 255, 0, 255);
+    public static Color32 WeaponEmptyIconColour = new(78, 78, 78, 178);
     public const float TargetIconMovementMult = 2;
     public const float BarResetBorder = 300;
-    public static Color32 FuelGaugeColor = new Color32(255, 0, 0, 1);
+    public static Color32 FuelGaugeColor = new(255, 0, 0, 1);
     public const float FuelGaugeNormalAlpha = 1;
     public const float FuelGaugeAlertAlpha = 160;
-    public static Color32 FuelGaugeEmptyColour = new Color32(87, 87, 87, 200);
-    public static Color32 FadePanelDefaultColour = new Color32(0, 0, 0, 0);
-    public static Color32 ExtinguishSignColour = new Color32(69, 237, 0, 0);
-    public static Color32 ExtinguishSignColourAll = new Color32(250, 255, 65, 0);
+    public static Color32 FuelGaugeEmptyColour = new(87, 87, 87, 200);
+    public static Color32 FadePanelDefaultColour = new(0, 0, 0, 0);
+    public static Color32 ExtinguishSignColour = new(69, 237, 0, 0);
+    public static Color32 ExtinguishSignColourAll = new(250, 255, 65, 0);
     public const byte UISignMaxAlpha = 200;
     public const string ExtinguishSignDefaultText = "FIRE EXTINGUISHED";
     public const string ExtinguishSignAllExtinguishedText= "ALL FIRES EXTINGUISHED";
     public const int UISignFadeSpeed = 10;
     public const float UISignDefaultFontSize = 60;
     public const float UISignMaxFontSize = 80;
-    public static Color32 ScoreToAddSignColour = new Color32(255, 255, 0, 0);
+    public static Color32 ScoreToAddSignColour = new(255, 255, 0, 0);
     public static byte FadeScreenAlphaMin = 0;
     public static byte FadeScreenAlphaMax = 255;
     public static float FadeScreenSpeed = 5;
-    public static Color32 CrashSignColourGround = new Color32(237, 83, 0, 0);
-    public static Color32 CrashSignColourWater = new Color32(0, 228, 227, 0);
-    public static Color32 CrashSignColourFuel = new Color32(237, 184, 0, 0);
-    public static Color32 ClearSignColour = new Color32(240, 255, 55, 0);
+    public static Color32 CrashSignColourGround = new(237, 83, 0, 0);
+    public static Color32 CrashSignColourWater = new(0, 228, 227, 0);
+    public static Color32 CrashSignColourFuel = new(237, 184, 0, 0);
+    public static Color32 ClearSignColour = new(240, 255, 55, 0);
     public const string CrashSignTextCrash = "CRASH";
     public const string CrashSignTextEmpty = "FUEL DEPLETED";
     public const string StageClearSign = "STAGE CLEAR";
     public const string TutorialClearSign = "TUTORIAL CLEAR";
-    public static Vector3 DefaultLocatorIconPosition = new Vector3(0, 0, 0);
+    public static Vector3 DefaultLocatorIconPosition = new(0, 0, 0);
     public const string GoalSphereTag = "Goal";
+
+
+
+    // Menus
+
     public const byte PauseMenuAlphaDefault = 0;
     public const byte PauseMenuAlphaVisible = 153;
     public const byte PauseMenuItemBakcgroundAlphaDefault = 0;
@@ -113,10 +118,9 @@ public static class Constants {
     public const string RestartSignTutorial = "RESTART TUTORIAL";
     public const string ContinueSignRegular = "CONTINUE";
     public const string ContinueSignCheckpoint = "CONTINUE FROM CHECKPOINT";
-    public const string InGameMenuParamName = "Open";
     public const string InGameMenuStateSignPause = "PAUSE";
     public const string InGameMenuStateSignGameOver = "GAME OVER";
-    public static Color32 InGameMenuStateColorPause = new Color32(116, 255, 62, 0);
+    public static Color32 InGameMenuStateColorPause = new(116, 255, 62, 0);
     public const float MenuTextAlphaMin = 0;
     public const float MenuTextAlphaMax = 255;
     public const float MenuCursorAlphaMin = 0;
@@ -130,11 +134,14 @@ public static class Constants {
     public const float InGameMenuTextFadeSpeedGameOver = 20;
     public const float InGameMenuTextTrigger = 440;
     public const float InGameMenuSizeTrigger = 24;
-    public static Color32 MenuInactiveOptionColour = new Color32(143, 143, 143, 96);
-    public static Color32 InGameMenuOptionColourDefault = new Color32(255, 255, 255, 0);
+    public static Color32 MenuInactiveOptionColour = new(143, 143, 143, 96);
+    public static Color32 InGameMenuOptionColourDefault = new(255, 255, 255, 0);
     public const string InGameUICanvasTagName = "InGameUI";
     public const string InGameMenuTagNam = "InGameMenu";
     public const string ConfirmPromptMenuTagName = "Confirm";
+    public const string LeaveStagePromptText = "ALL YOUR CURRENT PROGRESS ON THIS STAGE WILL BE LOST IF YOU PROCEED. IS THAT OK?";
+    public const float ConfirmPromptTextTrigger = 100;
+    public const float ConfirmPromptBkgAlphaMax = 350;
 
     // Terrain interaction
 
@@ -152,9 +159,10 @@ public static class Constants {
     public const float LandingTimer = 1.5f;
 
     // Gameplay
+
     public const float FireDefaultIntensity = 60;
     public const float FireParticleDamage = 5;
-    public static Vector3 FireScaleReduction = new Vector3(0, 0, 0.04f);
+    public static Vector3 FireScaleReduction = new(0, 0, 0.04f);
     public const int ClearSphereScore = 200;
     public const int LandingScore = 1000;
     public const float WaterFloatForceUp = 0.12f;

@@ -16,10 +16,11 @@ public class GameManager : MonoBehaviour
     private UnityEvent<GameOverType> _initCrash;
 
     private MenuController _currentMenu;
-    private UnityEvent _confirmOption;
-    private UnityEvent _backMenu;
+    private MenuController _previousMenu;
+    private UnityEvent<float> _screenFadeEffect;
     private PlayerInputHandler _input;
     private UIController _inGameUIController;
+    private GameState _previousState;
     public static GameState CurrentState { get; private set; }
     public static PlayMode CurrentPlayMode { get; private set; }
 
@@ -27,6 +28,7 @@ public class GameManager : MonoBehaviour
     {
         DontDestroyOnLoad(gameObject);
         _input = transform.GetComponent<PlayerInputHandler>();
+        _screenFadeEffect = new();
     }
 
     // Start is called before the first frame update
@@ -52,15 +54,16 @@ public class GameManager : MonoBehaviour
 
     public void Navigate(Vector2 movement)
     {
-        if (CurrentState == GameState.Pause || CurrentState == GameState.GameOver)
-        {
-            _inGameMenu.NavigateMenu(Vector2Int.CeilToInt(movement));
-        }
+        _currentMenu.NavigateMenu(Vector2Int.CeilToInt(movement));
     }
 
     public void ChooseMenuOption()
     {
-        if (CurrentState == GameState.Pause || CurrentState == GameState.GameOver)
+        if (CurrentState == GameState.Confirmation)
+        {
+            _confirmPrompt.GiveResponse();
+        }
+        else if (CurrentState == GameState.Pause || CurrentState == GameState.GameOver)
         {
             switch (_inGameMenu.CursorIndex.y)
             {
@@ -77,6 +80,7 @@ public class GameManager : MonoBehaviour
                 case 1: // Restart stage/tutorial
                     if (CurrentState == GameState.Pause)
                     {
+                        _inGameMenu.ClosePauseMenu();
                         StartCoroutine(ConfirmAndExecute(LoadGameplayScene(SceneManager.GetActiveScene().name)));
                     }
                     else
@@ -85,7 +89,14 @@ public class GameManager : MonoBehaviour
                     }
                     break;
                 case 2: // Back to main menu
-                    Debug.Log("To be implemented.");
+                    if (CurrentState == GameState.Pause)
+                    {
+                        Debug.Log("To be implemented.");
+                    }
+                    else
+                    {
+                        Debug.Log("To be implemented.");
+                    }
                     break;
                 case 3: // Exit game
                     Application.Quit();
@@ -97,14 +108,12 @@ public class GameManager : MonoBehaviour
 
     public void Pause()
     {
-        _inGameMenu.ShowPuseMenu();
-        CurrentState = GameState.Pause;
+        StartCoroutine(PauseCoroutine());
     }
 
     public void Unpause()
     {
-        _inGameMenu.HidePuseMenu();
-        CurrentState = GameState.Playing;
+        StartCoroutine(UnpauseCoroutine());
     }
 
     public void InitGameOver(GameOverType type)
@@ -115,7 +124,7 @@ public class GameManager : MonoBehaviour
 
     public void ShowGameOver()
     {
-        _inGameMenu.ShowGameOverMenu();
+        StartCoroutine(ShowGameOverCoroutine());
     }
 
     public void ToggleFreezeGameplay(bool freeze)
@@ -152,8 +161,8 @@ public class GameManager : MonoBehaviour
         _input.Player = GameObject.FindWithTag(Constants.PlayerTagName).GetComponent<PlayerController>();
         _initInGameMenu.AddListener(_inGameMenu.SetInGameMenuForMode);
         _initCrash.AddListener(_inGameUIController.CrashSequence);
+        _screenFadeEffect.AddListener(_inGameUIController.ScreenFadeInGame);
         _inGameUIController.CrashComplete.AddListener(ShowGameOver);
-        _inGameMenu.MenuReady.AddListener(ToggleFreezeGameplay);
         _input.Player.SignalGameOver.AddListener(InitGameOver);
         _initInGameMenu.Invoke(CurrentPlayMode);
 
@@ -163,14 +172,73 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator ConfirmAndExecute(IEnumerator action)
     {
-        _confirmPrompt.Show();
+        _input.DisableInput();
+        _previousMenu = _currentMenu;
+        _currentMenu = _confirmPrompt;
+        _previousState = CurrentState;
+        CurrentState = GameState.Confirmation;
+        _confirmPrompt.ResetCursorPosition();
+        _confirmPrompt.Open();
+        yield return new WaitUntil(() => _confirmPrompt.Opened);
+        _input.SwitchToMenuControls();
         yield return new WaitUntil(() => _confirmPrompt.Responded);
+        _confirmPrompt.Close();
+        yield return new WaitUntil(() => !_confirmPrompt.Opened);
         if (_confirmPrompt.Confirmed)
         {
             StartCoroutine(action);
         }
-        /*executedMethod += menuAction;
-        executedMethod();*/
+        else
+        {
+            StartCoroutine(ReopenPreviousMenu());
+        }
+    }
+
+    private IEnumerator PauseCoroutine()
+    {
+        _input.DisableInput();
+        _screenFadeEffect.Invoke(Constants.FadeScreenAlphaPause);
+        _inGameMenu.ResetCursorPosition();
+        _inGameMenu.OpenPauseMenu();
+        yield return new WaitUntil(() => _inGameMenu.Opened);
+        CurrentState = GameState.Pause;
+        _currentMenu = _inGameMenu;
+        ToggleFreezeGameplay(true);
+    }
+
+    private IEnumerator UnpauseCoroutine()
+    {
+        _input.DisableInput();
+        _inGameMenu.ClosePauseMenu();
+        yield return new WaitUntil(() => !_inGameMenu.Opened);
+        _screenFadeEffect.Invoke(-Constants.FadeScreenAlphaPause);
+        ToggleFreezeGameplay(false);
+        CurrentState = GameState.Playing;
+    }
+
+    private IEnumerator ShowGameOverCoroutine()
+    {
+        _inGameMenu.OpenGameOverMenu();
+        yield return new WaitUntil(() => _inGameMenu.Opened);
+        CurrentState = GameState.GameOver;
+        ToggleFreezeGameplay(true);
+    }
+
+    private IEnumerator ReopenPreviousMenu()
+    {
+        _currentMenu = _previousMenu;
+
+        if (_previousState == GameState.Pause)
+        {
+            _inGameMenu.OpenPauseMenu();
+        }
+        else if (_previousState == GameState.GameOver)
+        {
+            _inGameMenu.OpenGameOverMenu();
+        }
+        yield return new WaitUntil(() => _currentMenu.Opened);
+        CurrentState = _previousState;
+        _input.SwitchToMenuControls();
     }
 
 }
