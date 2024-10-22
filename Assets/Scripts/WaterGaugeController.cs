@@ -16,12 +16,12 @@ public class WaterGaugeController : MonoBehaviour
     private float _capToQuantityRatio;
 
 
-    public void SetWater_capacity(float cap)
+    public void SetWaterCapacity(float cap)
     {
         _capacity = cap > 0 ? cap : 0;
     }
 
-    public void UpdateWater_quantity(float qtity)
+    public void UpdateWaterQuantity(float qtity)
     {
         _quantity = Mathf.Clamp(qtity, 0, _capacity);
         _capToQuantityRatio = _quantity / _capacity;

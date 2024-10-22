@@ -35,10 +35,10 @@ public class UIController : MonoBehaviour
     private InGameMenuController _inGameMenu;
 
     public UnityEvent CrashComplete { get; set; }
+    public static byte ScreenAlpha { get; private set; }
     private int _speedDisplayed;
     private Image _heightMeterBkg;
     private int _currentWeaponIconIndex;
-    private static byte _screenAlpha;
     private static byte _extinguishSignAlpha;
     private static byte _scoreToAddSignAlpha;
     private static byte _clearSignAlpha;
@@ -67,7 +67,7 @@ public class UIController : MonoBehaviour
         _heightMeterBkg.color = Constants.HeightBelowAlertColour;
         _currentWeaponIconIndex = 0;
         _fadeEffectsPanel.color = Constants.FadePanelDefaultColour;
-        _screenAlpha = Constants.FadePanelDefaultColour.a;
+        ScreenAlpha = Constants.FadePanelDefaultColour.a;
         _extinguishSignAlpha = Constants.ExtinguishSignColour.a;
         _extinguishedSign.color = Constants.ExtinguishSignColour;
         _extinguishedSign.fontSize = Constants.UISignDefaultFontSize;
@@ -139,11 +139,6 @@ public class UIController : MonoBehaviour
         ShowExtinguishedSign(fireCount, firesInCombo);
     }
 
-    public static float GetScreenTransparency()
-    {
-        return _screenAlpha;
-    }
-
     public void ShowExtinguishedSign(int numFiresLeft, int numFiresCombo)
     {
         _extinguishedSign.fontSize = Constants.UISignDefaultFontSize;
@@ -213,9 +208,9 @@ public class UIController : MonoBehaviour
         StartCoroutine(CrashCoroutine());
     }
 
-    public void ScreenFadeInGame(float speed)
+    public void ScreenFadeInGame(byte minAlpha, byte maxAlpha, float speed)
     {
-        StartCoroutine(ScreenFade(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaPause, speed));
+        StartCoroutine(ScreenFade(minAlpha, maxAlpha, speed));
     }
 
     private IEnumerator ClearCoroutine()
@@ -246,11 +241,11 @@ public class UIController : MonoBehaviour
     private IEnumerator ScreenFade(byte minAlpha, byte maxAlpha, float fadeSpeed)
     {
         byte alphaTarget = fadeSpeed > 0 ? maxAlpha : minAlpha;
-        while (_screenAlpha != alphaTarget)
+        while (ScreenAlpha != alphaTarget)
         {
-            _screenAlpha = (byte) Math.Clamp(_screenAlpha + fadeSpeed, minAlpha, maxAlpha);
+            ScreenAlpha = (byte) Math.Clamp(ScreenAlpha + fadeSpeed, minAlpha, maxAlpha);
             _fadeEffectsPanel.color = new Color32(Constants.FadePanelDefaultColour.r,
-                Constants.FadePanelDefaultColour.g, Constants.FadePanelDefaultColour.b, _screenAlpha);
+                Constants.FadePanelDefaultColour.g, Constants.FadePanelDefaultColour.b, ScreenAlpha);
             yield return null;
         }
     }

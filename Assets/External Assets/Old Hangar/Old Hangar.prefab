@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4928341380924672}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4329712457858354}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Old Hangar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -75,7 +75,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4602703312490326}
   - component: {fileID: 137858047752480840}
-  m_Layer: 0
+  - component: {fileID: 6829270530496223502}
+  m_Layer: 14
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -159,6 +160,28 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.0025787354, y: 1.0992284, z: -5.208662}
     m_Extent: {x: 14.099508, y: 5.237523, z: 14.658043}
   m_DirtyAABB: 0
+--- !u!64 &6829270530496223502
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1277791706596166}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: 6ab693db99e1c8a48939c522d49a62ba, type: 3}
 --- !u!1 &1631829766523938
 GameObject:
   m_ObjectHideFlags: 0
@@ -168,7 +191,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4599227868460324}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Root
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -200,7 +223,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4898167187003672}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -232,7 +255,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4937239493256068}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Armature.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -264,7 +287,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4114864466926424}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}

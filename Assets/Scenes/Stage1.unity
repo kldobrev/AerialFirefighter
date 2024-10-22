@@ -7428,10 +7428,19 @@ PrefabInstance:
       propertyPath: m_Name
       value: ControlTower
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 798ddd71f12b57046bfac945c10d943f,
+        type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 798ddd71f12b57046bfac945c10d943f,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1000140602}
   m_SourcePrefab: {fileID: 100100000, guid: 798ddd71f12b57046bfac945c10d943f, type: 3}
 --- !u!1 &410087039
 GameObject:
@@ -8461,6 +8470,12 @@ Transform:
   - {fileID: 849852182}
   m_Father: {fileID: 4155046195940137136}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &714604122 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 798ddd71f12b57046bfac945c10d943f,
+    type: 3}
+  m_PrefabInstance: {fileID: 378785132}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &742034465
 GameObject:
   m_ObjectHideFlags: 0
@@ -23656,6 +23671,27 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 378785132}
   m_PrefabAsset: {fileID: 0}
+--- !u!65 &1000140602
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 714604122}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 6.99, y: 16.47, z: 17.25}
+  m_Center: {x: 0, y: 2.1, z: 2.75}
 --- !u!1 &1015979387
 GameObject:
   m_ObjectHideFlags: 0
@@ -25535,21 +25571,6 @@ MonoBehaviour:
   <optionsHolder>k__BackingField: {fileID: 979809115}
   <cursor>k__BackingField: {fileID: 891953238}
   <stateSign>k__BackingField: {fileID: 2098865260}
-  _screenFadeEffect:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 224394741}
-        m_TargetAssemblyTypeName: UIController, Assembly-CSharp
-        m_MethodName: ScreenFadeInGame
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &1604302639
 GameObject:
   m_ObjectHideFlags: 0

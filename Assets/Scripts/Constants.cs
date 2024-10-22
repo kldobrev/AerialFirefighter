@@ -102,7 +102,8 @@ public static class Constants {
     public const string TutorialClearSign = "TUTORIAL CLEAR";
     public static Vector3 DefaultLocatorIconPosition = new(0, 0, 0);
     public const string GoalSphereTag = "Goal";
-
+    public const float ScreenFadePauseSpeed = 20;
+    public const float ScreenFadeQuitSpeed = 10;
 
 
     // Menus

@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
 
     private MenuController _currentMenu;
     private MenuController _previousMenu;
-    private UnityEvent<float> _screenFadeEffect;
+    private UnityEvent<byte, byte, float> _screenFadeEffect;
     private PlayerInputHandler _input;
     private UIController _inGameUIController;
     private GameState _previousState;
@@ -99,7 +99,8 @@ public class GameManager : MonoBehaviour
                     }
                     break;
                 case 3: // Exit game
-                    Application.Quit();
+                    _inGameMenu.ClosePauseMenu();
+                    StartCoroutine(ConfirmAndExecute(QuitGame()));
                     break;
             }
         }
@@ -165,6 +166,8 @@ public class GameManager : MonoBehaviour
         _inGameUIController.CrashComplete.AddListener(ShowGameOver);
         _input.Player.SignalGameOver.AddListener(InitGameOver);
         _initInGameMenu.Invoke(CurrentPlayMode);
+        _currentMenu = _inGameMenu;
+        _previousMenu = _currentMenu;
 
         ToggleFreezeGameplay(false);
         CurrentState = GameState.Playing;
@@ -197,12 +200,12 @@ public class GameManager : MonoBehaviour
     private IEnumerator PauseCoroutine()
     {
         _input.DisableInput();
-        _screenFadeEffect.Invoke(Constants.FadeScreenAlphaPause);
+        _screenFadeEffect.Invoke(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaPause, 
+            Constants.ScreenFadePauseSpeed);
         _inGameMenu.ResetCursorPosition();
         _inGameMenu.OpenPauseMenu();
         yield return new WaitUntil(() => _inGameMenu.Opened);
         CurrentState = GameState.Pause;
-        _currentMenu = _inGameMenu;
         ToggleFreezeGameplay(true);
     }
 
@@ -211,7 +214,8 @@ public class GameManager : MonoBehaviour
         _input.DisableInput();
         _inGameMenu.ClosePauseMenu();
         yield return new WaitUntil(() => !_inGameMenu.Opened);
-        _screenFadeEffect.Invoke(-Constants.FadeScreenAlphaPause);
+        _screenFadeEffect.Invoke(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaPause, 
+            -Constants.ScreenFadePauseSpeed);
         ToggleFreezeGameplay(false);
         CurrentState = GameState.Playing;
     }
@@ -226,8 +230,6 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator ReopenPreviousMenu()
     {
-        _currentMenu = _previousMenu;
-
         if (_previousState == GameState.Pause)
         {
             _inGameMenu.OpenPauseMenu();
@@ -236,9 +238,18 @@ public class GameManager : MonoBehaviour
         {
             _inGameMenu.OpenGameOverMenu();
         }
-        yield return new WaitUntil(() => _currentMenu.Opened);
+        yield return new WaitUntil(() => _previousMenu.Opened);
         CurrentState = _previousState;
+        _currentMenu = _previousMenu;
         _input.SwitchToMenuControls();
+    }
+
+    private IEnumerator QuitGame()
+    {
+        _screenFadeEffect.Invoke(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaMax, 
+            Constants.ScreenFadeQuitSpeed);
+        yield return new WaitUntil(() => UIController.ScreenAlpha == Constants.FadeScreenAlphaMax);
+        Application.Quit();
     }
 
 }

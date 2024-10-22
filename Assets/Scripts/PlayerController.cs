@@ -229,12 +229,12 @@ public class PlayerController : MonoBehaviour
 
         if (_outsideFieldBounds)
         {
-            if (UIController.GetScreenTransparency() == 0)
+            if (UIController.ScreenAlpha == Constants.FadeScreenAlphaMin)
             {
                 _lockedControls = true;
                 _startFadeOut.Invoke();
             }
-            else if (UIController.GetScreenTransparency() == 255 && _lockedControls)
+            else if (UIController.ScreenAlpha == Constants.FadeScreenAlphaMax && _lockedControls)
             {
                 // Reversing plane direction and speed after passing stage boundary
                 _cachedTransform.Rotate(new Vector3(2 * _cachedTransform.rotation.eulerAngles.x, 180, 0));
