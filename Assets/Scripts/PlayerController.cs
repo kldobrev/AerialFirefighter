@@ -27,9 +27,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float _rollFactor;
     [SerializeField]
-    private float _liftForce = 3.1f;
+    private float _liftForce;
     [SerializeField]
-    private float _pitchLiftFactor = 2;
+    private float _pitchLiftFactor;
     [SerializeField]
     private ParticleSystem _dropWaterEffect;
     [SerializeField]
@@ -103,7 +103,6 @@ public class PlayerController : MonoBehaviour
     private float _bankAngle;
     private float _liftValue;
     private bool _throttleAllowed;
-    private float _cameraTransitionTimer;
     private Transform _cachedTransform;
     private float _landingTimerCounter;
     private IEnumerator _landingCountCoroutine;
@@ -143,7 +142,6 @@ public class PlayerController : MonoBehaviour
         _nullifyingAngleEnabled = false;
         _waterTankOpened = false;
         _throttleAllowed = false;
-        _cameraTransitionTimer = 0;
         _landingTimerCounter = 0;
         _landingCountCoroutine = LandingCountdown();
         _updateFuelGaugeQuantity.Invoke(_fuelQuantity);
@@ -210,7 +208,7 @@ public class PlayerController : MonoBehaviour
             _updateWaterGaugeQuantity.Invoke(_waterQuantity);
         }
 
-        // _propeller spinning
+        // Propeller spinning
         if (_engineStarted || _propellerSpeed > 0)
         {
             _propeller.Rotate(_propellerSpeed, 0, 0);
@@ -358,7 +356,6 @@ public class PlayerController : MonoBehaviour
         }
         else if (other.gameObject.CompareTag(Constants.WaterDepthsTagName))
         {
-            _cameraTransitionTimer = 0;
             _waterSplashEffect.Stop();
             EndPlaySession(_crashInWaterEffect, GameOverType.WaterCrash);
         }
@@ -383,12 +380,6 @@ public class PlayerController : MonoBehaviour
                 // Trying to keep plane afloat while scooping water
                 _planeBody.AddRelativeForce(Vector3.up * Constants.WaterFloatForceUp, ForceMode.VelocityChange);
                 _waterSplashEffect.Play();
-                if (_cameraTransitionTimer == 0)
-                {
-                    _changeCameraDistance.Invoke(Constants.CameraTrailingDistanceWater);
-                    StartCoroutine(CameraTimerCountdown());
-                }
-                _cameraTransitionTimer = Constants.CameraTimeLimit;
             }
         }
         else if(other.gameObject.CompareTag(Constants.LandingZoneTagName) && (_engineStarted || _planeMagnitudeRounded != 0))
@@ -429,17 +420,6 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(0.8f);
         if(_pitchRollInput == Vector2.zero && _yawInput == 0) _planeBody.angularVelocity = Vector3.zero;
         _nullifyingAngleEnabled = false;
-    }
-
-    private IEnumerator CameraTimerCountdown()
-    {
-        _cameraTransitionTimer = Constants.CameraTimeLimit;
-        while (_cameraTransitionTimer != 0)
-        {
-            _cameraTransitionTimer = Mathf.Clamp(_cameraTransitionTimer - Time.deltaTime, 0, Constants.CameraTimeLimit);
-            yield return null;
-        }
-        _changeCameraDistance.Invoke(Constants.CameraTrailingDistanceDefault);
     }
 
     private IEnumerator LandingCountdown() 

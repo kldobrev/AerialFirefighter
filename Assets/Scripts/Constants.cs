@@ -29,8 +29,8 @@ public static class Constants {
     public const float PlaneMaxSpeed = 210;
     public const float WeightPlaneNoLoad = 2000;
     public const float MaxWeightPlaneFullyLoaded = 3000;
-    public static Vector3 CameraTrailingDistanceDefault = new(5.75f,1.29f,0);
-    public static Vector3 CameraTrailingDistanceWater = new(6f, 2.3f, 0);
+    public static Vector3 CameraTrailingDistanceDefault = new(0, 1.15f, -6);
+    public static Vector3 CameraTrailingDistanceSurface = new(0, 1.8f, -6.5f);
     public static Vector3 CameraCrashDistance = new(30, 15, 0);
     public const float CameraTransitionSpeed = 0.05f;
     public const float CameraTimeLimit = 3;
@@ -140,7 +140,7 @@ public static class Constants {
     public const string InGameUICanvasTagName = "InGameUI";
     public const string InGameMenuTagNam = "InGameMenu";
     public const string ConfirmPromptMenuTagName = "Confirm";
-    public const string LeaveStagePromptText = "ALL YOUR CURRENT PROGRESS ON THIS STAGE WILL BE LOST IF YOU PROCEED. IS THAT OK?";
+    public const string LeaveStagePromptText = "IF YOU EXIT YOUR CURRENT PROGRESS ON THIS STAGE WILL BE LOST. WILL YOU PROCEED?";
     public const float ConfirmPromptTextTrigger = 100;
     public const float ConfirmPromptBkgAlphaMax = 350;
 
@@ -158,6 +158,10 @@ public static class Constants {
     public const float ScoopBankMin = -5;
     public const float ScoopBankMax = 5;
     public const float LandingTimer = 1.5f;
+    public const string GroundLayerName = "Ground";
+    public const string BuildingLayerName = "Building";
+    public const string WaterLayerName = "Water";
+    public const float DistanceToGroundCameraTrigger = 10;
 
     // Gameplay
 

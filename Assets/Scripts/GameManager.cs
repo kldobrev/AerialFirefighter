@@ -6,15 +6,9 @@ using UnityEngine.Windows;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField]
     private InGameMenuController _inGameMenu;
-    [SerializeField]
     private ConfirmPromptController _confirmPrompt;
-    [SerializeField]
     private UnityEvent<PlayMode> _initInGameMenu;
-    [SerializeField]
-    private UnityEvent<GameOverType> _initCrash;
-
     private MenuController _currentMenu;
     private MenuController _previousMenu;
     private UnityEvent<byte, byte, float> _screenFadeEffect;
@@ -29,6 +23,7 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         _input = transform.GetComponent<PlayerInputHandler>();
         _screenFadeEffect = new();
+        _initInGameMenu = new();
     }
 
     // Start is called before the first frame update
@@ -78,7 +73,7 @@ public class GameManager : MonoBehaviour
                     }
                     break;
                 case 1: // Restart stage/tutorial
-                    if (CurrentState == GameState.Pause)
+                    if (CurrentState == GameState.Pause || (CurrentState == GameState.GameOver && CurrentPlayMode == PlayMode.FireMission))
                     {
                         _inGameMenu.ClosePauseMenu();
                         StartCoroutine(ConfirmAndExecute(LoadGameplayScene(SceneManager.GetActiveScene().name)));
@@ -120,7 +115,7 @@ public class GameManager : MonoBehaviour
     public void InitGameOver(GameOverType type)
     {
         CurrentState = GameState.GameOver;
-        _initCrash.Invoke(type);
+        StartCoroutine(_inGameUIController.CrashSequence(type));
     }
 
     public void ShowGameOver()
@@ -161,7 +156,6 @@ public class GameManager : MonoBehaviour
         _confirmPrompt = GameObject.FindWithTag(Constants.ConfirmPromptMenuTagName).GetComponent<ConfirmPromptController>();
         _input.Player = GameObject.FindWithTag(Constants.PlayerTagName).GetComponent<PlayerController>();
         _initInGameMenu.AddListener(_inGameMenu.SetInGameMenuForMode);
-        _initCrash.AddListener(_inGameUIController.CrashSequence);
         _screenFadeEffect.AddListener(_inGameUIController.ScreenFadeInGame);
         _inGameUIController.CrashComplete.AddListener(ShowGameOver);
         _input.Player.SignalGameOver.AddListener(InitGameOver);

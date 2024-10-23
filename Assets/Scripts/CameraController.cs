@@ -12,19 +12,26 @@ public class CameraController : MonoBehaviour
     [SerializeField]
     private float _smoothSpeed;
 
-    private Vector3 _targetPosition;
+    public Vector3 _targetPosition;
     private Transform _cameraTrns;
     private IEnumerator _trailingTransition;
     private static bool _trailingChangeInProgress;
 
+    public float temp_DistanceToGround;
+    private FrameRule _checkGroundDistanceRule;
+    private int _surfacesLayerMask;
 
     // Start is called before the first frame update
     void Start()
     {
         _cameraTrns = transform;
-        _targetPosition = Constants.CameraTrailingDistanceDefault;
-        _cameraTrns.position = _playerTransform.position + Constants.CameraTrailingDistanceDefault;
+        _targetPosition = Constants.CameraTrailingDistanceSurface;
+        _cameraTrns.position = _playerTransform.position + Constants.CameraTrailingDistanceSurface;
         _trailingChangeInProgress = false;
+
+        _surfacesLayerMask = LayerMask.GetMask(Constants.GroundLayerName, Constants.BuildingLayerName, Constants.WaterLayerName);
+        _checkGroundDistanceRule = new(20);
+        StartCoroutine(ScanForSurface());
     }
 
     // Update is called once per frame
@@ -78,6 +85,30 @@ public class CameraController : MonoBehaviour
             yield return null;
         }
         _targetPosition = Constants.CameraTrailingDistanceDefault;
+    }
+
+    private IEnumerator ScanForSurface()
+    {
+        while (!_playerTransform.IsUnityNull())
+        {
+            Debug.DrawRay(_playerTransform.position, Vector3.down * Constants.DistanceToGroundCameraTrigger, Color.red);
+
+            if (_checkGroundDistanceRule.CheckFrameRule())
+            {
+                if (Physics.Raycast(_playerTransform.position, Vector3.down, Constants.DistanceToGroundCameraTrigger, _surfacesLayerMask))
+                {
+                    if (_targetPosition != Constants.CameraTrailingDistanceSurface && !_trailingChangeInProgress) {
+                        ChangeCameraPosition(Constants.CameraTrailingDistanceSurface);
+                    }
+                }
+                else if (_targetPosition != Constants.CameraTrailingDistanceDefault && !_trailingChangeInProgress)
+                {
+                    ChangeCameraPosition(Constants.CameraTrailingDistanceDefault);
+                }
+            }
+            _checkGroundDistanceRule.AdvanceCounter();
+            yield return null;
+        }
     }
 
 }

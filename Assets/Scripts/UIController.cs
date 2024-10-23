@@ -38,13 +38,7 @@ public class UIController : MonoBehaviour
     public static byte ScreenAlpha { get; private set; }
     private int _speedDisplayed;
     private Image _heightMeterBkg;
-    private int _currentWeaponIconIndex;
-    private static byte _extinguishSignAlpha;
     private static byte _scoreToAddSignAlpha;
-    private static byte _clearSignAlpha;
-    private static int _numberOfFires;
-    private float _extingSignTimer;
-
 
 
     void Awake()
@@ -65,15 +59,12 @@ public class UIController : MonoBehaviour
         _heightMeter.maxValue = Constants.MaxHeightAllowed;
         _heightMeterBkg = _heightMeter.GetComponentInChildren<Image>();
         _heightMeterBkg.color = Constants.HeightBelowAlertColour;
-        _currentWeaponIconIndex = 0;
         _fadeEffectsPanel.color = Constants.FadePanelDefaultColour;
         ScreenAlpha = Constants.FadePanelDefaultColour.a;
-        _extinguishSignAlpha = Constants.ExtinguishSignColour.a;
         _extinguishedSign.color = Constants.ExtinguishSignColour;
         _extinguishedSign.fontSize = Constants.UISignDefaultFontSize;
         _scoreToAddSignAlpha = Constants.ScoreToAddSignColour.a;
         _scoreToAddSign.color = Constants.ScoreToAddSignColour;
-        _clearSignAlpha = Constants.ClearSignColour.a;
         _clearSign.color = Constants.ClearSignColour;
         _extinguishedSign.transform.parent.gameObject.SetActive(true);
     }
@@ -186,7 +177,17 @@ public class UIController : MonoBehaviour
         StartCoroutine(ClearCoroutine());
     }
 
-    public void CrashSequence(GameOverType type)
+    public void ScreenFadeInGame(byte minAlpha, byte maxAlpha, float speed)
+    {
+        StartCoroutine(ScreenFade(minAlpha, maxAlpha, speed));
+    }
+
+    public void HideScoreToAddSign()
+    {
+        StartCoroutine(HelperMethods.FadeText(_scoreToAddSign, 0, Constants.UISignMaxAlpha, -Constants.UISignFadeSpeed));
+    }
+
+    public IEnumerator CrashSequence(GameOverType type)
     {
         if (type == GameOverType.GroundCrash)
         {
@@ -205,25 +206,6 @@ public class UIController : MonoBehaviour
         }
 
         _inGameMenu.SetGameOverMenu(type);
-        StartCoroutine(CrashCoroutine());
-    }
-
-    public void ScreenFadeInGame(byte minAlpha, byte maxAlpha, float speed)
-    {
-        StartCoroutine(ScreenFade(minAlpha, maxAlpha, speed));
-    }
-
-    private IEnumerator ClearCoroutine()
-    {
-        yield return new WaitForSeconds(0.5f);
-        yield return StartCoroutine(HelperMethods.FadeText(_clearSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
-        yield return new WaitForSeconds(3);
-        yield return StartCoroutine(ScreenFade(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaMax,
-            Constants.FadeScreenSpeed));
-    }
-
-    private IEnumerator CrashCoroutine()
-    {
         yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(HelperMethods.FadeText(_crashSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
         yield return new WaitForSeconds(1.5f);
@@ -233,9 +215,13 @@ public class UIController : MonoBehaviour
         CrashComplete.Invoke();
     }
 
-    public void HideScoreToAddSign()
+    private IEnumerator ClearCoroutine()
     {
-        StartCoroutine(HelperMethods.FadeText(_scoreToAddSign, 0, Constants.UISignMaxAlpha, -Constants.UISignFadeSpeed));
+        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(HelperMethods.FadeText(_clearSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
+        yield return new WaitForSeconds(3);
+        yield return StartCoroutine(ScreenFade(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaMax,
+            Constants.FadeScreenSpeed));
     }
 
     private IEnumerator ScreenFade(byte minAlpha, byte maxAlpha, float fadeSpeed)
