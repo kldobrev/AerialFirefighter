@@ -155,6 +155,7 @@ public class GameManager : MonoBehaviour
         _inGameMenu = GameObject.FindWithTag(Constants.InGameMenuTagNam).GetComponent<InGameMenuController>();
         _confirmPrompt = GameObject.FindWithTag(Constants.ConfirmPromptMenuTagName).GetComponent<ConfirmPromptController>();
         _input.Player = GameObject.FindWithTag(Constants.PlayerTagName).GetComponent<PlayerController>();
+        _input.Camera = GameObject.FindWithTag(Constants.CameraTagName).GetComponent<CameraController>();
         _initInGameMenu.AddListener(_inGameMenu.SetInGameMenuForMode);
         _screenFadeEffect.AddListener(_inGameUIController.ScreenFadeInGame);
         _inGameUIController.CrashComplete.AddListener(ShowGameOver);

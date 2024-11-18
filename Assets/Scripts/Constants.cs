@@ -29,12 +29,37 @@ public static class Constants {
     public const float PlaneMaxSpeed = 210;
     public const float WeightPlaneNoLoad = 2000;
     public const float MaxWeightPlaneFullyLoaded = 3000;
-    public static Vector3 CameraTrailingDistanceDefault = new(0, 1.15f, -6);
-    public static Vector3 CameraTrailingDistanceSurface = new(0, 1.8f, -6.5f);
-    public static Vector3 CameraCrashDistance = new(30, 15, 0);
-    public const float CameraTransitionSpeed = 0.05f;
-    public const float CameraTimeLimit = 3;
 
+
+    // Camera
+
+    public const int CameraModesCount = 4;
+    public const float AirboutneThresholdHeight = 5;
+    public static Vector3 CameraTrailingDistanceBehindAbove = new(0, 3.06f, -17);
+    public static Vector3 CameraTrailingDistanceBehindCentered = new(0, 1.26f, -16.9f);
+    public static Vector3 CameraTrailingDistancePropeller = new(0, 0.08f, 0.12f);
+    public static Vector3 CameraTrailingDistanceFirstPerson = new(0, 0, 0.42f);
+    public static Vector3 CameraTrailingDistanceSurface = new(0, 3.06f, -23);
+    public static Vector3 CameraTrailingDistanceImpact = new(0, 15, 18);
+    public static Vector3 CameraModeTransitionPoint = new(0, 0.49f, -4.43f);
+    public static Vector3 CameraCrashDistance = new(30, 15, 0);
+    public const float CameraTransitionSpeedDefault = 5;
+    public const float CameraTransitionSpeedFrontBack = 30;
+    public const float CameraTransitionSpeedAirToSurface = 8;
+    public const float CameraTransitionSpeedSurfaceToAir = 8;
+    public const float CameraTransitionSpeedGameOver = 3;
+    public const float CameraTransitionSpeedImpact = 200;
+    public const float CameraRotationSpeedAirToSurface = 10;
+    public const float CameraRotationSpeedSurfaceToAir = 10;
+    public const float CameraRotationSpeedDefault = 80;
+    public const float CameraRotationSpeedImpact = 500;
+    public const float CameraImpactViewAngleX = 100;
+    public const float CameraTimeLimit = 3;
+    public const string CameraTagName = "MainCamera";
+    public const uint CameraSurfaceCheckInterval = 10;
+    public const float CameraImpactAngleThreshold = -20;
+    public const float CameraSurfaceToAirHeightTrigger = 3;
+    public const float CameraUnderwaterEffectThreshold = 1;
 
     // Fire Missions
 
@@ -79,7 +104,8 @@ public static class Constants {
     public const float FuelGaugeNormalAlpha = 1;
     public const float FuelGaugeAlertAlpha = 160;
     public static Color32 FuelGaugeEmptyColour = new(87, 87, 87, 200);
-    public static Color32 FadePanelDefaultColour = new(0, 0, 0, 0);
+    public static Color32 EffectsPanelColourDefault = new(0, 0, 0, 0);
+    public static Color32 EffectsPanelColourWater = new(0, 157, 255, 137);
     public static Color32 ExtinguishSignColour = new(69, 237, 0, 0);
     public static Color32 ExtinguishSignColourAll = new(250, 255, 65, 0);
     public const byte UISignMaxAlpha = 200;
@@ -161,7 +187,6 @@ public static class Constants {
     public const string GroundLayerName = "Ground";
     public const string BuildingLayerName = "Building";
     public const string WaterLayerName = "Water";
-    public const float DistanceToGroundCameraTrigger = 10;
 
     // Gameplay
 

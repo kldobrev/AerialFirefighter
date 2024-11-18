@@ -59,8 +59,8 @@ public class UIController : MonoBehaviour
         _heightMeter.maxValue = Constants.MaxHeightAllowed;
         _heightMeterBkg = _heightMeter.GetComponentInChildren<Image>();
         _heightMeterBkg.color = Constants.HeightBelowAlertColour;
-        _fadeEffectsPanel.color = Constants.FadePanelDefaultColour;
-        ScreenAlpha = Constants.FadePanelDefaultColour.a;
+        _fadeEffectsPanel.color = Constants.EffectsPanelColourDefault;
+        ScreenAlpha = Constants.EffectsPanelColourDefault.a;
         _extinguishedSign.color = Constants.ExtinguishSignColour;
         _extinguishedSign.fontSize = Constants.UISignDefaultFontSize;
         _scoreToAddSignAlpha = Constants.ScoreToAddSignColour.a;
@@ -187,6 +187,11 @@ public class UIController : MonoBehaviour
         StartCoroutine(HelperMethods.FadeText(_scoreToAddSign, 0, Constants.UISignMaxAlpha, -Constants.UISignFadeSpeed));
     }
 
+    public void ToggleWaterFilter(bool enabled)
+    {
+        _fadeEffectsPanel.color = (enabled) ? Constants.EffectsPanelColourWater : Constants.EffectsPanelColourDefault;
+    }
+
     public IEnumerator CrashSequence(GameOverType type)
     {
         if (type == GameOverType.GroundCrash)
@@ -205,6 +210,7 @@ public class UIController : MonoBehaviour
             _crashSign.color = Constants.CrashSignColourFuel;
         }
 
+        _fadeEffectsPanel.color = Constants.EffectsPanelColourDefault;
         _inGameMenu.SetGameOverMenu(type);
         yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(HelperMethods.FadeText(_crashSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
@@ -230,8 +236,8 @@ public class UIController : MonoBehaviour
         while (ScreenAlpha != alphaTarget)
         {
             ScreenAlpha = (byte) Math.Clamp(ScreenAlpha + fadeSpeed, minAlpha, maxAlpha);
-            _fadeEffectsPanel.color = new Color32(Constants.FadePanelDefaultColour.r,
-                Constants.FadePanelDefaultColour.g, Constants.FadePanelDefaultColour.b, ScreenAlpha);
+            _fadeEffectsPanel.color = new Color32(Constants.EffectsPanelColourDefault.r,
+                Constants.EffectsPanelColourDefault.g, Constants.EffectsPanelColourDefault.b, ScreenAlpha);
             yield return null;
         }
     }

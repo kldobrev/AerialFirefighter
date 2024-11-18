@@ -98,6 +98,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""change camera mode"",
+                    ""type"": ""Button"",
+                    ""id"": ""7b156a95-df73-4185-bab9-168e1520d098"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -105,17 +114,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""7a64551b-14d2-415b-97db-b3855bb62943"",
                     ""path"": ""<Keyboard>/o"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""drop water"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""5c18885e-01ad-40d2-8772-c4ee987e2490"",
-                    ""path"": ""<Keyboard>/numpadPlus"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
@@ -138,28 +136,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""name"": ""positive"",
                     ""id"": ""31966a26-8a73-45d7-b1c1-b01d7c847d91"",
                     ""path"": ""<Keyboard>/space"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""accelerate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""1D Axis"",
-                    ""id"": ""9ae68083-b4f5-40e2-9e8a-8d0880b786ac"",
-                    ""path"": ""1DAxis(minValue=0)"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""accelerate"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""positive"",
-                    ""id"": ""038d78b3-328c-4edd-8df1-f93488ab32bb"",
-                    ""path"": ""<Keyboard>/numpad0"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
@@ -223,75 +199,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""2D Vector"",
-                    ""id"": ""728e8cc5-0006-488a-b3ed-514709aef6dd"",
-                    ""path"": ""2DVector(mode=2)"",
-                    ""interactions"": """",
-                    ""processors"": ""InvertVector2(invertY=false)"",
-                    ""groups"": """",
-                    ""action"": ""pitch/roll"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""up"",
-                    ""id"": ""cf0585be-8320-4d4f-9f9b-599a45d60c1c"",
-                    ""path"": ""<Keyboard>/upArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""pitch/roll"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""67ba22e9-a5e0-46f4-bf91-bce98cb6c22e"",
-                    ""path"": ""<Keyboard>/downArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""pitch/roll"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""f846cbb6-2895-4050-91b5-68571f13b5dd"",
-                    ""path"": ""<Keyboard>/leftArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""pitch/roll"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""03b9615e-4551-4509-92fb-285a8eeb7cc0"",
-                    ""path"": ""<Keyboard>/rightArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""pitch/roll"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
                     ""name"": """",
                     ""id"": ""44ac5227-8e9c-4b04-8534-6be4c43998c5"",
                     ""path"": ""<Keyboard>/y"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""toggle auto speed"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""ef088c1a-2792-4306-af29-fd5d48ab84f7"",
-                    ""path"": ""<Keyboard>/numpadMinus"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
@@ -314,28 +224,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""name"": ""positive"",
                     ""id"": ""6f12c665-f185-48a4-a2ae-9704da58a332"",
                     ""path"": ""<Keyboard>/leftCtrl"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""brake"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""1D Axis"",
-                    ""id"": ""7995e45d-3576-4108-919b-b9367da4b3e7"",
-                    ""path"": ""1DAxis(minValue=0)"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""brake"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""positive"",
-                    ""id"": ""5481df23-3cc7-45b5-8c86-77a078a934d0"",
-                    ""path"": ""<Keyboard>/numpadPeriod"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
@@ -377,53 +265,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""1D Axis"",
-                    ""id"": ""393b8c58-c889-48df-9738-ca6b3cc5e992"",
-                    ""path"": ""1DAxis"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""yaw"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""negative"",
-                    ""id"": ""1d3ac60c-6964-4077-890d-aa8b4e991fd9"",
-                    ""path"": ""<Keyboard>/numpad1"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""yaw"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""positive"",
-                    ""id"": ""53f505b4-e99c-47c5-beb9-8e60bfce67cb"",
-                    ""path"": ""<Keyboard>/numpad2"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""yaw"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
                     ""name"": """",
                     ""id"": ""0cd3d3ba-468a-46e1-b842-c6adc30628e7"",
                     ""path"": ""<Keyboard>/r"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""start/stop engine"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""5b8a5054-ddf6-4637-ab61-4c0a2db2003d"",
-                    ""path"": ""<Keyboard>/numpadMultiply"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
@@ -443,15 +287,37 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": """",
-                    ""id"": ""4583e8f4-0a47-48ea-917c-2a341c39dce2"",
-                    ""path"": ""<Keyboard>/backspace"",
+                    ""name"": ""1D Axis"",
+                    ""id"": ""afb2c6a2-a590-4f50-9ddc-ceed818e0899"",
+                    ""path"": ""1DAxis"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""pause"",
-                    ""isComposite"": false,
+                    ""groups"": """",
+                    ""action"": ""change camera mode"",
+                    ""isComposite"": true,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""65b3fc55-981f-4a18-91b7-f8629ea017dc"",
+                    ""path"": ""<Keyboard>/leftBracket"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""change camera mode"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""7424f36e-0b0c-465a-8a00-5e5d1e0c864c"",
+                    ""path"": ""<Keyboard>/rightBracket"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""change camera mode"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         },
@@ -713,6 +579,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_gameplay_dropwater = m_gameplay.FindAction("drop water", throwIfNotFound: true);
         m_gameplay_toggleautospeed = m_gameplay.FindAction("toggle auto speed", throwIfNotFound: true);
         m_gameplay_pause = m_gameplay.FindAction("pause", throwIfNotFound: true);
+        m_gameplay_changecameramode = m_gameplay.FindAction("change camera mode", throwIfNotFound: true);
         // menu
         m_menu = asset.FindActionMap("menu", throwIfNotFound: true);
         m_menu_confirm = m_menu.FindAction("confirm", throwIfNotFound: true);
@@ -787,6 +654,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_gameplay_dropwater;
     private readonly InputAction m_gameplay_toggleautospeed;
     private readonly InputAction m_gameplay_pause;
+    private readonly InputAction m_gameplay_changecameramode;
     public struct GameplayActions
     {
         private @PlayerControls m_Wrapper;
@@ -799,6 +667,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @dropwater => m_Wrapper.m_gameplay_dropwater;
         public InputAction @toggleautospeed => m_Wrapper.m_gameplay_toggleautospeed;
         public InputAction @pause => m_Wrapper.m_gameplay_pause;
+        public InputAction @changecameramode => m_Wrapper.m_gameplay_changecameramode;
         public InputActionMap Get() { return m_Wrapper.m_gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -832,6 +701,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @pause.started += instance.OnPause;
             @pause.performed += instance.OnPause;
             @pause.canceled += instance.OnPause;
+            @changecameramode.started += instance.OnChangecameramode;
+            @changecameramode.performed += instance.OnChangecameramode;
+            @changecameramode.canceled += instance.OnChangecameramode;
         }
 
         private void UnregisterCallbacks(IGameplayActions instance)
@@ -860,6 +732,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @pause.started -= instance.OnPause;
             @pause.performed -= instance.OnPause;
             @pause.canceled -= instance.OnPause;
+            @changecameramode.started -= instance.OnChangecameramode;
+            @changecameramode.performed -= instance.OnChangecameramode;
+            @changecameramode.canceled -= instance.OnChangecameramode;
         }
 
         public void RemoveCallbacks(IGameplayActions instance)
@@ -976,6 +851,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnDropwater(InputAction.CallbackContext context);
         void OnToggleautospeed(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
+        void OnChangecameramode(InputAction.CallbackContext context);
     }
     public interface IMenuActions
     {

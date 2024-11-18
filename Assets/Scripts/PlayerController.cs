@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using static System.Net.Mime.MediaTypeNames;
 //using static UnityEditor.VersionControl.Message;
 
 public class PlayerController : MonoBehaviour
@@ -66,9 +67,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private UnityEvent<Vector3> _detachCamera;
     [SerializeField]
-    private UnityEvent<Vector3> _changeCameraDistance;
+    private UnityEvent reverseCamera;
     [SerializeField]
     private UnityEvent<bool> _stageEndTrigger;
+    [SerializeField]
+    private UnityEvent<bool> _synchronizeCameraAirbourneFlag;
 
 
 
@@ -118,8 +121,9 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         _isAirbourne = false;
+        _synchronizeCameraAirbourneFlag.Invoke(_isAirbourne);
         _isAutoSpeedOn = false;
-        _airbourneThresholdY = _cachedTransform.position.y + 1;
+        _airbourneThresholdY = _cachedTransform.position.y + Constants.AirboutneThresholdHeight;
         _autoSpeed = 0;
         _planeMagnitudeRounded = 0;
         _planeDrag = Constants.PlDefaultDrag;
@@ -160,6 +164,7 @@ public class PlayerController : MonoBehaviour
         if (!_isAirbourne && _cachedTransform.position.y > _airbourneThresholdY)
         {
             _isAirbourne = true;
+            _synchronizeCameraAirbourneFlag.Invoke(_isAirbourne);
         }
 
         // Updating UI elements
@@ -225,6 +230,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        // Reversing plane direction and speed after passing stage boundary
         if (_outsideFieldBounds)
         {
             if (UIController.ScreenAlpha == Constants.FadeScreenAlphaMin)
@@ -234,11 +240,11 @@ public class PlayerController : MonoBehaviour
             }
             else if (UIController.ScreenAlpha == Constants.FadeScreenAlphaMax && _lockedControls)
             {
-                // Reversing plane direction and speed after passing stage boundary
                 _cachedTransform.Rotate(new Vector3(2 * _cachedTransform.rotation.eulerAngles.x, 180, 0));
                 Vector3 currentDirection = -_planeBody.velocity.normalized;
                 _planeBody.velocity = currentDirection * _planeBody.velocity.magnitude;
                 Physics.SyncTransforms();
+                reverseCamera.Invoke();
                 _lockedControls = false;
             }
         }
@@ -325,6 +331,7 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag(Constants.TerrainTagName) && _isAirbourne)
         {
             _isAirbourne = false;
+            _synchronizeCameraAirbourneFlag.Invoke(_isAirbourne);
             float signedEulerBank = HelperMethods.GetSignedAngleFromEuler(_cachedTransform.rotation.eulerAngles.z);
             ContactPoint collisionPoint = collision.GetContact(0);
             if (!(collisionPoint.normal == Vector3.up && collisionPoint.impulse.y == 0 &&
@@ -403,9 +410,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void StartPlaneInAir(float initSpeed)
+    public void StartPlaneInAir(Vector3 position, Vector3 eulerRotation, float initSpeed)
     {
+        _planeBody.position = position;
+        _planeBody.transform.eulerAngles = eulerRotation;
+        Physics.SyncTransforms();
         _isAirbourne = true;
+        _synchronizeCameraAirbourneFlag.Invoke(_isAirbourne);
         _engineStarted = true;
         AllowThrottle(true);
         _propellerSpeed = Constants.MaxIdlePropellerSpeed;

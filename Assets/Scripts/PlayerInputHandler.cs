@@ -18,6 +18,7 @@ public class PlayerInputHandler : MonoBehaviour, PlayerControls.IGameplayActions
     private UnityEvent<Vector2> _passNavData;
 
     public PlayerController Player { get; set; }
+    public CameraController Camera { get; set; }
     private PlayerControls _controls;
 
     void Awake()
@@ -35,6 +36,7 @@ public class PlayerInputHandler : MonoBehaviour, PlayerControls.IGameplayActions
         _controls.gameplay.brake.canceled += OnCancelBrake;
         _controls.gameplay.dropwater.canceled += OnDropwater;
         _controls.gameplay.toggleautospeed.performed += OnToggleautospeed;
+        _controls.gameplay.changecameramode.performed += OnChangecameramode;
         _controls.gameplay.pause.performed += OnPause;
         _controls.menu.confirm.canceled += OnConfirm;
         _controls.menu.back.canceled += OnBack;
@@ -140,4 +142,8 @@ public class PlayerInputHandler : MonoBehaviour, PlayerControls.IGameplayActions
         _passNavData.Invoke(context.ReadValue<Vector2>());
     }
 
+    public void OnChangecameramode(InputAction.CallbackContext context)
+    {
+        Camera.SetCameraMode(context.ReadValue<float>());
+    }
 }
