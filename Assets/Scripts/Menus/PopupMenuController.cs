@@ -19,7 +19,7 @@ public class PopupMenuController : MenuController
         yield return new WaitUntil(() => menuBkgRect.sizeDelta.y == maxBkgSize);
         UpdateCursorPosition();
         yield return StartCoroutine(HelperMethods.FadeRawImage(cursor, Constants.MenuCursorAlphaMin, Constants.MenuCursorAlphaMax,
-            Constants.MenuCursorFadeSpeed));
+            Constants.MenuCursorFadeSpeedIn));
         StartCoroutine(HelperMethods.FadeText(stateSign, Constants.MenuTextAlphaMin, Constants.MenuTextAlphaMax, textFadeSpeed));
         Opened = true;
     }
@@ -30,7 +30,7 @@ public class PopupMenuController : MenuController
         StartCoroutine(FadeOptions(Constants.MenuTextAlphaMin, Constants.MenuTextAlphaMax, -textFadeSpeed));
         StartCoroutine(HelperMethods.FadeText(stateSign, Constants.MenuTextAlphaMin, Constants.MenuTextAlphaMax, -textFadeSpeed));
         StartCoroutine(HelperMethods.FadeRawImage(cursor, Constants.MenuCursorAlphaMin, Constants.MenuCursorAlphaMax,
-            -Constants.MenuCursorFadeSpeed));
+            -Constants.MenuCursorFadeSpeedOut));
         while (cursor.color.a > cursorAlphaTrigger)
         {
             yield return null;

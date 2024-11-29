@@ -152,12 +152,13 @@ public static class Constants {
     public const float MenuTextAlphaMax = 255;
     public const float MenuCursorAlphaMin = 0;
     public const float MenuCursorAlphaMax = 92;
-    public const float MenuCursorFadeSpeed = 20;
+    public const float MenuCursorFadeSpeedIn = 20;
+    public const float MenuCursorFadeSpeedOut = 50;
     public const float InGameMenuBkgAlphaMin = 0;
     public const float InGameMenuBkgAlphaMax = 600;
     public const float InGameMenuBkgSizeChangeSpeed = 60;
     public const float InGameMenuTextFadeSpeedPauseIn = 30;
-    public const float InGameMenuTextFadeSpeedPauseOut = 70;
+    public const float InGameMenuTextFadeSpeedPauseOut = 100;
     public const float InGameMenuTextFadeSpeedGameOver = 20;
     public const float InGameMenuTextTrigger = 440;
     public const float InGameMenuSizeTrigger = 24;
