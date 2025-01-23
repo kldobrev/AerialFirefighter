@@ -36,9 +36,14 @@ public class UIController : MonoBehaviour
 
     public UnityEvent CrashComplete { get; set; }
     public static byte ScreenAlpha { get; private set; }
-    private int _speedDisplayed;
+    private string _speedDisplayed;
     private Image _heightMeterBkg;
     private static byte _scoreToAddSignAlpha;
+    private float _speedConvertRatio;
+    private string _speedUnit;
+    private bool _displaySpeedInKnots;
+    private int _currentSpeedRounded;
+    private int _newSpeedRounded;
 
 
     void Awake()
@@ -49,9 +54,8 @@ public class UIController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _speedometer.text = Constants.DefaultSpeedValueUI;
-        _autoSpeedIndicator.text = Constants.DefaultAutoSpeedValueUI;
-        _speedDisplayed = 0;
+        _speedDisplayed = "000";
+        _currentSpeedRounded = 0;
         _speedometer.color = Constants.SpeedColourInactive;
         _autoSpeedIndicator.color = Constants.SpeedColourInactive;
         _heightMeter.value = 0f;
@@ -67,6 +71,11 @@ public class UIController : MonoBehaviour
         _scoreToAddSign.color = Constants.ScoreToAddSignColour;
         _clearSign.color = Constants.ClearSignColour;
         _extinguishedSign.transform.parent.gameObject.SetActive(true);
+        _displaySpeedInKnots = false;    // Will be set in menu
+        _speedConvertRatio = _displaySpeedInKnots ? Constants.KmPhToKnotsRatio : 1;
+        _speedUnit = _displaySpeedInKnots ? "knots" : "km/h";
+        _speedometer.text = Constants.DefaultSpeedValueUI + _speedDisplayed + " " + _speedUnit;
+        _autoSpeedIndicator.text = Constants.DefaultAutoSpeedValueUI + _speedDisplayed + " " + _speedUnit;
     }
 
     public void SetSpeedometerColour(bool active)
@@ -74,20 +83,21 @@ public class UIController : MonoBehaviour
         _speedometer.color = active ? Constants.SpeedColourIndicatorOn : Constants.SpeedColourInactive;
     }
 
-    public void UpdateSpeedometer(int newSpeed)
+    public void UpdateSpeedometer(float newSpeed)
     {
-        if(newSpeed != _speedDisplayed)
-        {
-            _speedDisplayed = newSpeed;
-            _speedometer.text = "Speed: " + newSpeed.ToString().PadLeft(3, '0') + " km/h";
+        _newSpeedRounded = Mathf.RoundToInt(newSpeed * _speedConvertRatio);
+        if (_currentSpeedRounded != _newSpeedRounded) {
+            _currentSpeedRounded = _newSpeedRounded;
+            _speedDisplayed = _currentSpeedRounded.ToString().PadLeft(3, '0');
+            _speedometer.text = "Speed: " + _speedDisplayed + " " + _speedUnit;
         }
     }
 
-    public void ToggleAutoSpeed(bool isTurnedOn, int newAutoSpeed)
+    public void ToggleAutoSpeed(bool isTurnedOn)
     {
         if(isTurnedOn)
         {
-            _autoSpeedIndicator.text = "Auto speed: " + newAutoSpeed.ToString().PadLeft(3, '0') + " km/h";
+            _autoSpeedIndicator.text = "Auto speed: " + _speedDisplayed + " " + _speedUnit;
             _autoSpeedIndicator.color = Constants.AutoSpeedColourOn;
         }
         else

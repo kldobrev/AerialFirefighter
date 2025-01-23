@@ -64,11 +64,20 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""pitch/roll"",
+                    ""name"": ""pitch"",
                     ""type"": ""Value"",
-                    ""id"": ""c99209c7-8fa0-4995-818c-21bcb2bbd083"",
-                    ""expectedControlType"": ""Vector2"",
-                    ""processors"": ""InvertVector2(invertX=false)"",
+                    ""id"": ""29f4b4e0-1f0a-4f3c-a1e4-2e85521169be"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""bank"",
+                    ""type"": ""Value"",
+                    ""id"": ""55a76ed9-991f-4bdf-aeca-68b2201c710a"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
                 },
@@ -173,116 +182,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Controller"",
                     ""action"": ""accelerate"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""2D Vector"",
-                    ""id"": ""3ba4f94e-8d02-4ca2-9b12-7f12fc842504"",
-                    ""path"": ""2DVector(mode=2)"",
-                    ""interactions"": """",
-                    ""processors"": ""InvertVector2(invertY=false)"",
-                    ""groups"": """",
-                    ""action"": ""pitch/roll"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""up"",
-                    ""id"": ""2336066a-bb1e-4488-a219-ee3f62b8de26"",
-                    ""path"": ""<Keyboard>/s"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""pitch/roll"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""1ac48977-153c-4f93-aefd-b18d0b30c9f0"",
-                    ""path"": ""<Keyboard>/w"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""pitch/roll"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""1598be3b-7ea0-4fc4-9e35-785ebde7ab50"",
-                    ""path"": ""<Keyboard>/a"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""pitch/roll"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""55459a08-fa33-4339-90ec-00b58b08cd05"",
-                    ""path"": ""<Keyboard>/d"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""pitch/roll"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""2D Vector"",
-                    ""id"": ""2910e6e3-febf-4400-9567-32d6982b7386"",
-                    ""path"": ""2DVector(mode=2)"",
-                    ""interactions"": """",
-                    ""processors"": ""InvertVector2(invertY=false),StickDeadzone"",
-                    ""groups"": """",
-                    ""action"": ""pitch/roll"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""up"",
-                    ""id"": ""2ad184f4-aee1-4cd4-94ce-9ac2200655a9"",
-                    ""path"": ""<Gamepad>/leftStick/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Controller"",
-                    ""action"": ""pitch/roll"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""455cc408-cec2-4bc6-95a1-7eb59cbb74bc"",
-                    ""path"": ""<Gamepad>/leftStick/up"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Controller"",
-                    ""action"": ""pitch/roll"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""444c16de-8375-44e4-9525-aef998d12d53"",
-                    ""path"": ""<Gamepad>/leftStick/left"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Controller"",
-                    ""action"": ""pitch/roll"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""a45730f5-5d4a-4a03-ac0b-8499ce22ee1b"",
-                    ""path"": ""<Gamepad>/leftStick/right"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Controller"",
-                    ""action"": ""pitch/roll"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -525,6 +424,138 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Controller"",
                     ""action"": ""change camera mode"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""a555c010-360e-402d-aef7-17af12617fdd"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""pitch"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""7b5d1e79-699c-4397-b4b7-9d68caea92e6"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""pitch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""24463ee2-4cb7-42cf-b796-660a2458cdbf"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""pitch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""0e244914-b9a0-4659-8e10-5848ecf25412"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""pitch"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""fba20ca1-415f-4c1f-8bc5-e4f026833403"",
+                    ""path"": ""<Gamepad>/leftStick/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""pitch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""a7c36c66-8fc3-472b-bc0c-84649140c68e"",
+                    ""path"": ""<Gamepad>/leftStick/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""pitch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""362c2147-ee2d-4d74-bab2-80ef50cadc8f"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""bank"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""f4b65d59-b5cd-4a1c-a39c-d4889def4f11"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""bank"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""29339cb6-69f4-4218-85d0-6b46e0c5a763"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""bank"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""a22bea27-ba38-45bd-863a-c5a0c9fac7fd"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""bank"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""0709b209-a001-436f-9032-ccce2841c3b7"",
+                    ""path"": ""<Gamepad>/rightStick/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""bank"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""510972e6-d311-40b5-aec8-3220bee35aab"",
+                    ""path"": ""<Gamepad>/rightStick/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""bank"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 }
@@ -938,7 +969,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_gameplay_accelerate = m_gameplay.FindAction("accelerate", throwIfNotFound: true);
         m_gameplay_brake = m_gameplay.FindAction("brake", throwIfNotFound: true);
         m_gameplay_yaw = m_gameplay.FindAction("yaw", throwIfNotFound: true);
-        m_gameplay_pitchroll = m_gameplay.FindAction("pitch/roll", throwIfNotFound: true);
+        m_gameplay_pitch = m_gameplay.FindAction("pitch", throwIfNotFound: true);
+        m_gameplay_bank = m_gameplay.FindAction("bank", throwIfNotFound: true);
         m_gameplay_dropwater = m_gameplay.FindAction("drop water", throwIfNotFound: true);
         m_gameplay_toggleautospeed = m_gameplay.FindAction("toggle auto speed", throwIfNotFound: true);
         m_gameplay_pause = m_gameplay.FindAction("pause", throwIfNotFound: true);
@@ -1013,7 +1045,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_gameplay_accelerate;
     private readonly InputAction m_gameplay_brake;
     private readonly InputAction m_gameplay_yaw;
-    private readonly InputAction m_gameplay_pitchroll;
+    private readonly InputAction m_gameplay_pitch;
+    private readonly InputAction m_gameplay_bank;
     private readonly InputAction m_gameplay_dropwater;
     private readonly InputAction m_gameplay_toggleautospeed;
     private readonly InputAction m_gameplay_pause;
@@ -1026,7 +1059,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @accelerate => m_Wrapper.m_gameplay_accelerate;
         public InputAction @brake => m_Wrapper.m_gameplay_brake;
         public InputAction @yaw => m_Wrapper.m_gameplay_yaw;
-        public InputAction @pitchroll => m_Wrapper.m_gameplay_pitchroll;
+        public InputAction @pitch => m_Wrapper.m_gameplay_pitch;
+        public InputAction @bank => m_Wrapper.m_gameplay_bank;
         public InputAction @dropwater => m_Wrapper.m_gameplay_dropwater;
         public InputAction @toggleautospeed => m_Wrapper.m_gameplay_toggleautospeed;
         public InputAction @pause => m_Wrapper.m_gameplay_pause;
@@ -1052,9 +1086,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @yaw.started += instance.OnYaw;
             @yaw.performed += instance.OnYaw;
             @yaw.canceled += instance.OnYaw;
-            @pitchroll.started += instance.OnPitchroll;
-            @pitchroll.performed += instance.OnPitchroll;
-            @pitchroll.canceled += instance.OnPitchroll;
+            @pitch.started += instance.OnPitch;
+            @pitch.performed += instance.OnPitch;
+            @pitch.canceled += instance.OnPitch;
+            @bank.started += instance.OnBank;
+            @bank.performed += instance.OnBank;
+            @bank.canceled += instance.OnBank;
             @dropwater.started += instance.OnDropwater;
             @dropwater.performed += instance.OnDropwater;
             @dropwater.canceled += instance.OnDropwater;
@@ -1083,9 +1120,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @yaw.started -= instance.OnYaw;
             @yaw.performed -= instance.OnYaw;
             @yaw.canceled -= instance.OnYaw;
-            @pitchroll.started -= instance.OnPitchroll;
-            @pitchroll.performed -= instance.OnPitchroll;
-            @pitchroll.canceled -= instance.OnPitchroll;
+            @pitch.started -= instance.OnPitch;
+            @pitch.performed -= instance.OnPitch;
+            @pitch.canceled -= instance.OnPitch;
+            @bank.started -= instance.OnBank;
+            @bank.performed -= instance.OnBank;
+            @bank.canceled -= instance.OnBank;
             @dropwater.started -= instance.OnDropwater;
             @dropwater.performed -= instance.OnDropwater;
             @dropwater.canceled -= instance.OnDropwater;
@@ -1210,7 +1250,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnAccelerate(InputAction.CallbackContext context);
         void OnBrake(InputAction.CallbackContext context);
         void OnYaw(InputAction.CallbackContext context);
-        void OnPitchroll(InputAction.CallbackContext context);
+        void OnPitch(InputAction.CallbackContext context);
+        void OnBank(InputAction.CallbackContext context);
         void OnDropwater(InputAction.CallbackContext context);
         void OnToggleautospeed(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);

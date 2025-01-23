@@ -26,8 +26,10 @@ public class PlayerInputHandler : MonoBehaviour, PlayerControls.IGameplayActions
         _controls = new PlayerControls();
 
         _controls.gameplay.startstopengine.canceled += OnStartstopengine;
-        _controls.gameplay.pitchroll.performed += OnPitchroll;
-        _controls.gameplay.pitchroll.canceled += OnCancelPitchroll;
+        _controls.gameplay.pitch.performed += OnPitch;
+        _controls.gameplay.pitch.canceled += OnCancelPitch;
+        _controls.gameplay.bank.performed += OnBank;
+        _controls.gameplay.bank.canceled += OnCancelBank;
         _controls.gameplay.yaw.performed += OnYaw;
         _controls.gameplay.yaw.canceled += OnCancelYaw;
         _controls.gameplay.accelerate.performed += OnAccelerate;
@@ -66,16 +68,29 @@ public class PlayerInputHandler : MonoBehaviour, PlayerControls.IGameplayActions
         Player.ToggleEngine();
     }
 
-    public void OnPitchroll(InputAction.CallbackContext context)
+    public void OnPitch(InputAction.CallbackContext context)
     {
-        Player.PitchRoll(context.ReadValue<Vector2>());
+        Player.Pitch(context.ReadValue<float>());
     }
 
-    private void OnCancelPitchroll(InputAction.CallbackContext context)
+    private void OnCancelPitch(InputAction.CallbackContext context)
     {
         if (!Player.IsUnityNull())
         {
-            Player.CancelPitchroll();
+            Player.CancelPitch();
+        }
+    }
+
+    public void OnBank(InputAction.CallbackContext context)
+    {
+        Player.Bank(context.ReadValue<float>());
+    }
+
+    private void OnCancelBank(InputAction.CallbackContext context)
+    {
+        if (!Player.IsUnityNull())
+        {
+            Player.CancelBank();
         }
     }
 

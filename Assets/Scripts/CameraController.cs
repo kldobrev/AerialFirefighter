@@ -71,7 +71,7 @@ public class CameraController : MonoBehaviour
         _closeToSurface = true;
         _belowWater = false;
 
-        _surfacesLayerMask = LayerMask.GetMask(Constants.GroundLayerName, Constants.BuildingLayerName, Constants.WaterLayerName);
+        _surfacesLayerMask = LayerMask.GetMask(Constants.BuildingLayerName, Constants.WaterLayerName);
         _checkGroundDistanceRule = new(Constants.CameraSurfaceCheckInterval);
 
         _cameraModes = new CameraMode[Constants.CameraModesCount];
@@ -94,7 +94,7 @@ public class CameraController : MonoBehaviour
         {
             if (_trailingBehind)    // Camera is behind the plane
             {
-                _closeToSurface = Physics.Raycast(_cameraTransform.position, Vector3.down, out _surfaceHit, Constants.AirboutneThresholdHeight, _surfacesLayerMask);                
+                _closeToSurface = Physics.Raycast(_cameraTransform.position, Vector3.down, out _surfaceHit, Constants.CameraSpecialModeHeightThreshold, _surfacesLayerMask);                
                 if (_playerAirbourne && _checkGroundDistanceRule.CheckFrameRule() && _closeToSurface)
                 {   // Camera is too close to surface
                     if ((_cameraTransform.position.y - _surfaceHit.point.y) < Constants.CameraUnderwaterEffectThreshold && !_belowWater)

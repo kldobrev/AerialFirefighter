@@ -24,7 +24,7 @@ public static class HelperMethods
         }
     }
 
-    public static IEnumerator FadeRawImage(RawImage image, float minAlpha, float maxAlpha, float fadeSpeed)
+    public static IEnumerator FadeImage(MaskableGraphic image, float minAlpha, float maxAlpha, float fadeSpeed)
     {
         Color32 imageColour = image.color;
         float signTargetAlpha = fadeSpeed > 0 ? maxAlpha : minAlpha;

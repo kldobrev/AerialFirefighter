@@ -6316,7 +6316,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 1.258652, y: 1.0440578, z: 35.77696, w: 0}
+  m_margin: {x: 6.9383087, y: 1.0440578, z: 25.837627, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -7330,6 +7330,12 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1930253917}
   m_SourcePrefab: {fileID: 100100000, guid: 7e8bb3fe362f46d468db643a94b8f062, type: 3}
+--- !u!23 &362173867 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4138508083476505866, guid: 7e8bb3fe362f46d468db643a94b8f062,
+    type: 3}
+  m_PrefabInstance: {fileID: 362173866}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &365340738
 GameObject:
   m_ObjectHideFlags: 0
@@ -8747,7 +8753,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -0.41023254, y: -0.40435028, z: 38.04692, w: 0}
+  m_margin: {x: 6.405319, y: -0.40435028, z: 18.92247, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -32551,13 +32557,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _bodyTransform: {fileID: 4155046195940137136}
   _planeBody: {fileID: 3182071990185465855}
+  _planeRenderer: {fileID: 362173867}
   _propeller: {fileID: 654008710}
-  _throttleAcceleration: 25
-  _pitchFactor: 0.18
-  _yawFactor: 0.05
-  _rollFactor: 1.4
+  _throttleAcceleration: 21
   _liftForce: 3.1
+  _pitchFactor: 0.15
+  _yawFactor: 0.03
+  _rollFactor: 1.2
+  _turnFactor: 0.003
   _pitchLiftFactor: 0.09
+  _stallLeanDownFactor: 0.004
+  _liftCoefficient: 0
+  _dragCoefficient: 0
   _dropWaterEffect: {fileID: 155048161}
   _waterSplashEffect: {fileID: 849852183}
   _crashEffect: {fileID: 815817367}
@@ -32787,6 +32798,29 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  _toggleWaterGaugePour:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 468863061}
+        m_TargetAssemblyTypeName: WaterGaugeController, Assembly-CSharp
+        m_MethodName: ChangeWaterGaugeColour
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  randomFloat: 0.005
+  rayLength: 1
+  centerOffset: {x: 0, y: 0, z: 0}
+  liftModifier: 1.5
+  dragModifier: 0.003
+  _pitchAngle: 0
+  _bankAngle: 0
+  velocity: {x: 0, y: 0, z: 0}
 --- !u!1 &2092771972
 GameObject:
   m_ObjectHideFlags: 0
@@ -33360,8 +33394,8 @@ Rigidbody:
   m_GameObject: {fileID: 4155046195940137143}
   serializedVersion: 4
   m_Mass: 2000
-  m_Drag: 0.05
-  m_AngularDrag: 90
+  m_Drag: 0.01
+  m_AngularDrag: 0.3
   m_CenterOfMass: {x: 0, y: 0, z: -1}
   m_InertiaTensor: {x: 2000, y: 2000, z: 2000}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}

@@ -4,12 +4,15 @@ public static class Constants {
 
     // Player controller
 
+    public const float AirbourneThresholdHeight = 1;
     public const float PlDefaultDrag = 0.12f;
     public const float PlDefaultAngularDrag = 3f;
     public const float PlTurnAngularDrag = 0.05f;
     public const float PlBrakeDrag = 0.01f;
-    public const float PlTurnDrag = 0.0015f;
+    public const float PlTurnDrag = 0.0012f;
     public const float PlaneLiftForce = 0.9f;
+    public const float LiftModifier = 1.5f;
+    public const float DragModifier = 0.003f;
     public const int SendHeightFramerule = 2;
     public const int SendCoordsFramerule = 1;
     public const int SendSpeedFramerule = 5;
@@ -29,12 +32,21 @@ public static class Constants {
     public const float PlaneMaxSpeed = 210;
     public const float WeightPlaneNoLoad = 2000;
     public const float MaxWeightPlaneFullyLoaded = 3000;
+    public const float WingChordLengthAtRoot = 0.86f;
+    public const float WingChordLengthAtTip = 0.492f;
+    public const float DryAirDensitySummer = 1.1839f;
+    public const float DragCoefficientStreamlined = 0.03f;
+    public const float KmPhToKnotsRatio = 0.54f;
+    public const float StallLeanAngleMax = 80;
+    public const float StallLeanVelocityTreshold = -15;
+    public const float TurnStartBankAngleMin = -2f;
+
 
 
     // Camera
 
     public const int CameraModesCount = 4;
-    public const float AirboutneThresholdHeight = 5;
+    public const float CameraSpecialModeHeightThreshold = 5;
     public static Vector3 CameraTrailingDistanceBehindAbove = new(0, 3.06f, -17);
     public static Vector3 CameraTrailingDistanceBehindCentered = new(0, 1.26f, -16.9f);
     public static Vector3 CameraTrailingDistancePropeller = new(0, 0.08f, 0.12f);
@@ -88,8 +100,8 @@ public static class Constants {
 
     // UI
 
-    public const string DefaultSpeedValueUI = "Speed: 000 km/h";
-    public const string DefaultAutoSpeedValueUI = "Auto speed: 000 km/h";
+    public const string DefaultSpeedValueUI = "Speed: ";
+    public const string DefaultAutoSpeedValueUI = "Auto speed: ";
     public const float AttitudeMeterMaxPitchShown = 45;
     public const float AlertHeightUI = 200;
     public static Color32 HeightAboveAlertColour = new(80, 255, 0, 255);
@@ -130,6 +142,9 @@ public static class Constants {
     public const string GoalSphereTag = "Goal";
     public const float ScreenFadePauseSpeed = 20;
     public const float ScreenFadeQuitSpeed = 10;
+    public const float WaterGaugeAlphaDefault = 160;
+    public const float WaterGaugeAlphaPouring = 50;
+    public const float WaterGaugeAlphaChangeSpeed = 10;
 
 
     // Menus
