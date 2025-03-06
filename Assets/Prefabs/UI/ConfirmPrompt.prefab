@@ -305,12 +305,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9138ba68e4c4594d9fa8a52fd6e2004, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <optionsHolder>k__BackingField: {fileID: 1825879385160873725}
-  <cursor>k__BackingField: {fileID: 8745258052669657382}
-  <screenFadeEffect>k__BackingField:
-    m_PersistentCalls:
-      m_Calls: []
-  <stateSign>k__BackingField: {fileID: 2325260335048917884}
+  <OptionsHolder>k__BackingField: {fileID: 1825879385160873725}
+  <Cursor>k__BackingField: {fileID: 8745258052669657382}
+  <StateSign>k__BackingField: {fileID: 2325260335048917884}
 --- !u!1001 &361898300962623221
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -9,7 +9,7 @@ public static class Constants {
     public const float PlDefaultAngularDrag = 3f;
     public const float PlTurnAngularDrag = 0.05f;
     public const float PlBrakeDrag = 0.01f;
-    public const float PlTurnDrag = 0.0012f;
+    public const float PlTurnDrag = 0.0006f;
     public const float PlaneLiftForce = 0.9f;
     public const float LiftModifier = 1.5f;
     public const float DragModifier = 0.003f;
@@ -32,14 +32,14 @@ public static class Constants {
     public const float PlaneMaxSpeed = 210;
     public const float WeightPlaneNoLoad = 2000;
     public const float MaxWeightPlaneFullyLoaded = 3000;
-    public const float WingChordLengthAtRoot = 0.86f;
-    public const float WingChordLengthAtTip = 0.492f;
-    public const float DryAirDensitySummer = 1.1839f;
-    public const float DragCoefficientStreamlined = 0.03f;
     public const float KmPhToKnotsRatio = 0.54f;
     public const float StallLeanAngleMax = 80;
     public const float StallLeanVelocityTreshold = -15;
     public const float TurnStartBankAngleMin = -2f;
+    public const float RespawnVelocityZ = 90;
+    public const float RespawnRotationX = -5;
+    public const float RespawnRotationZ = 0;
+    public const float RespawnDistanceToGroundMin = 50;
 
 
 
@@ -86,6 +86,8 @@ public static class Constants {
     public const string WaterSurfaceTagName = "Surface";
     public const string WaterDepthsTagName = "Depths";
     public const float WaterFloatForce = 375;
+    public const float ScoreCheckpointPenalty = 0.8f;
+    public const string FireGroupsContainerTag = "FireGroupsContainer";
 
     // Tracker controller
 
@@ -142,6 +144,7 @@ public static class Constants {
     public const string GoalSphereTag = "Goal";
     public const float ScreenFadePauseSpeed = 20;
     public const float ScreenFadeQuitSpeed = 10;
+    public const float ScreenFadeRespawnSpeed = 5;
     public const float WaterGaugeAlphaDefault = 160;
     public const float WaterGaugeAlphaPouring = 50;
     public const float WaterGaugeAlphaChangeSpeed = 10;
@@ -177,8 +180,8 @@ public static class Constants {
     public const float InGameMenuTextFadeSpeedGameOver = 20;
     public const float InGameMenuTextTrigger = 440;
     public const float InGameMenuSizeTrigger = 24;
-    public static Color32 MenuInactiveOptionColour = new(143, 143, 143, 96);
     public static Color32 InGameMenuOptionColourDefault = new(255, 255, 255, 0);
+    public static Color32 InGameMenuOptionColourDisabled = new(124, 124, 124, 0);
     public const string InGameUICanvasTagName = "InGameUI";
     public const string InGameMenuTagNam = "InGameMenu";
     public const string ConfirmPromptMenuTagName = "Confirm";
@@ -189,6 +192,7 @@ public static class Constants {
     // Terrain interaction
 
     public const string TerrainTagName = "Terrain";
+    public const string TerrainPieceTagName = "Ground";
     public const string StageBoundsTagName = "StageBounds";
     public const string LandingZoneTagName = "LandingZone";
     public const float LandingPitchMin = -6;

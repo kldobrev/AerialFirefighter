@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
-using UnityEngine.Windows;
+
 
 public class GameManager : MonoBehaviour
 {
@@ -14,7 +14,13 @@ public class GameManager : MonoBehaviour
     private UnityEvent<byte, byte, float> _screenFadeEffect;
     private PlayerInputHandler _input;
     private UIController _inGameUIController;
+    private PlayerController _player;
     private GameState _previousState;
+    private int _retriesCount;
+    private FireMissionController _fireMissionController;
+
+
+
     public static GameState CurrentState { get; private set; }
     public static PlayMode CurrentPlayMode { get; private set; }
 
@@ -37,6 +43,7 @@ public class GameManager : MonoBehaviour
         {
             _currentMenu = _inGameMenu;
         }
+        _retriesCount = 0;
     }
 
     public void GoBack()
@@ -67,9 +74,10 @@ public class GameManager : MonoBehaviour
                     {
                         Unpause();
                     }
-                    else if (CurrentState == GameState.GameOver && CurrentPlayMode == PlayMode.FireMission)    // Continue from checkpoint
+                    else if (CurrentState == GameState.GameOver && CurrentPlayMode == PlayMode.FireMission && _player.CheckpointCreated)    // Continue from checkpoint
                     {
-                        Debug.Log("To be implemented");
+                        _inGameMenu.ClosePauseMenu();
+                        StartCoroutine(RestartFromCheckpoint());
                     }
                     break;
                 case 1: // Restart stage/tutorial
@@ -137,6 +145,25 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private IEnumerator RestartFromCheckpoint()
+    {
+        _input.DisableInput();
+        _retriesCount++;
+        _screenFadeEffect.Invoke(Constants.FadeScreenAlphaPause, Constants.FadeScreenAlphaMax,
+            Constants.ScreenFadeRespawnSpeed);
+        yield return null;
+        yield return new WaitUntil(() => !UIController.ScreenFadeInProgress && _fireMissionController.IsReadyForCheckpointReload());
+        _fireMissionController.RestoreFiresFromCheckpoint();
+        _inGameMenu.ActivatePauseMenu();
+        _player.RespawnFromCheckpoint();
+        CurrentState = GameState.Playing;
+        ToggleFreezeGameplay(false);
+        _screenFadeEffect.Invoke(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaMax,
+            -Constants.ScreenFadeRespawnSpeed);
+        yield return null;
+        yield return new WaitUntil(() => !UIController.ScreenFadeInProgress);
+    }
+
     private IEnumerator LoadMainMenu()
     {
         Time.timeScale = 1;
@@ -155,17 +182,29 @@ public class GameManager : MonoBehaviour
         _inGameMenu = GameObject.FindWithTag(Constants.InGameMenuTagNam).GetComponent<InGameMenuController>();
         _confirmPrompt = GameObject.FindWithTag(Constants.ConfirmPromptMenuTagName).GetComponent<ConfirmPromptController>();
         _input.Player = GameObject.FindWithTag(Constants.PlayerTagName).GetComponent<PlayerController>();
+        _player = _input.Player;
         _input.Camera = GameObject.FindWithTag(Constants.CameraTagName).GetComponent<CameraController>();
         _initInGameMenu.AddListener(_inGameMenu.SetInGameMenuForMode);
         _screenFadeEffect.AddListener(_inGameUIController.ScreenFadeInGame);
         _inGameUIController.CrashComplete.AddListener(ShowGameOver);
-        _input.Player.SignalGameOver.AddListener(InitGameOver);
+        _player.SignalGameOver.AddListener(InitGameOver);
         _initInGameMenu.Invoke(CurrentPlayMode);
         _currentMenu = _inGameMenu;
         _previousMenu = _currentMenu;
+        _fireMissionController = GameObject.FindGameObjectWithTag(Constants.FireGroupsContainerTag).GetComponent < FireMissionController>();
 
+        Transform ground = GameObject.Find(Constants.TerrainPieceTagName).transform;
+        for (int i = 0; i < ground.childCount; i++)
+        {
+            ground.GetChild(i).tag = Constants.TerrainTagName;
+        }
+
+        _screenFadeEffect.Invoke(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaMax,
+            -Constants.ScreenFadeQuitSpeed);
         ToggleFreezeGameplay(false);
         CurrentState = GameState.Playing;
+        yield return null;
+        yield return new WaitUntil(() => !UIController.ScreenFadeInProgress);
     }
 
     private IEnumerator ConfirmAndExecute(IEnumerator action)
@@ -243,7 +282,8 @@ public class GameManager : MonoBehaviour
     {
         _screenFadeEffect.Invoke(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaMax, 
             Constants.ScreenFadeQuitSpeed);
-        yield return new WaitUntil(() => UIController.ScreenAlpha == Constants.FadeScreenAlphaMax);
+        yield return null;
+        yield return new WaitUntil(() => !UIController.ScreenFadeInProgress);
         Application.Quit();
     }
 

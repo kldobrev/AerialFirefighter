@@ -75,7 +75,7 @@ public class PlayerInputHandler : MonoBehaviour, PlayerControls.IGameplayActions
 
     private void OnCancelPitch(InputAction.CallbackContext context)
     {
-        if (!Player.IsUnityNull())
+        if (Player.isActiveAndEnabled)
         {
             Player.CancelPitch();
         }
@@ -88,7 +88,7 @@ public class PlayerInputHandler : MonoBehaviour, PlayerControls.IGameplayActions
 
     private void OnCancelBank(InputAction.CallbackContext context)
     {
-        if (!Player.IsUnityNull())
+        if (Player.isActiveAndEnabled)
         {
             Player.CancelBank();
         }
@@ -101,7 +101,7 @@ public class PlayerInputHandler : MonoBehaviour, PlayerControls.IGameplayActions
 
     private void OnCancelYaw(InputAction.CallbackContext context)
     {
-        if (!Player.IsUnityNull())
+        if (Player.isActiveAndEnabled)
         {
             Player.CancelYaw();
         }

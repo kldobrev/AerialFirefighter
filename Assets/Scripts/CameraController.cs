@@ -28,13 +28,14 @@ public class CameraController : MonoBehaviour
     [SerializeField]
     private float _smoothSpeed;
     [SerializeField]
-    private UnityEvent<bool> waterFilter;
+    private UnityEvent<bool> _waterFilter;
 
-    public Vector3 _distanceToTarget;
+    private Vector3 _distanceToTarget;
     private Transform _cameraTransform;
     private IEnumerator _transitionRoutine;
     private IEnumerator _rotationRoutine;
     private IEnumerator _cameraModeTransition;
+    private IEnumerator _lookAtCrashSite;
     private bool _transitionChangeInProgress;
     private bool _rotationChangeInProgress;
     private bool _cameraModeChangeInProgress;
@@ -42,10 +43,9 @@ public class CameraController : MonoBehaviour
     private FrameRule _checkGroundDistanceRule;
     private int _surfacesLayerMask;
     private Vector3 _followPoint;
-
     private CameraMode[] _cameraModes;
     private int _cameraIndex;
-    public bool _verticalFollowLocked;
+    private bool _verticalFollowLocked;
     private bool _playerAirbourne;
     private float _rotationSpeed;
     private bool _trailingBehind;
@@ -53,6 +53,7 @@ public class CameraController : MonoBehaviour
     private bool _surfaceToAirTransition;
     private bool _rotationLocked;
     private bool _belowWater;
+    private bool _followingPlayer;
     private Quaternion _newRotation;
     private Vector3 _nextPosition;
     private RaycastHit _surfaceHit;
@@ -62,15 +63,6 @@ public class CameraController : MonoBehaviour
     void Start()
     {
         _cameraTransform = transform;
-        _transitionChangeInProgress = false;
-        _rotationChangeInProgress = false;
-        _cameraModeChangeInProgress = false;
-        _airToSurfaceTransition = false;
-        _surfaceToAirTransition = false;
-        _rotationLocked = false;
-        _closeToSurface = true;
-        _belowWater = false;
-
         _surfacesLayerMask = LayerMask.GetMask(Constants.BuildingLayerName, Constants.WaterLayerName);
         _checkGroundDistanceRule = new(Constants.CameraSurfaceCheckInterval);
 
@@ -79,6 +71,20 @@ public class CameraController : MonoBehaviour
         _cameraModes[1] = new(Constants.CameraTrailingDistanceBehindCentered);
         _cameraModes[2] = new(Constants.CameraTrailingDistancePropeller);
         _cameraModes[3] = new(Constants.CameraTrailingDistanceFirstPerson);
+        ResetCamera();
+    }
+
+    private void ResetCamera()
+    {
+        _transitionChangeInProgress = false;
+        _rotationChangeInProgress = false;
+        _cameraModeChangeInProgress = false;
+        _airToSurfaceTransition = false;
+        _surfaceToAirTransition = false;
+        _rotationLocked = false;
+        _closeToSurface = true;
+        _belowWater = false;
+        _followingPlayer = true;
         _cameraIndex = 0;
         _distanceToTarget = _cameraModes[_cameraIndex].TrailingDistance;
         _verticalFollowLocked = false;
@@ -90,7 +96,7 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
-        if (!_playerTransform.IsUnityNull())
+        if (_followingPlayer)
         {
             if (_trailingBehind)    // Camera is behind the plane
             {
@@ -100,12 +106,12 @@ public class CameraController : MonoBehaviour
                     if ((_cameraTransform.position.y - _surfaceHit.point.y) < Constants.CameraUnderwaterEffectThreshold && !_belowWater)
                     {
                         _belowWater = true;
-                        waterFilter.Invoke(_belowWater);
+                        _waterFilter.Invoke(_belowWater);
                     }
                     else if ((_cameraTransform.position.y - _surfaceHit.point.y) > Constants.CameraUnderwaterEffectThreshold && _belowWater)
                     {
                         _belowWater = false;
-                        waterFilter.Invoke(_belowWater);
+                        _waterFilter.Invoke(_belowWater);
                     }
 
                     if (!_rotationLocked && HelperMethods.GetSignedAngleFromEuler(_cameraTransform.eulerAngles.x) < Constants.CameraImpactAngleThreshold)
@@ -191,14 +197,26 @@ public class CameraController : MonoBehaviour
         }
     }
 
-    public void StopFollowingPlayer(Vector3 crashLocation)
+    public void AttachToPlayer()
+    {
+        if (!_followingPlayer)
+        {
+            StopCoroutine(_lookAtCrashSite);
+            _followingPlayer = true;
+        }
+        ResetCamera();
+        UpdateCameraPositionBehindPlayer();
+    }
+
+    public void DetachFromPlayer(Vector3 crashLocation)
     {
         StopTransitionIfActive();
         StopRotationIfActive();
         if (_cameraModeChangeInProgress) StopCoroutine(_cameraModeTransition);
-        _playerTransform = null;
+        _followingPlayer = false;
         _distanceToTarget = _cameraTransform.position + Constants.CameraCrashDistance;
-        StartCoroutine(LookAtCrashSite(crashLocation));
+        _lookAtCrashSite = LookAtCrashSite(crashLocation);
+        StartCoroutine(_lookAtCrashSite);
     }
 
     public void ChangeCameraPosition(Vector3 newDistance)
@@ -232,7 +250,7 @@ public class CameraController : MonoBehaviour
         if (_rotationChangeInProgress) yield break; // Only one rotation transition should run at a time
         _rotationChangeInProgress = true;
         _newRotation.eulerAngles = angle;
-        while (!_playerTransform.IsUnityNull() && Vector3.Distance(_cameraTransform.eulerAngles, angle) > 0.1f)
+        while (_followingPlayer && Vector3.Distance(_cameraTransform.eulerAngles, angle) > 0.1f)
         {
             _cameraTransform.rotation = Quaternion.RotateTowards(_cameraTransform.rotation, _newRotation, speed * Time.deltaTime);
             yield return null;
@@ -244,7 +262,7 @@ public class CameraController : MonoBehaviour
     {
         if (_rotationChangeInProgress) yield break; // Only one rotation transition should run at a time
         _rotationChangeInProgress = true;
-        while (!_playerTransform.IsUnityNull() && Vector3.Distance(_cameraTransform.eulerAngles, _playerTransform.eulerAngles) > 0.1f)
+        while (_followingPlayer && Vector3.Distance(_cameraTransform.eulerAngles, _playerTransform.eulerAngles) > 0.1f)
         {
             _newRotation.eulerAngles = _playerTransform.eulerAngles;
             _cameraTransform.rotation = Quaternion.RotateTowards(_cameraTransform.rotation, _newRotation, speed * Time.deltaTime);

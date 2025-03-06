@@ -9,41 +9,41 @@ using UnityEngine.UI;
 public class MenuController : MonoBehaviour
 {
     [field: SerializeField]
-    protected Transform optionsHolder { get; set; }
+    protected Transform OptionsHolder { get; set; }
     [field: SerializeField]
-    protected RawImage cursor { get; set; }
+    protected RawImage Cursor { get; set; }
 
-    protected RectTransform menuBkgRect { get; set; }
-    protected TextMeshProUGUI[] optionsSigns { get; set; }
-    protected int optionsCount { get; set; }
-    protected RectTransform cursorTrns { get; set; }
-    protected Vector3 startingCursorPos { get; set; }
+    protected RectTransform MenuBkgRect { get; set; }
+    protected TextMeshProUGUI[] OptionsSigns { get; set; }
+    protected int OptionsCount { get; set; }
+    protected RectTransform CursorTrns { get; set; }
+    protected Vector3 StartingCursorPos { get; set; }
     public Vector2Int CursorIndex { get; protected set; }
-    protected Transform[] optionsTransforms { get; set; }
-    protected int menuStartIndexVert { get; set; }
+    protected Transform[] OptionsTransforms { get; set; }
+    protected int MenuStartIndexVert { get; set; }
     public bool Opened { get; protected set; }
 
 
     protected void Awake()
     {
-        menuBkgRect = transform.GetComponent<RectTransform>();
-        optionsCount = optionsHolder.childCount;
-        optionsSigns = new TextMeshProUGUI[optionsCount];
-        optionsTransforms = new Transform[optionsCount];
-        for (int i = 0; i < optionsCount; i++)
+        MenuBkgRect = transform.GetComponent<RectTransform>();
+        OptionsCount = OptionsHolder.childCount;
+        OptionsSigns = new TextMeshProUGUI[OptionsCount];
+        OptionsTransforms = new Transform[OptionsCount];
+        for (int i = 0; i < OptionsCount; i++)
         {
-            optionsSigns[i] = optionsHolder.GetChild(i).GetComponent<TextMeshProUGUI>();
-            optionsTransforms[i] = optionsSigns[i].transform;
+            OptionsSigns[i] = OptionsHolder.GetChild(i).GetComponent<TextMeshProUGUI>();
+            OptionsTransforms[i] = OptionsSigns[i].transform;
         }
-        cursorTrns = cursor.transform.GetComponent<RectTransform>();
+        CursorTrns = Cursor.transform.GetComponent<RectTransform>();
         CursorIndex = Vector2Int.zero;
-        menuStartIndexVert = 0;
+        MenuStartIndexVert = 0;
     }
 
     public virtual void NavigateMenu(Vector2Int direction)
     {
         int nextIdx = CursorIndex.y + direction.y;
-        if (nextIdx != (menuStartIndexVert - 1) && nextIdx != optionsCount) {
+        if (nextIdx != (MenuStartIndexVert - 1) && nextIdx != OptionsCount) {
             CursorIndex = new Vector2Int(0, nextIdx);
             UpdateCursorPosition();
         }
@@ -51,19 +51,19 @@ public class MenuController : MonoBehaviour
 
     public void ResetCursorPosition()
     {
-        CursorIndex = new Vector2Int(0, menuStartIndexVert);
+        CursorIndex = new Vector2Int(0, MenuStartIndexVert);
     }
 
     public void UpdateCursorPosition()
     {
-        cursorTrns.localPosition = optionsHolder.localPosition + optionsTransforms[CursorIndex.y].localPosition;
+        CursorTrns.localPosition = OptionsHolder.localPosition + OptionsTransforms[CursorIndex.y].localPosition;
     }
 
     protected IEnumerator FadeOptions(float minAlpha, float maxAlpha, float speed)
     {
-        for (int i = 0; i < optionsCount; i++)
+        for (int i = 0; i < OptionsCount; i++)
         {
-            StartCoroutine(HelperMethods.FadeText(optionsSigns[i], minAlpha, maxAlpha, speed));
+            StartCoroutine(HelperMethods.FadeText(OptionsSigns[i], minAlpha, maxAlpha, speed));
         }
         yield return null;
     }

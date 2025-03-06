@@ -12,7 +12,7 @@ public class ConfirmPromptController : PopupMenuController
     {
         Responded = false;
         Opened = false;
-        stateSign.text = Constants.LeaveStagePromptText;
+        StateSign.text = Constants.LeaveStagePromptText;
     }
 
     public void Open()

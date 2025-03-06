@@ -7,35 +7,35 @@ public class PopupMenuController : MenuController
 {
 
     [field: SerializeField]
-    protected TextMeshProUGUI stateSign { get; set; }
+    protected TextMeshProUGUI StateSign { get; set; }
 
 
     protected IEnumerator FadeInMenu(float menuBkgSizeTrigger, float minBkgSize, float maxBkgSize, float bkgSizeChangeSpeed,
         float textFadeSpeed)
     {
-        StartCoroutine(HelperMethods.TransitionHeightUI(menuBkgRect, minBkgSize, maxBkgSize, bkgSizeChangeSpeed));
-        yield return new WaitUntil(() => menuBkgRect.sizeDelta.y >= menuBkgSizeTrigger);
+        StartCoroutine(HelperMethods.TransitionHeightUI(MenuBkgRect, minBkgSize, maxBkgSize, bkgSizeChangeSpeed));
+        yield return new WaitUntil(() => MenuBkgRect.sizeDelta.y >= menuBkgSizeTrigger);
         StartCoroutine(FadeOptions(Constants.MenuTextAlphaMin, Constants.MenuTextAlphaMax, textFadeSpeed));
-        yield return new WaitUntil(() => menuBkgRect.sizeDelta.y == maxBkgSize);
+        yield return new WaitUntil(() => MenuBkgRect.sizeDelta.y == maxBkgSize);
         UpdateCursorPosition();
-        yield return StartCoroutine(HelperMethods.FadeImage(cursor, Constants.MenuCursorAlphaMin, Constants.MenuCursorAlphaMax,
+        yield return StartCoroutine(HelperMethods.FadeImage(Cursor, Constants.MenuCursorAlphaMin, Constants.MenuCursorAlphaMax,
             Constants.MenuCursorFadeSpeedIn));
-        StartCoroutine(HelperMethods.FadeText(stateSign, Constants.MenuTextAlphaMin, Constants.MenuTextAlphaMax, textFadeSpeed));
+        StartCoroutine(HelperMethods.FadeText(StateSign, Constants.MenuTextAlphaMin, Constants.MenuTextAlphaMax, textFadeSpeed));
         Opened = true;
     }
 
-    protected IEnumerator FadeOutMenu(float cursorAlphaTrigger, float minBkgSize, float maxBkgSize, float bkgSizeChangeSpeed,
+    protected IEnumerator FadeOutMenu(float CursorAlphaTrigger, float minBkgSize, float maxBkgSize, float bkgSizeChangeSpeed,
         float textFadeSpeed)
     {
         StartCoroutine(FadeOptions(Constants.MenuTextAlphaMin, Constants.MenuTextAlphaMax, -textFadeSpeed));
-        StartCoroutine(HelperMethods.FadeText(stateSign, Constants.MenuTextAlphaMin, Constants.MenuTextAlphaMax, -textFadeSpeed));
-        StartCoroutine(HelperMethods.FadeImage(cursor, Constants.MenuCursorAlphaMin, Constants.MenuCursorAlphaMax,
+        StartCoroutine(HelperMethods.FadeText(StateSign, Constants.MenuTextAlphaMin, Constants.MenuTextAlphaMax, -textFadeSpeed));
+        StartCoroutine(HelperMethods.FadeImage(Cursor, Constants.MenuCursorAlphaMin, Constants.MenuCursorAlphaMax,
             -Constants.MenuCursorFadeSpeedOut));
-        while (cursor.color.a > cursorAlphaTrigger)
+        while (Cursor.color.a > CursorAlphaTrigger)
         {
             yield return null;
         }
-        yield return StartCoroutine(HelperMethods.TransitionHeightUI(menuBkgRect, minBkgSize, maxBkgSize, -bkgSizeChangeSpeed));
+        yield return StartCoroutine(HelperMethods.TransitionHeightUI(MenuBkgRect, minBkgSize, maxBkgSize, -bkgSizeChangeSpeed));
         Opened = false;
     }
 

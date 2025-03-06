@@ -38,8 +38,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float _stallLeanDownFactor;
 
-    public float _liftCoefficient;
-    public float _dragCoefficient;
 
     [SerializeField]
     private ParticleSystem _dropWaterEffect;
@@ -77,7 +75,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private UnityEvent<Vector3> _detachCamera;
     [SerializeField]
-    private UnityEvent reverseCamera;
+    private UnityEvent _reverseCamera;
+    [SerializeField]
+    private UnityEvent _reattachCamera;
     [SerializeField]
     private UnityEvent<bool> _stageEndTrigger;
     [SerializeField]
@@ -85,14 +85,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private UnityEvent<bool> _toggleWaterGaugePour;
 
-    public float randomFloat;
 
-    public float rayLength = 1;
-    public Vector3 centerOffset = Vector3.zero;
-    public float liftModifier;
-    public float dragModifier;
 
-    private float intitalPositionZ;
 
     public UnityEvent<GameOverType> SignalGameOver { get; set; }
     private float _accelerateValue;
@@ -112,7 +106,7 @@ public class PlayerController : MonoBehaviour
     private FrameRule _sendSpeedRule;
     private FrameRule _spinPropellerRule;
     public static Transform PlayerBodyTransform { get; set; }
-    public float _pitchAngle;
+    private float _pitchAngle;
     private float _planeSpeed;
     private static bool _engineStarted;
     private float _propellerSpeed;
@@ -122,14 +116,15 @@ public class PlayerController : MonoBehaviour
     private bool _nullifyingAngleEnabled;
     private bool _waterTankOpened;
     private float _waterQuantity;
-    public float _bankAngle;
+    private float _bankAngle;
     private float _liftValue;
     private bool _throttleAllowed;
     private Transform _cachedTransform;
     private float _landingTimerCounter;
     private IEnumerator _landingCountCoroutine;
-    public Vector3 velocity;
     private float _leanDirection;
+    private PlayerCheckpointData _checkpointData;
+    public bool CheckpointCreated { get; private set; }
 
 
 
@@ -142,6 +137,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        ResetInputs();
         _isAirbourne = false;
         _synchronizeCameraAirbourneFlag.Invoke(_isAirbourne);
         _isAutoSpeedOn = false;
@@ -167,16 +163,11 @@ public class PlayerController : MonoBehaviour
         _nullifyingAngleEnabled = false;
         _waterTankOpened = false;
         _throttleAllowed = false;
+        CheckpointCreated = false;
         _landingTimerCounter = 0;
+        _checkpointData = new PlayerCheckpointData();
         _landingCountCoroutine = LandingCountdown();
         _updateFuelGaugeQuantity.Invoke(_fuelQuantity);
-
-        // Move to game manager script the logic below
-        Transform ground = GameObject.Find("Ground").transform;
-        for (int i = 0; i < ground.childCount; i++)
-        {
-            ground.GetChild(i).tag = Constants.TerrainTagName;
-        }
     }
 
     // Update is called once per frame
@@ -220,16 +211,16 @@ public class PlayerController : MonoBehaviour
         // Water management
         if (_waterTankOpened)
         {
-            if (_waterQuantity <= 0 || _bankAngle < -Constants.PourWaterBankAngleMinMax || 
-                _bankAngle > Constants.PourWaterBankAngleMinMax)
-            {
-                _waterTankOpened = false;
-                _dropWaterEffect.Stop();
-            }
             _waterQuantity = Mathf.Clamp(_waterQuantity - Constants.WaterWasteRate, 0, Constants.WaterCapacity);
             _planeBody.mass = Mathf.Clamp(_planeBody.mass - (Constants.WaterWasteRate * Constants.WaterQuantityToWeightRatio),
                 Constants.WeightPlaneNoLoad, Constants.MaxWeightPlaneFullyLoaded);
             _updateWaterGaugeQuantity.Invoke(_waterQuantity);
+
+            if (_waterQuantity <= 0 || _bankAngle < -Constants.PourWaterBankAngleMinMax || 
+                _bankAngle > Constants.PourWaterBankAngleMinMax)
+            {
+                ToggleDropwater();
+            }
         }
 
         // Propeller spinning
@@ -263,7 +254,7 @@ public class PlayerController : MonoBehaviour
                 Vector3 currentDirection = -_planeBody.velocity.normalized;
                 _planeBody.velocity = currentDirection * _planeBody.velocity.magnitude;
                 Physics.SyncTransforms();
-                reverseCamera.Invoke();
+                _reverseCamera.Invoke();
                 _lockedControls = false;
             }
         }
@@ -278,8 +269,6 @@ public class PlayerController : MonoBehaviour
         _bankAngle = HelperMethods.GetSignedAngleFromEuler(_planeBody.rotation.eulerAngles.z);
         _pitchAngle = HelperMethods.GetSignedAngleFromEuler(_planeBody.rotation.eulerAngles.x);
 
-
-        velocity = _planeBody.velocity;
 
         if (_throttleAllowed)
         {
@@ -317,13 +306,13 @@ public class PlayerController : MonoBehaviour
 
         if (_pitchInput != 0 && _planeSpeed > 1)
         {
-            if (_pitchInput != 0 && _isAirbourne) _planeDrag += (Constants.PlTurnDrag * _planeSpeed);
+            if (_isAirbourne) _planeDrag += (Constants.PlTurnDrag * _planeSpeed);
             _planeBody.AddRelativeTorque(_pitchInput * _pitchFactor * Vector3.right, ForceMode.Acceleration);
         }
 
         if (_bankInput != 0 && _planeSpeed > 1)
         {
-            if (_bankInput != 0 && _isAirbourne) _planeDrag += (Constants.PlTurnDrag * _planeSpeed);
+            if (_isAirbourne) _planeDrag += (Constants.PlTurnDrag * _planeSpeed);
             _planeBody.AddRelativeTorque(_bankInput * _rollFactor * Vector3.forward, ForceMode.Acceleration);
         }
 
@@ -361,9 +350,74 @@ public class PlayerController : MonoBehaviour
         effect.transform.position = _planeBody.position;
         effect.Play();
         _detachCamera.Invoke(effect.transform.position);
-        Destroy(gameObject);
+        StopAllCoroutines();
+        gameObject.SetActive(false);
+        if (_waterTankOpened) ToggleDropwater();
         SignalGameOver.Invoke(gameOverReason);
     }
+
+    public void UpdatePlayerCheckpointData()
+    {
+        _checkpointData.Position = _planeBody.position;
+        if (Physics.Raycast(_checkpointData.Position, Vector3.down, out RaycastHit groundHit, Constants.RespawnDistanceToGroundMin))
+        {   // Correcting player position for a safer respawn
+            _checkpointData.Position += Vector3.up * ((groundHit.point.y + Constants.RespawnDistanceToGroundMin) - _checkpointData.Position.y);
+        }
+
+        _checkpointData.ForwardVector = _planeBody.transform.forward;
+        _checkpointData.PlayerEulerRotationY =_planeBody.rotation.eulerAngles.y;
+        _checkpointData.FuelRemaining = _fuelQuantity;
+        _checkpointData.WaterRemaining = _waterQuantity;
+        CheckpointCreated = true;
+    }
+
+    public void RespawnFromCheckpoint()
+    {
+        if (_isAutoSpeedOn)
+        {
+            ToggleAutoSpeed();
+        }
+        _crashEffect.Stop();
+        _crashInWaterEffect.Stop();
+        ResetInputs();
+        _nullifyingAngleEnabled = false;
+        gameObject.SetActive(true);
+        Vector3 respawnRotation = new(Constants.RespawnRotationX, _checkpointData.PlayerEulerRotationY, Constants.RespawnRotationZ);
+        _fuelQuantity = _checkpointData.FuelRemaining;
+        _updateFuelGaugeQuantity.Invoke(_fuelQuantity);
+        _waterQuantity = _checkpointData.WaterRemaining;
+        _updateWaterGaugeQuantity.Invoke(_waterQuantity);
+        _planeBody.velocity = Vector3.zero;
+        _planeBody.angularVelocity = Vector3.zero;
+        StartPlaneInAir(_checkpointData.Position, respawnRotation, _checkpointData.ForwardVector * Constants.RespawnVelocityZ);
+        _reattachCamera.Invoke();
+    }
+
+    private void ResetInputs()
+    {
+        _throttleInput = 0;
+        _brakeInput = 0;
+        _pitchInput = 0;
+        _bankInput = 0;
+        _yawInput = 0;
+    }
+
+    public void StartPlaneInAir(Vector3 position, Vector3 eulerRotation, Vector3 initVelocity)
+    {
+        _planeBody.position = position;
+        _planeBody.transform.eulerAngles = eulerRotation;
+        _planeBody.velocity = initVelocity;
+        _isAirbourne = true;
+        _synchronizeCameraAirbourneFlag.Invoke(_isAirbourne);
+        _engineStarted = true;
+        AllowThrottle(true);
+        Physics.SyncTransforms();
+        _planeSpeed = _planeBody.velocity.magnitude;
+        _propellerSpeed = Constants.MaxIdlePropellerSpeed;
+        _setSpeedometerSpeed.Invoke(_planeBody.velocity.magnitude);
+        ToggleAutoSpeed();
+    }
+
 
     // Collisions/Triggers
 
@@ -448,22 +502,6 @@ public class PlayerController : MonoBehaviour
         {
             StopCoroutine(_landingCountCoroutine);
         }
-    }
-
-    public void StartPlaneInAir(Vector3 position, Vector3 eulerRotation, Vector3 initVelocity)
-    {
-        _planeBody.position = position;
-        _planeBody.transform.eulerAngles = eulerRotation;
-        _planeBody.velocity = initVelocity;
-        _planeSpeed = initVelocity.z;
-        Physics.SyncTransforms();
-        _isAirbourne = true;
-        _synchronizeCameraAirbourneFlag.Invoke(_isAirbourne);
-        _engineStarted = true;
-        AllowThrottle(true);
-        _propellerSpeed = Constants.MaxIdlePropellerSpeed;
-        _setSpeedometerSpeed.Invoke(_planeBody.velocity.magnitude);
-        ToggleAutoSpeed();
     }
 
     private IEnumerator NullifyAngularSpeed()
@@ -578,21 +616,18 @@ public class PlayerController : MonoBehaviour
 
     public void ToggleDropwater()
     {
-        if (_isAirbourne && _waterQuantity > 0)
+        if (_waterTankOpened)
         {
-            _waterTankOpened = !_waterTankOpened;
-            if (_waterTankOpened)
-            {
-                _dropWaterEffect.Play();
-                _toggleWaterGaugePour.Invoke(true);
-            }
-            else
-            {
-                _dropWaterEffect.Stop();
-                _toggleWaterGaugePour.Invoke(false);
-            }
+            _dropWaterEffect.Stop();
+            _toggleWaterGaugePour.Invoke(false);
+            _waterTankOpened = false;
         }
-
+        else if (_isAirbourne && _waterQuantity > 0)
+        {
+            _dropWaterEffect.Play();
+            _toggleWaterGaugePour.Invoke(true);
+            _waterTankOpened = true;
+        }
     }
 
     public void ToggleAutoSpeed()

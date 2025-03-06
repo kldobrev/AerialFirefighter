@@ -16,6 +16,7 @@ TagManager:
   - InGameUI
   - InGameMenu
   - Confirm
+  - FireGroupsContainer
   layers:
   - Default
   - TransparentFX
