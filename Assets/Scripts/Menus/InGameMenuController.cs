@@ -51,19 +51,14 @@ public class InGameMenuController : PopupMenuController
         }
     }
 
-    public void OpenPauseMenu()
+    public override void OpenMenu()
     {
-        StartCoroutine(ToggleInGameMenu(true, Constants.InGameMenuTextFadeSpeedPauseIn));
+        StartCoroutine(ToggleInGameMenu(true, Constants.InGameMenuTextFadeSpeedIn));
     }
 
-    public void ClosePauseMenu()
+    public override void CloseMenu()
     {
-        StartCoroutine(ToggleInGameMenu(false, Constants.InGameMenuTextFadeSpeedPauseOut));
-    }
-
-    public void OpenGameOverMenu()
-    {
-        StartCoroutine(ToggleInGameMenu(true, Constants.InGameMenuTextFadeSpeedGameOver));
+        StartCoroutine(ToggleInGameMenu(false, Constants.InGameMenuTextFadeSpeedOut));
     }
 
     public void ActivatePauseMenu()
@@ -116,8 +111,6 @@ public class InGameMenuController : PopupMenuController
             yield return StartCoroutine(FadeOutMenu(Constants.InGameMenuSizeTrigger, Constants.InGameMenuBkgAlphaMin, 
                 Constants.InGameMenuBkgAlphaMax, Constants.InGameMenuBkgSizeChangeSpeed, textFadeSpeed));
         }
-        Opened = activate;
     }
-
 
 }

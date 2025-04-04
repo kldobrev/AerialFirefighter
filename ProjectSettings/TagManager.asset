@@ -17,6 +17,8 @@ TagManager:
   - InGameMenu
   - Confirm
   - FireGroupsContainer
+  - MenuMain
+  - MainMenuCanvas
   layers:
   - Default
   - TransparentFX

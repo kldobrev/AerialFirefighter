@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 3706530657241332151}
   - component: {fileID: 7399825959210230404}
   - component: {fileID: 6550952396869447576}
-  - component: {fileID: 2995968682911064540}
   m_Layer: 8
   m_Name: LandingZone
   m_TagString: Untagged
@@ -106,16 +105,3 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2995968682911064540
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7864800899666246389}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b6d4ee8195e78e49ac2d8b3a1ca62b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerTrns: {fileID: 0}

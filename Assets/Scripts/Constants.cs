@@ -175,9 +175,8 @@ public static class Constants {
     public const float InGameMenuBkgAlphaMin = 0;
     public const float InGameMenuBkgAlphaMax = 600;
     public const float InGameMenuBkgSizeChangeSpeed = 60;
-    public const float InGameMenuTextFadeSpeedPauseIn = 30;
-    public const float InGameMenuTextFadeSpeedPauseOut = 100;
-    public const float InGameMenuTextFadeSpeedGameOver = 20;
+    public const float InGameMenuTextFadeSpeedIn = 20;
+    public const float InGameMenuTextFadeSpeedOut = 100;
     public const float InGameMenuTextTrigger = 440;
     public const float InGameMenuSizeTrigger = 24;
     public static Color32 InGameMenuOptionColourDefault = new(255, 255, 255, 0);
@@ -188,6 +187,13 @@ public static class Constants {
     public const string LeaveStagePromptText = "IF YOU EXIT YOUR CURRENT PROGRESS ON THIS STAGE WILL BE LOST. WILL YOU PROCEED?";
     public const float ConfirmPromptTextTrigger = 100;
     public const float ConfirmPromptBkgAlphaMax = 350;
+    public const string MainMenuTag = "MenuMain";
+    public const string TitleScene = "TitleScreen";
+    public const string MainMenuCanvasTag = "MainMenuCanvas";
+    public static Vector2 TitlePositionInitial = new(2220, 510);
+    public static Vector2 TitlePositionReady = new(880, 510);
+    public static Vector2 TitleMoveSpeed = new(50, 0);
+    public const float MainMenuMoveSpeed = 50;
 
     // Terrain interaction
 

@@ -7,6 +7,7 @@ public class ConfirmPromptController : PopupMenuController
     public bool Confirmed { private set; get; }
     public bool Responded { private set; get; }
 
+
     // Start is called before the first frame update
     void Start()
     {
@@ -15,17 +16,17 @@ public class ConfirmPromptController : PopupMenuController
         StateSign.text = Constants.LeaveStagePromptText;
     }
 
-    public void Open()
+    public override void OpenMenu()
     {
         Responded = false;
         StartCoroutine(FadeInMenu(Constants.ConfirmPromptTextTrigger, Constants.InGameMenuBkgAlphaMin, Constants.ConfirmPromptBkgAlphaMax, 
-            Constants.InGameMenuBkgSizeChangeSpeed, Constants.InGameMenuTextFadeSpeedPauseIn));
+            Constants.InGameMenuBkgSizeChangeSpeed, Constants.InGameMenuTextFadeSpeedIn));
     }
 
-    public void Close()
+    public override void CloseMenu()
     {
         StartCoroutine(FadeOutMenu(Constants.InGameMenuSizeTrigger, Constants.InGameMenuBkgAlphaMin, Constants.InGameMenuBkgAlphaMax, 
-            Constants.InGameMenuBkgSizeChangeSpeed, Constants.InGameMenuTextFadeSpeedPauseOut));
+            Constants.InGameMenuBkgSizeChangeSpeed, Constants.InGameMenuTextFadeSpeedOut));
     }
 
     public void GiveResponse()

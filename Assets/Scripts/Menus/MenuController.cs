@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class MenuController : MonoBehaviour
+public abstract class MenuController : MonoBehaviour
 {
     [field: SerializeField]
     protected Transform OptionsHolder { get; set; }
@@ -57,6 +57,14 @@ public class MenuController : MonoBehaviour
     public void UpdateCursorPosition()
     {
         CursorTrns.localPosition = OptionsHolder.localPosition + OptionsTransforms[CursorIndex.y].localPosition;
+    }
+
+    public abstract void OpenMenu();
+    public abstract void CloseMenu();
+
+    protected float GetOptionsAlpha()
+    {
+        return OptionsSigns[OptionsCount - 1].color.a;
     }
 
     protected IEnumerator FadeOptions(float minAlpha, float maxAlpha, float speed)

@@ -60,4 +60,13 @@ public static class HelperMethods
         }
     }
 
+    public static IEnumerator MoveCanvasRectTransform(RectTransform uiElem, Vector2 endPos, Vector3 speed, float maxDistAllowed = 0.1f)
+    {
+        while (Vector2.Distance(uiElem.position, endPos) > maxDistAllowed)
+        {
+            uiElem.localPosition += speed;
+            yield return null;
+        }
+    }
+
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class PopupMenuController : MenuController
+public abstract class PopupMenuController : MenuController
 {
 
     [field: SerializeField]
@@ -20,7 +20,7 @@ public class PopupMenuController : MenuController
         UpdateCursorPosition();
         yield return StartCoroutine(HelperMethods.FadeImage(Cursor, Constants.MenuCursorAlphaMin, Constants.MenuCursorAlphaMax,
             Constants.MenuCursorFadeSpeedIn));
-        StartCoroutine(HelperMethods.FadeText(StateSign, Constants.MenuTextAlphaMin, Constants.MenuTextAlphaMax, textFadeSpeed));
+        yield return StartCoroutine(HelperMethods.FadeText(StateSign, Constants.MenuTextAlphaMin, Constants.MenuTextAlphaMax, textFadeSpeed));
         Opened = true;
     }
 
@@ -31,10 +31,8 @@ public class PopupMenuController : MenuController
         StartCoroutine(HelperMethods.FadeText(StateSign, Constants.MenuTextAlphaMin, Constants.MenuTextAlphaMax, -textFadeSpeed));
         StartCoroutine(HelperMethods.FadeImage(Cursor, Constants.MenuCursorAlphaMin, Constants.MenuCursorAlphaMax,
             -Constants.MenuCursorFadeSpeedOut));
-        while (Cursor.color.a > CursorAlphaTrigger)
-        {
-            yield return null;
-        }
+        yield return new WaitUntil(() => GetOptionsAlpha() == Constants.MenuTextAlphaMin && StateSign.color.a == Constants.MenuTextAlphaMin 
+            && Cursor.color.a <= CursorAlphaTrigger);
         yield return StartCoroutine(HelperMethods.TransitionHeightUI(MenuBkgRect, minBkgSize, maxBkgSize, -bkgSizeChangeSpeed));
         Opened = false;
     }
