@@ -12,16 +12,10 @@ public class CanvasController : MonoBehaviour
     public static byte ScreenAlpha { get; protected set; }
 
 
-    // Start is called before the first frame update
-    void Start()
+    protected void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        ScreenFadeInProgress = false;
+        ScreenAlpha = (byte) _fadeEffectsPanel.color.a;
     }
 
     public void StartScreenFade(byte minAlpha, byte maxAlpha, float speed)
@@ -31,6 +25,7 @@ public class CanvasController : MonoBehaviour
 
     protected IEnumerator ScreenFade(byte minAlpha, byte maxAlpha, float fadeSpeed)
     {
+        if (ScreenFadeInProgress) yield break;
         ScreenFadeInProgress = true;
         byte alphaTarget = fadeSpeed > 0 ? maxAlpha : minAlpha;
         while (ScreenAlpha != alphaTarget)

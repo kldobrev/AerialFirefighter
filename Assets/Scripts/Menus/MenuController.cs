@@ -21,6 +21,8 @@ public abstract class MenuController : MonoBehaviour
     public Vector2Int CursorIndex { get; protected set; }
     protected Transform[] OptionsTransforms { get; set; }
     protected int MenuStartIndexVert { get; set; }
+
+    [field: SerializeField]
     public bool Opened { get; protected set; }
 
 

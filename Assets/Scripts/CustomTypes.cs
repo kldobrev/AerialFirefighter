@@ -8,7 +8,8 @@ public enum GameState
     Playing,
     Pause,
     GameOver,
-    Confirmation
+    Confirmation,
+    Transition
 }
 
 public enum GameOverType

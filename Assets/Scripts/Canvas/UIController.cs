@@ -48,8 +48,9 @@ public class UIController : CanvasController
     }
 
     // Start is called before the first frame update
-    void Start()
+    new void Start()
     {
+        base.Start();
         _speedDisplayed = "000";
         _currentSpeedRounded = 0;
         _speedometer.color = Constants.SpeedColourInactive;
@@ -223,8 +224,6 @@ public class UIController : CanvasController
         yield return StartCoroutine(HelperMethods.FadeText(_crashSign, 0, Constants.UISignMaxAlpha, Constants.UISignFadeSpeed));
         yield return new WaitForSeconds(1.5f);
         yield return StartCoroutine(HelperMethods.FadeText(_crashSign, 0, Constants.UISignMaxAlpha, -Constants.UISignFadeSpeed));
-        yield return ScreenFade(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaPause,
-                Constants.FadeAlphaSpeedPause);
         CrashComplete.Invoke();
     }
 

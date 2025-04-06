@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -114,7 +115,7 @@ public class GameManager : MonoBehaviour
                     Debug.Log("OPTIONS to be implemented");
                     break;
                 case 4:
-                    StartCoroutine(ConfirmAndExecute(QuitGame()));
+                    StartCoroutine(QuitFromMainMenu());
                     break;
             }
         }
@@ -123,7 +124,10 @@ public class GameManager : MonoBehaviour
 
     public void Pause()
     {
-        StartCoroutine(PauseCoroutine());
+        if (CurrentState == GameState.Playing)
+        {
+            StartCoroutine(PauseCoroutine());
+        }
     }
 
     public void Unpause()
@@ -158,25 +162,27 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator RestartFromCheckpoint()
     {
+        CurrentState = GameState.Transition;
         _input.DisableInput();
         _retriesCount++;
         _screenFadeEffect.Invoke(Constants.FadeScreenAlphaPause, Constants.FadeScreenAlphaMax,
             Constants.ScreenFadeRespawnSpeed);
         yield return null;
-        yield return new WaitUntil(() => !UIController.ScreenFadeInProgress && _fireMissionController.IsReadyForCheckpointReload());
+        yield return new WaitUntil(() => !CanvasController.ScreenFadeInProgress && _fireMissionController.IsReadyForCheckpointReload());
         _fireMissionController.RestoreFiresFromCheckpoint();
         _inGameMenu.ActivatePauseMenu();
         _player.RespawnFromCheckpoint();
-        CurrentState = GameState.Playing;
         ToggleFreezeGameplay(false);
         _screenFadeEffect.Invoke(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaMax,
             -Constants.ScreenFadeRespawnSpeed);
         yield return null;
-        yield return new WaitUntil(() => !UIController.ScreenFadeInProgress);
+        yield return new WaitUntil(() => !CanvasController.ScreenFadeInProgress);
+        CurrentState = GameState.Playing;
     }
 
     private IEnumerator LoadMainMenu()
     {
+        CurrentState = GameState.Transition;
         SceneManager.LoadScene(Constants.TitleScene);
         yield return null;
 
@@ -194,6 +200,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator LoadGameplayScene(string sceneName)
     {
+        CurrentState = GameState.Transition;
         _input.DisableInput();
         SceneManager.LoadScene(sceneName);
         yield return null;
@@ -228,20 +235,21 @@ public class GameManager : MonoBehaviour
         ToggleFreezeGameplay(false);
         CurrentState = GameState.Playing;
         yield return null;
-        yield return new WaitUntil(() => !UIController.ScreenFadeInProgress);
+        yield return new WaitUntil(() => !CanvasController.ScreenFadeInProgress);
     }
 
     private IEnumerator ConfirmAndExecute(IEnumerator action)
     {
         _input.DisableInput();
+        _previousState = CurrentState;
+        CurrentState = GameState.Transition;
         _previousMenu = _currentMenu;
         _currentMenu = _confirmPrompt;
-        _previousState = CurrentState;
-        CurrentState = GameState.Confirmation;
         _confirmPrompt.ResetCursorPosition();
         _confirmPrompt.OpenMenu();
-        yield return new WaitUntil(() => _confirmPrompt.Opened);
+        yield return new WaitUntil(() => _confirmPrompt.Opened && !CanvasController.ScreenFadeInProgress);
         _input.SwitchToMenuControls();
+        CurrentState = GameState.Confirmation;
         yield return new WaitUntil(() => _confirmPrompt.Responded);
         _confirmPrompt.CloseMenu();
         yield return new WaitUntil(() => !_confirmPrompt.Opened);
@@ -257,50 +265,72 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator PauseCoroutine()
     {
+        CurrentState = GameState.Transition;
         _input.DisableInput();
         _screenFadeEffect.Invoke(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaPause, 
             Constants.ScreenFadePauseSpeed);
         _inGameMenu.ResetCursorPosition();
         _inGameMenu.OpenMenu();
-        yield return new WaitUntil(() => _inGameMenu.Opened);
+        yield return new WaitUntil(() => _inGameMenu.Opened && !CanvasController.ScreenFadeInProgress);
         CurrentState = GameState.Pause;
         ToggleFreezeGameplay(true);
     }
 
     private IEnumerator UnpauseCoroutine()
     {
+        CurrentState = GameState.Transition;
         _input.DisableInput();
         _inGameMenu.CloseMenu();
-        yield return new WaitUntil(() => !_inGameMenu.Opened);
         _screenFadeEffect.Invoke(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaPause, 
             -Constants.ScreenFadePauseSpeed);
+        yield return new WaitUntil(() => !_inGameMenu.Opened && !CanvasController.ScreenFadeInProgress);
         ToggleFreezeGameplay(false);
         CurrentState = GameState.Playing;
     }
 
     private IEnumerator ShowGameOverCoroutine()
     {
+        CurrentState = GameState.Transition;
+        _input.DisableInput();
+        _screenFadeEffect.Invoke(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaPause,
+                Constants.FadeAlphaSpeedPause);
         _inGameMenu.OpenMenu();
-        yield return new WaitUntil(() => _inGameMenu.Opened);
+        yield return new WaitUntil(() => _inGameMenu.Opened && !CanvasController.ScreenFadeInProgress);
         CurrentState = GameState.GameOver;
         ToggleFreezeGameplay(true);
     }
 
     private IEnumerator ReopenPreviousMenu()
     {
+        CurrentState = GameState.Transition;
+        _input.DisableInput();
         _previousMenu.OpenMenu();
-        yield return new WaitUntil(() => _previousMenu.Opened);
-        CurrentState = _previousState;
+        yield return new WaitUntil(() => _previousMenu.Opened && !CanvasController.ScreenFadeInProgress);
         _currentMenu = _previousMenu;
         _input.SwitchToMenuControls();
+        CurrentState = _previousState;
+    }
+
+    private IEnumerator QuitFromMainMenu()
+    {
+        _screenFadeEffect.Invoke(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaPause,
+            Constants.ScreenFadePauseSpeed);
+        yield return StartCoroutine(ConfirmAndExecute(QuitGame()));
+        if (!_confirmPrompt.Confirmed)
+        {
+            _screenFadeEffect.Invoke(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaPause,
+                -Constants.ScreenFadePauseSpeed);
+            yield return new WaitUntil(() => !CanvasController.ScreenFadeInProgress);
+        }
     }
 
     private IEnumerator QuitGame()
     {
+        CurrentState = GameState.Transition;
         _screenFadeEffect.Invoke(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaMax, 
             Constants.ScreenFadeQuitSpeed);
         yield return null;
-        yield return new WaitUntil(() => !UIController.ScreenFadeInProgress);
+        yield return new WaitUntil(() => !CanvasController.ScreenFadeInProgress);
         Application.Quit();
     }
 

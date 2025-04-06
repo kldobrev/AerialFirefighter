@@ -8,8 +8,9 @@ public class MenuCanvasController : CanvasController
     private RectTransform titleTransform;
 
     // Start is called before the first frame update
-    void Start()
+    new void Start()
     {
+        base.Start();
         titleTransform.localPosition = Constants.TitlePositionReady;
     }
 
