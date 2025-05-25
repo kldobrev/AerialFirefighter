@@ -10,6 +10,11 @@ public abstract class PopupMenuController : MenuController
     protected TextMeshProUGUI StateSign { get; set; }
 
 
+    public void SetPopupText(string text)
+    {
+        StateSign.text = text;
+    }
+
     protected IEnumerator FadeInMenu(float menuBkgSizeTrigger, float minBkgSize, float maxBkgSize, float bkgSizeChangeSpeed,
         float textFadeSpeed)
     {

@@ -4,7 +4,6 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 
 public class GameManager : MonoBehaviour
@@ -80,7 +79,7 @@ public class GameManager : MonoBehaviour
                     if (CurrentState == GameState.Pause || (CurrentState == GameState.GameOver && CurrentPlayMode == PlayMode.FireMission))
                     {
                         _inGameMenu.CloseMenu();
-                        StartCoroutine(ConfirmAndExecute(LoadGameplayScene(SceneManager.GetActiveScene().name)));
+                        StartCoroutine(ConfirmAndExecute(LoadGameplayScene(SceneManager.GetActiveScene().name), Constants.LeaveStagePromptText));
                     }
                     else
                     {
@@ -89,11 +88,11 @@ public class GameManager : MonoBehaviour
                     break;
                 case 2: // Back to main menu
                     _inGameMenu.CloseMenu();
-                    StartCoroutine(ConfirmAndExecute(LoadMainMenu()));
+                    StartCoroutine(ConfirmAndExecute(LoadMainMenu(), Constants.LeaveStagePromptText));
                     break;
                 case 3: // Exit game
                     _inGameMenu.CloseMenu();
-                    StartCoroutine(ConfirmAndExecute(QuitGame()));
+                    StartCoroutine(ConfirmAndExecute(QuitGame(), Constants.LeaveStagePromptText));
                     break;
             }
         }
@@ -238,13 +237,14 @@ public class GameManager : MonoBehaviour
         yield return new WaitUntil(() => !CanvasController.ScreenFadeInProgress);
     }
 
-    private IEnumerator ConfirmAndExecute(IEnumerator action)
+    private IEnumerator ConfirmAndExecute(IEnumerator action, string question)
     {
         _input.DisableInput();
         _previousState = CurrentState;
         CurrentState = GameState.Transition;
         _previousMenu = _currentMenu;
         _currentMenu = _confirmPrompt;
+        _confirmPrompt.SetPopupText(question);
         _confirmPrompt.ResetCursorPosition();
         _confirmPrompt.OpenMenu();
         yield return new WaitUntil(() => _confirmPrompt.Opened && !CanvasController.ScreenFadeInProgress);
@@ -315,7 +315,7 @@ public class GameManager : MonoBehaviour
     {
         _screenFadeEffect.Invoke(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaPause,
             Constants.ScreenFadePauseSpeed);
-        yield return StartCoroutine(ConfirmAndExecute(QuitGame()));
+        yield return StartCoroutine(ConfirmAndExecute(QuitGame(), Constants.MainMenuExitPromptText));
         if (!_confirmPrompt.Confirmed)
         {
             _screenFadeEffect.Invoke(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaPause,

@@ -64,7 +64,7 @@ public static class HelperMethods
     {
         while (Vector2.Distance(uiElem.position, endPos) > maxDistAllowed)
         {
-            uiElem.localPosition += speed;
+            uiElem.position += speed;
             yield return null;
         }
     }

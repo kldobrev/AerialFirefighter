@@ -185,6 +185,7 @@ public static class Constants {
     public const string InGameMenuTagNam = "InGameMenu";
     public const string ConfirmPromptMenuTagName = "Confirm";
     public const string LeaveStagePromptText = "IF YOU EXIT YOUR CURRENT PROGRESS ON THIS STAGE WILL BE LOST. WILL YOU PROCEED?";
+    public const string MainMenuExitPromptText = "LEAVE GAME AND EXIT TO DESKTOP?";
     public const float ConfirmPromptTextTrigger = 100;
     public const float ConfirmPromptBkgAlphaMax = 350;
     public const string MainMenuTag = "MenuMain";
@@ -193,7 +194,7 @@ public static class Constants {
     public static Vector2 TitlePositionInitial = new(2220, 510);
     public static Vector2 TitlePositionReady = new(880, 510);
     public static Vector2 TitleMoveSpeed = new(50, 0);
-    public const float MainMenuMoveSpeed = 50;
+    public const float MainMenuMoveSpeedBase = 50;
 
     // Terrain interaction
 

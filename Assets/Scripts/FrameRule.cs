@@ -3,9 +3,9 @@ public class FrameRule
     private uint _frameCounter;
     private uint _checkFrame;
 
-    public FrameRule(uint check)
+    public FrameRule(uint numberOfFrames)
     {
-        _checkFrame = check;
+        _checkFrame = numberOfFrames;
         ResetCounter();
     }
 
