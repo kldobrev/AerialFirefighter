@@ -68,7 +68,7 @@ public class UIController : CanvasController
         _clearSign.color = Constants.ClearSignColour;
         _extinguishedSign.transform.parent.gameObject.SetActive(true);
         _displaySpeedInKnots = false;    // Will be set in menu
-        _speedConvertRatio = _displaySpeedInKnots ? Constants.KmPhToKnotsRatio : 1;
+        _speedConvertRatio = _displaySpeedInKnots ? Constants.MPsToKnotsRatio : Constants.MPsToKmPhRatio;
         _speedUnit = _displaySpeedInKnots ? "knots" : "km/h";
         _speedometer.text = Constants.DefaultSpeedValueUI + _speedDisplayed + " " + _speedUnit;
         _autoSpeedIndicator.text = Constants.DefaultAutoSpeedValueUI + _speedDisplayed + " " + _speedUnit;

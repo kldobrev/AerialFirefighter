@@ -30,12 +30,8 @@ public class MainMenuController : MenuController
         if (checkResolutionRule.CheckFrameRule() && currentScaleFactor != screenCanvas.scaleFactor)
         {
             CalculateMenuProperties();
-            checkResolutionRule.ResetCounter();
         }
-        else
-        {
-            checkResolutionRule.AdvanceCounter();
-        }
+        checkResolutionRule.AdvanceCounter();
     }
 
 

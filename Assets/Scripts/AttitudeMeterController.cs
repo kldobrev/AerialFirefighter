@@ -35,7 +35,8 @@ public class AttitudeMeterController : MonoBehaviour
             }
 
             pitch = HelperMethods.GetSignedAngleFromEuler(_playerTrns.rotation.eulerAngles.x);
-            _pitchSlider.value = Mathf.Clamp(pitch, -Constants.AttitudeMeterMaxPitchShown, Constants.AttitudeMeterMaxPitchShown);
+            _pitchSlider.value = Mathf.Clamp(pitch * Constants.AttitudeMeterPitchRatio, -Constants.AttitudeMeterMaxPitchShown, 
+                Constants.AttitudeMeterMaxPitchShown);
         }
     }
 

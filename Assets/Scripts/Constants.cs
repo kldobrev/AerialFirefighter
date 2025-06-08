@@ -18,23 +18,25 @@ public static class Constants {
     public const int SendSpeedFramerule = 5;
     public const int SpinPropellerFramerule = 7;
     public const float MinHeightAllowed = 0;
-    public const float MaxHeightAllowed = 1200;
+    public const float MaxHeightAllowed = 1000;
     public const float HeightDrag = 0.5f;
     public const float HeightDragTurn = 1f;
     public const string PlayerTagName = "Player";
     public const string EnemiesTagName = "Enemy";
     public const float PitchDragAngle = 21;
-    public const float HighSpeedDrag = 0.0002f;
+    public const float HighSpeedDrag = 0.0012f;
     public const float HighPitchDrag = 0.001f;
-    public const float MaxIdlePropellerSpeed = 50;
+    public const float MaxIdlePropellerSpeed = 40;
     public const float FuelCapacity = 10000;
     public const float EngineRunningFuelWaste = 0.01f;
-    public const float PlaneMaxSpeed = 210;
-    public const float WeightPlaneNoLoad = 2000;
-    public const float MaxWeightPlaneFullyLoaded = 3000;
-    public const float KmPhToKnotsRatio = 0.54f;
+    public const float PlaneMaxSpeedMpS = 40;
+    public const float WeightPlaneNoLoad = 1000;
+    public const float MaxWeightPlaneFullyLoaded = 1500;
+    public const float MPsToKnotsRatio = 1.94f;
+    public const float MPsToKmPhRatio = 3.6f;
+    public const float MPsToMilPhRatio = 2.24f;
     public const float StallLeanAngleMax = 80;
-    public const float StallLeanVelocityTreshold = -15;
+    public const float StallLeanVelocityTreshold = -10;
     public const float TurnStartBankAngleMin = -2f;
     public const float RespawnVelocityZ = 90;
     public const float RespawnRotationX = -5;
@@ -47,8 +49,8 @@ public static class Constants {
 
     public const int CameraModesCount = 4;
     public const float CameraSpecialModeHeightThreshold = 5;
-    public static Vector3 CameraTrailingDistanceBehindAbove = new(0, 3.06f, -17);
-    public static Vector3 CameraTrailingDistanceBehindCentered = new(0, 1.26f, -16.9f);
+    public static Vector3 CameraTrailingDistanceBehindAbove = new(0, 3.06f, -16);
+    public static Vector3 CameraTrailingDistanceBehindCentered = new(0, 1.26f, -15.9f);
     public static Vector3 CameraTrailingDistancePropeller = new(0, 0.08f, 0.12f);
     public static Vector3 CameraTrailingDistanceFirstPerson = new(0, 0, 0.42f);
     public static Vector3 CameraTrailingDistanceSurface = new(0, 3.06f, -23);
@@ -75,9 +77,9 @@ public static class Constants {
 
     // Fire Missions
 
-    public const float WaterCapacity = 1000;
-    public const float WaterWasteRate = 1.5f;
-    public const float WaterScoopRate = 30;
+    public const float WaterCapacity = 500;
+    public const float WaterWasteRate = 0.75f;
+    public const float WaterScoopRate = 15;
     public const float WaterQuantityToWeightRatio = 1;
     public const float PourWaterBankAngleMinMax = 15;
     public const float ExtinguishedComboTime = 2.5f;
@@ -105,6 +107,7 @@ public static class Constants {
     public const string DefaultSpeedValueUI = "Speed: ";
     public const string DefaultAutoSpeedValueUI = "Auto speed: ";
     public const float AttitudeMeterMaxPitchShown = 45;
+    public const float AttitudeMeterPitchRatio = 1.5f;
     public const float AlertHeightUI = 200;
     public static Color32 HeightAboveAlertColour = new(80, 255, 0, 255);
     public static Color32 HeightBelowAlertColour = new(255, 141, 0, 255);

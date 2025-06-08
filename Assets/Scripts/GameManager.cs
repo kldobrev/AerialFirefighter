@@ -38,7 +38,9 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        StartCoroutine(LoadMainMenu());
+        //StartCoroutine(LoadMainMenu());
+        StartCoroutine(LoadGameplayScene(Constants.Stage1SceneName));
+
     }
 
     public void GoBack()

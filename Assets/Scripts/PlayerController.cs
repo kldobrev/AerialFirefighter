@@ -24,9 +24,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float _throttleAcceleration;
     [SerializeField]
+    private float _speedLiftFactor;
+    [SerializeField]
     private float _liftForce;
     [SerializeField]
     private float _pitchFactor;
+    [SerializeField]
+    private float _pitchDrag;
     [SerializeField]
     private float _yawFactor;
     [SerializeField]
@@ -155,7 +159,7 @@ public class PlayerController : MonoBehaviour
         _setFuelGaugeCap.Invoke(Constants.FuelCapacity);
         _setWaterGaugeCap.Invoke(Constants.WaterCapacity);
         _fuelQuantity = 10000;    // Will be set from game settings
-        _waterQuantity = 1000;
+        _waterQuantity = 500;
         _planeBody.mass = Mathf.Clamp(Constants.WeightPlaneNoLoad + (_waterQuantity * Constants.WaterQuantityToWeightRatio),
             Constants.WeightPlaneNoLoad, Constants.MaxWeightPlaneFullyLoaded);   // Should be executed only when attempting firefighter missions
         _outsideFieldBounds = false;
@@ -177,6 +181,8 @@ public class PlayerController : MonoBehaviour
         {
             _isAirbourne = true;
             _synchronizeCameraAirbourneFlag.Invoke(_isAirbourne);
+
+            Debug.Log("Lift off speed: " + _planeSpeed * Constants.MPsToKmPhRatio);
         }
 
         // Updating UI elements
@@ -282,11 +288,14 @@ public class PlayerController : MonoBehaviour
                     _accelerateValue = _planeSpeed < _autoSpeed ? _throttleAcceleration : 0;
             }
 
-            if (_planeSpeed > Constants.PlaneMaxSpeed) _planeDrag += (Constants.HighSpeedDrag * _planeSpeed);
+            if (_planeSpeed > Constants.PlaneMaxSpeedMpS) _planeDrag += (Constants.HighSpeedDrag * _planeSpeed);
         }
 
-        _liftValue = (_planeSpeed - (_planeSpeed * _pitchAngle * _pitchLiftFactor)) * _liftForce;
-        _planeBody.AddRelativeForce(Vector3.up * _liftValue, ForceMode.Impulse);
+        if (_pitchAngle < -0.5f || _pitchAngle > 0.5f)
+        {
+            _liftValue = (_speedLiftFactor * _planeSpeed - (_planeSpeed * _pitchAngle * _pitchLiftFactor)) * _liftForce;
+            _planeBody.AddRelativeForce(Vector3.up * _liftValue, ForceMode.Impulse);
+        }
 
         if (_brakeInput != 0)    // Brake engaged
         {
@@ -300,6 +309,8 @@ public class PlayerController : MonoBehaviour
         {
             _planeDrag += (Constants.HighPitchDrag * (-_pitchAngle));
         }
+
+        _planeDrag += (_pitchDrag * (-_pitchAngle));
 
         if (_planeBody.position.y >= Constants.MaxHeightAllowed)    // Height ceiling check
             _planeDrag += Constants.HeightDrag;
