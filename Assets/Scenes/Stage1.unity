@@ -22102,49 +22102,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6446741534543909475, guid: 2fde29b64e82c8c49a8146abcc4e3718,
         type: 3}
-      propertyPath: _liftForce
-      value: 9
-      objectReference: {fileID: 0}
-    - target: {fileID: 6446741534543909475, guid: 2fde29b64e82c8c49a8146abcc4e3718,
-        type: 3}
-      propertyPath: _pitchDrag
-      value: 0.005
-      objectReference: {fileID: 0}
-    - target: {fileID: 6446741534543909475, guid: 2fde29b64e82c8c49a8146abcc4e3718,
-        type: 3}
       propertyPath: _crashEffect
       value: 
       objectReference: {fileID: 815817367}
     - target: {fileID: 6446741534543909475, guid: 2fde29b64e82c8c49a8146abcc4e3718,
         type: 3}
-      propertyPath: _pitchFactor
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6446741534543909475, guid: 2fde29b64e82c8c49a8146abcc4e3718,
-        type: 3}
-      propertyPath: _pitchLiftFactor
-      value: 0.018
-      objectReference: {fileID: 0}
-    - target: {fileID: 6446741534543909475, guid: 2fde29b64e82c8c49a8146abcc4e3718,
-        type: 3}
-      propertyPath: _speedLiftFactor
-      value: 0.9
-      objectReference: {fileID: 0}
-    - target: {fileID: 6446741534543909475, guid: 2fde29b64e82c8c49a8146abcc4e3718,
-        type: 3}
       propertyPath: _crashInWaterEffect
       value: 
       objectReference: {fileID: 809082554}
-    - target: {fileID: 6446741534543909475, guid: 2fde29b64e82c8c49a8146abcc4e3718,
-        type: 3}
-      propertyPath: _stallLeanDownFactor
-      value: 0.005
-      objectReference: {fileID: 0}
-    - target: {fileID: 6446741534543909475, guid: 2fde29b64e82c8c49a8146abcc4e3718,
-        type: 3}
-      propertyPath: _throttleAcceleration
-      value: 12
-      objectReference: {fileID: 0}
     - target: {fileID: 6446741534543909475, guid: 2fde29b64e82c8c49a8146abcc4e3718,
         type: 3}
       propertyPath: _startFadeIn.m_PersistentCalls.m_Calls.Array.data[0].m_Target

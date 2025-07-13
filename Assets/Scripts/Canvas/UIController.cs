@@ -84,7 +84,7 @@ public class UIController : CanvasController
     {
         _newSpeedRounded = Mathf.RoundToInt(newSpeed * _speedConvertRatio);
         if (_currentSpeedRounded != _newSpeedRounded) {
-            _currentSpeedRounded = _newSpeedRounded;
+            _currentSpeedRounded = Mathf.Clamp(_newSpeedRounded, 0, 999);
             _speedDisplayed = _currentSpeedRounded.ToString().PadLeft(3, '0');
             _speedometer.text = "Speed: " + _speedDisplayed + " " + _speedUnit;
         }

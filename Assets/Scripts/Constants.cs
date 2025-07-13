@@ -5,7 +5,6 @@ public static class Constants {
     // Player controller
 
     public const float AirbourneThresholdHeight = 1;
-    public const float PlDefaultDrag = 0.12f;
     public const float PlDefaultAngularDrag = 3f;
     public const float PlTurnAngularDrag = 0.05f;
     public const float PlBrakeDrag = 0.01f;
@@ -24,7 +23,7 @@ public static class Constants {
     public const string PlayerTagName = "Player";
     public const string EnemiesTagName = "Enemy";
     public const float PitchDragAngle = 21;
-    public const float HighSpeedDrag = 0.0012f;
+    public const float HighSpeedDrag = 0.0025f;
     public const float HighPitchDrag = 0.001f;
     public const float MaxIdlePropellerSpeed = 40;
     public const float FuelCapacity = 10000;
@@ -37,8 +36,8 @@ public static class Constants {
     public const float MPsToMilPhRatio = 2.24f;
     public const float StallLeanAngleMax = 80;
     public const float StallLeanVelocityTreshold = -10;
-    public const float TurnStartBankAngleMin = -2f;
-    public const float RespawnVelocityZ = 90;
+    public const float TurnStartBankAngleMin = 2f;
+    public const float RespawnVelocityZMs = 40;
     public const float RespawnRotationX = -5;
     public const float RespawnRotationZ = 0;
     public const float RespawnDistanceToGroundMin = 50;

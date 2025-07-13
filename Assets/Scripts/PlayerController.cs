@@ -26,8 +26,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float _speedLiftFactor;
     [SerializeField]
-    private float _liftForce;
-    [SerializeField]
     private float _pitchFactor;
     [SerializeField]
     private float _pitchDrag;
@@ -41,8 +39,10 @@ public class PlayerController : MonoBehaviour
     private float _pitchLiftFactor;
     [SerializeField]
     private float _stallLeanDownFactor;
-
-
+    [SerializeField]
+    private float _maxDragAllowed;
+    [SerializeField]
+    private Vector3 _speed;
     [SerializeField]
     private ParticleSystem _dropWaterEffect;
     [SerializeField]
@@ -121,15 +121,17 @@ public class PlayerController : MonoBehaviour
     private bool _waterTankOpened;
     private float _waterQuantity;
     private float _bankAngle;
-    private float _liftValue;
+    public float _liftValue;
     private bool _throttleAllowed;
     private Transform _cachedTransform;
     private float _landingTimerCounter;
     private IEnumerator _landingCountCoroutine;
     private float _leanDirection;
     private PlayerCheckpointData _checkpointData;
+    private float _localSpeedZ;
     public bool CheckpointCreated { get; private set; }
 
+    public bool bankTurning;
 
 
     private void Awake()
@@ -147,7 +149,6 @@ public class PlayerController : MonoBehaviour
         _isAutoSpeedOn = false;
         _airbourneThresholdY = _cachedTransform.position.y + Constants.AirbourneThresholdHeight;
         _autoSpeed = 0;
-        _planeDrag = Constants.PlDefaultDrag;
         _planeAngularDrag = Constants.PlDefaultAngularDrag;
         _sendHeightRule = new FrameRule(Constants.SendHeightFramerule);
         _sendCoordsRule = new FrameRule(Constants.SendCoordsFramerule);
@@ -168,6 +169,7 @@ public class PlayerController : MonoBehaviour
         _waterTankOpened = false;
         _throttleAllowed = false;
         CheckpointCreated = false;
+        bankTurning = false;
         _landingTimerCounter = 0;
         _checkpointData = new PlayerCheckpointData();
         _landingCountCoroutine = LandingCountdown();
@@ -271,7 +273,7 @@ public class PlayerController : MonoBehaviour
     {
         _accelerateValue = 0;
         _planeSpeed = _planeBody.velocity.magnitude;
-        _planeDrag = Constants.PlDefaultDrag;
+        _planeDrag = 0;
         _bankAngle = HelperMethods.GetSignedAngleFromEuler(_planeBody.rotation.eulerAngles.z);
         _pitchAngle = HelperMethods.GetSignedAngleFromEuler(_planeBody.rotation.eulerAngles.x);
 
@@ -291,11 +293,9 @@ public class PlayerController : MonoBehaviour
             if (_planeSpeed > Constants.PlaneMaxSpeedMpS) _planeDrag += (Constants.HighSpeedDrag * _planeSpeed);
         }
 
-        if (_pitchAngle < -0.5f || _pitchAngle > 0.5f)
-        {
-            _liftValue = (_speedLiftFactor * _planeSpeed - (_planeSpeed * _pitchAngle * _pitchLiftFactor)) * _liftForce;
-            _planeBody.AddRelativeForce(Vector3.up * _liftValue, ForceMode.Impulse);
-        }
+        _localSpeedZ = transform.InverseTransformDirection(_planeBody.velocity).z;
+        _liftValue = _speedLiftFactor * _localSpeedZ - (_planeSpeed * _pitchAngle * _pitchLiftFactor);
+        _planeBody.AddRelativeForce(Vector3.up * _liftValue, ForceMode.Impulse);
 
         if (_brakeInput != 0)    // Brake engaged
         {
@@ -305,39 +305,44 @@ public class PlayerController : MonoBehaviour
         {
             _planeBody.AddRelativeForce(Vector3.forward * _accelerateValue, ForceMode.Acceleration);
         }
-        else
-        {
-            _planeDrag += (Constants.HighPitchDrag * (-_pitchAngle));
-        }
 
-        _planeDrag += (_pitchDrag * (-_pitchAngle));
+        if(_planeSpeed > 0)
+            _planeDrag += (_pitchDrag * (Mathf.Abs(_pitchAngle) / 2) * _planeSpeed * _planeSpeed);
 
         if (_planeBody.position.y >= Constants.MaxHeightAllowed)    // Height ceiling check
             _planeDrag += Constants.HeightDrag;
 
         if (_pitchInput != 0 && _planeSpeed > 1)
         {
-            if (_isAirbourne) _planeDrag += (Constants.PlTurnDrag * _planeSpeed);
             _planeBody.AddRelativeTorque(_pitchInput * _pitchFactor * Vector3.right, ForceMode.Acceleration);
         }
 
         if (_bankInput != 0 && _planeSpeed > 1)
         {
-            if (_isAirbourne) _planeDrag += (Constants.PlTurnDrag * _planeSpeed);
             _planeBody.AddRelativeTorque(_bankInput * _rollFactor * Vector3.forward, ForceMode.Acceleration);
         }
 
         if (_isAirbourne && _yawInput != 0f)
         {
-            if (_throttleInput == 0) _planeDrag += Constants.PlTurnDrag;
             _planeBody.AddRelativeTorque(_yawInput * _yawFactor * Vector3.up, ForceMode.Acceleration);
         }
 
-        if (_bankAngle < -Constants.TurnStartBankAngleMin || _bankAngle > Constants.TurnStartBankAngleMin)  // Turns
+        if (_bankAngle < -Constants.TurnStartBankAngleMin || _bankAngle > Constants.TurnStartBankAngleMin)  // Bank turns
         {
+            if (!bankTurning) bankTurning = true;
+
             _planeBody.AddRelativeTorque(-_bankAngle * _turnFactor * Vector3.up, ForceMode.Acceleration);
         }
+        else if (_planeBody.velocity.x < -0.05f || _planeBody.velocity.x > 0.005f)
+        {
+            _planeBody.AddForce((_planeBody.velocity.x < 0 ? 1 : -1) * 0.5f * transform.right, ForceMode.Force);
+        }
 
+        else if (bankTurning)
+        {
+            bankTurning = false;
+        }
+        
         if (_isAirbourne && _planeBody.velocity.y < Constants.StallLeanVelocityTreshold && 
             _pitchAngle < Constants.StallLeanAngleMax)   // Leaning plane down when stalling
         {
@@ -345,9 +350,11 @@ public class PlayerController : MonoBehaviour
             _planeBody.AddRelativeTorque(((_pitchInput * _pitchFactor) - (_planeBody.velocity.y * _stallLeanDownFactor * _leanDirection))
                 * Vector3.right, ForceMode.Acceleration);
         }
-
-        if (_planeBody.drag != _planeDrag) _planeBody.drag = _planeDrag;
+        
+        if (_planeBody.drag != _planeDrag) _planeBody.drag = Mathf.Clamp(_planeDrag, 0, _maxDragAllowed);
         if (_planeBody.angularDrag != _planeAngularDrag) _planeBody.angularDrag = _planeAngularDrag;
+
+        _speed = _planeBody.velocity;
     }
 
     private void AllowThrottle(bool allowVal)
@@ -400,7 +407,7 @@ public class PlayerController : MonoBehaviour
         _updateWaterGaugeQuantity.Invoke(_waterQuantity);
         _planeBody.velocity = Vector3.zero;
         _planeBody.angularVelocity = Vector3.zero;
-        StartPlaneInAir(_checkpointData.Position, respawnRotation, _checkpointData.ForwardVector * Constants.RespawnVelocityZ);
+        StartPlaneInAir(_checkpointData.Position, respawnRotation, _checkpointData.ForwardVector * Constants.RespawnVelocityZMs);
         _reattachCamera.Invoke();
     }
 

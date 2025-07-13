@@ -9920,13 +9920,16 @@ MonoBehaviour:
   _planeRenderer: {fileID: 2626665443133319120}
   _propeller: {fileID: 2578464652004244788}
   _throttleAcceleration: 12
-  _liftForce: 7
-  _pitchFactor: 0.15
+  _speedLiftFactor: 5
+  _pitchFactor: 0.1
+  _pitchDrag: 0.0001
   _yawFactor: 0.03
   _rollFactor: 1.2
   _turnFactor: 0.006
-  _pitchLiftFactor: 0.06
-  _stallLeanDownFactor: 0.004
+  _pitchLiftFactor: 0.9
+  _stallLeanDownFactor: 0.005
+  _maxDragAllowed: 50
+  _speed: {x: 0, y: 0, z: 0}
   _dropWaterEffect: {fileID: 5334943598074397993}
   _waterSplashEffect: {fileID: 3349423091032859186}
   _crashEffect: {fileID: 0}
