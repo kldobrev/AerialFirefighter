@@ -18,7 +18,6 @@ public class MainMenuController : MenuController
     private new void Awake()
     {
         base.Awake();
-        Opened = false;
         CalculateMenuProperties();
         checkResolutionRule = new FrameRule(15);
         transform.position = hiddenPosition;

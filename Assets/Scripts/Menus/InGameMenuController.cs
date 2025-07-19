@@ -19,7 +19,6 @@ public class InGameMenuController : PopupMenuController
         base.Awake();
         _continueActive = true;
         _gameOverStartIdx = 1;
-        Opened = false;
         _checkpointContinueAllowed = false;
     }
 

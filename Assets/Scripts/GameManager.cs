@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     private MainMenuController _mainMenu;
     private InGameMenuController _inGameMenu;
     private ConfirmPromptController _confirmPrompt;
+    private InfoPromptController _infoPrompt;
     private UnityEvent<PlayMode> _initInGameMenu;
     private MenuController _currentMenu;
     private MenuController _previousMenu;
@@ -38,8 +39,8 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        //StartCoroutine(LoadMainMenu());
-        StartCoroutine(LoadGameplayScene(Constants.Stage1SceneName));
+        StartCoroutine(LoadMainMenu());
+        //StartCoroutine(LoadGameplayScene(Constants.Stage1SceneName));
 
     }
 
@@ -58,9 +59,16 @@ public class GameManager : MonoBehaviour
 
     public void ChooseMenuOption()
     {
-        if (CurrentState == GameState.Confirmation)
+        if (CurrentState == GameState.Prompting)
         {
-            _confirmPrompt.GiveResponse();
+            if(_currentMenu == _confirmPrompt) 
+            {
+                _confirmPrompt.GiveResponse();
+            }
+            else
+            {
+                _infoPrompt.GiveResponse();
+            }
         }
         else if (CurrentState == GameState.Pause || CurrentState == GameState.GameOver)
         {
@@ -73,14 +81,14 @@ public class GameManager : MonoBehaviour
                     }
                     else if (CurrentState == GameState.GameOver && CurrentPlayMode == PlayMode.FireMission && _player.CheckpointCreated)    // Continue from checkpoint
                     {
-                        _inGameMenu.CloseMenu();
+                        _currentMenu.CloseMenu();
                         StartCoroutine(RestartFromCheckpoint());
                     }
                     break;
                 case 1: // Restart stage/tutorial
                     if (CurrentState == GameState.Pause || (CurrentState == GameState.GameOver && CurrentPlayMode == PlayMode.FireMission))
                     {
-                        _inGameMenu.CloseMenu();
+                        _currentMenu.CloseMenu();
                         StartCoroutine(ConfirmAndExecute(LoadGameplayScene(SceneManager.GetActiveScene().name), Constants.LeaveStagePromptText));
                     }
                     else
@@ -89,11 +97,11 @@ public class GameManager : MonoBehaviour
                     }
                     break;
                 case 2: // Back to main menu
-                    _inGameMenu.CloseMenu();
+                    _currentMenu.CloseMenu();
                     StartCoroutine(ConfirmAndExecute(LoadMainMenu(), Constants.LeaveStagePromptText));
                     break;
                 case 3: // Exit game
-                    _inGameMenu.CloseMenu();
+                    _currentMenu.CloseMenu();
                     StartCoroutine(ConfirmAndExecute(QuitGame(), Constants.LeaveStagePromptText));
                     break;
             }
@@ -107,13 +115,13 @@ public class GameManager : MonoBehaviour
                     StartCoroutine(LoadGameplayScene(Constants.Stage1SceneName));
                     break;
                 case 1:
-                    Debug.Log("TUTORIALS to be implemented");
+                    StartCoroutine(Inform("TUTORIALS UNDER CONSTRUCTION"));
                     break;
                 case 2:
-                    Debug.Log("ENDLESS STAGE to be implemented");
+                    StartCoroutine(Inform("ENDLESS STAGE MODE UNDER CONSTRUCTION"));
                     break;
                 case 3:
-                    Debug.Log("OPTIONS to be implemented");
+                    StartCoroutine(Inform("OPTIONS UNDER CONSTRUCTION"));
                     break;
                 case 4:
                     StartCoroutine(QuitFromMainMenu());
@@ -189,6 +197,7 @@ public class GameManager : MonoBehaviour
 
         _mainMenu = GameObject.FindGameObjectWithTag(Constants.MainMenuTag).GetComponent<MainMenuController>();
         _confirmPrompt = GameObject.FindWithTag(Constants.ConfirmPromptMenuTagName).GetComponent<ConfirmPromptController>();
+        _infoPrompt = GameObject.FindWithTag(Constants.InfoPromptMenuTagName).GetComponent<InfoPromptController>();
         _mainMenuCanvas = GameObject.FindWithTag(Constants.MainMenuCanvasTag).GetComponent<MenuCanvasController>();
         _screenFadeEffect.RemoveAllListeners();
         _screenFadeEffect.AddListener(_mainMenuCanvas.StartScreenFade);
@@ -251,7 +260,7 @@ public class GameManager : MonoBehaviour
         _confirmPrompt.OpenMenu();
         yield return new WaitUntil(() => _confirmPrompt.Opened && !CanvasController.ScreenFadeInProgress);
         _input.SwitchToMenuControls();
-        CurrentState = GameState.Confirmation;
+        CurrentState = GameState.Prompting;
         yield return new WaitUntil(() => _confirmPrompt.Responded);
         _confirmPrompt.CloseMenu();
         yield return new WaitUntil(() => !_confirmPrompt.Opened);
@@ -263,6 +272,28 @@ public class GameManager : MonoBehaviour
         {
             StartCoroutine(ReopenPreviousMenu());
         }
+    }
+
+    private IEnumerator Inform(string statement)
+    {
+        _input.DisableInput();
+        _previousState = CurrentState;
+        CurrentState = GameState.Transition;
+        _previousMenu = _currentMenu;
+        _currentMenu = _infoPrompt;
+        _screenFadeEffect.Invoke(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaPause,
+            Constants.ScreenFadePauseSpeed);
+        _infoPrompt.SetPopupText(statement);
+        _infoPrompt.OpenMenu();
+        yield return new WaitUntil(() => _infoPrompt.Opened && !CanvasController.ScreenFadeInProgress);
+        _input.SwitchToMenuControls();
+        CurrentState = GameState.Prompting;
+        yield return new WaitUntil(() => _infoPrompt.Responded);
+        _screenFadeEffect.Invoke(Constants.FadeScreenAlphaMin, Constants.FadeScreenAlphaPause,
+            -Constants.ScreenFadePauseSpeed);
+        _infoPrompt.CloseMenu();
+        yield return new WaitUntil(() => !CanvasController.ScreenFadeInProgress && !_infoPrompt.Opened);
+        StartCoroutine(ReopenPreviousMenu());
     }
 
     private IEnumerator PauseCoroutine()

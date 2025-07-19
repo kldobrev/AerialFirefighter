@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class ConfirmPromptController : PopupMenuController
 {
-    public bool Confirmed { private set; get; }
-    public bool Responded { private set; get; }
+    public bool Confirmed { protected set; get; }
+    public bool Responded { protected set; get; }
 
 
     // Start is called before the first frame update
@@ -28,7 +28,7 @@ public class ConfirmPromptController : PopupMenuController
             Constants.InGameMenuBkgSizeChangeSpeed, Constants.InGameMenuTextFadeSpeedOut));
     }
 
-    public void GiveResponse()
+    public virtual void GiveResponse()
     {
         Confirmed = CursorIndex.y == 0 ? true : false;
         Responded = true;

@@ -19,6 +19,7 @@ TagManager:
   - FireGroupsContainer
   - MenuMain
   - MainMenuCanvas
+  - Inform
   layers:
   - Default
   - TransparentFX

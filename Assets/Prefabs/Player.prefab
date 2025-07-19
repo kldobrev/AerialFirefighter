@@ -9928,7 +9928,6 @@ MonoBehaviour:
   _turnFactor: 0.006
   _pitchLiftFactor: 0.9
   _stallLeanDownFactor: 0.005
-  _maxDragAllowed: 50
   _speed: {x: 0, y: 0, z: 0}
   _dropWaterEffect: {fileID: 5334943598074397993}
   _waterSplashEffect: {fileID: 3349423091032859186}
@@ -10189,6 +10188,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  _liftValue: 0
+  bankTurning: 0
 --- !u!1 &8901062233002389399
 GameObject:
   m_ObjectHideFlags: 0
@@ -10605,17 +10606,17 @@ PrefabInstance:
     - target: {fileID: 8121585141398818307, guid: 20513b21cc7681a48a55d750d556d156,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 150
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 8121585141398818307, guid: 20513b21cc7681a48a55d750d556d156,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 150
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 8121585141398818307, guid: 20513b21cc7681a48a55d750d556d156,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 150
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 8121585141398818307, guid: 20513b21cc7681a48a55d750d556d156,
         type: 3}

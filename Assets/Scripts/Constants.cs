@@ -20,8 +20,6 @@ public static class Constants {
     public const float MaxHeightAllowed = 1000;
     public const float HeightDrag = 0.5f;
     public const float HeightDragTurn = 1f;
-    public const string PlayerTagName = "Player";
-    public const string EnemiesTagName = "Enemy";
     public const float PitchDragAngle = 21;
     public const float HighSpeedDrag = 0.0025f;
     public const float HighPitchDrag = 0.001f;
@@ -68,7 +66,6 @@ public static class Constants {
     public const float CameraRotationSpeedImpact = 500;
     public const float CameraImpactViewAngleX = 100;
     public const float CameraTimeLimit = 3;
-    public const string CameraTagName = "MainCamera";
     public const uint CameraSurfaceCheckInterval = 10;
     public const float CameraImpactAngleThreshold = -20;
     public const float CameraSurfaceToAirHeightTrigger = 3;
@@ -84,16 +81,11 @@ public static class Constants {
     public const float ExtinguishedComboTime = 2.5f;
     public const int SingleExtinguishScore = 100;
     public const int WaterUnitScoopScore = 10;
-    public const string WaterSurfaceTagName = "Surface";
-    public const string WaterDepthsTagName = "Depths";
     public const float WaterFloatForce = 375;
     public const float ScoreCheckpointPenalty = 0.8f;
-    public const string FireGroupsContainerTag = "FireGroupsContainer";
 
     // Tracker controller
 
-    public const string EnemyPointTagName = "RadarPointEnemy";
-    public const string RadarPointLayerName = "RadarTracked";
     public const float CoveredDistance = 30000;
     public static Color32 OutOfRangeColour = new(140, 140, 140, 255);
     public static Color32 EnemyColour = new(255, 66, 0, 255);
@@ -143,7 +135,6 @@ public static class Constants {
     public const string StageClearSign = "STAGE CLEAR";
     public const string TutorialClearSign = "TUTORIAL CLEAR";
     public static Vector3 DefaultLocatorIconPosition = new(0, 0, 0);
-    public const string GoalSphereTag = "Goal";
     public const float ScreenFadePauseSpeed = 20;
     public const float ScreenFadeQuitSpeed = 10;
     public const float ScreenFadeRespawnSpeed = 5;
@@ -183,16 +174,10 @@ public static class Constants {
     public const float InGameMenuSizeTrigger = 24;
     public static Color32 InGameMenuOptionColourDefault = new(255, 255, 255, 0);
     public static Color32 InGameMenuOptionColourDisabled = new(124, 124, 124, 0);
-    public const string InGameUICanvasTagName = "InGameUI";
-    public const string InGameMenuTagNam = "InGameMenu";
-    public const string ConfirmPromptMenuTagName = "Confirm";
     public const string LeaveStagePromptText = "IF YOU EXIT YOUR CURRENT PROGRESS ON THIS STAGE WILL BE LOST. WILL YOU PROCEED?";
     public const string MainMenuExitPromptText = "LEAVE GAME AND EXIT TO DESKTOP?";
     public const float ConfirmPromptTextTrigger = 100;
     public const float ConfirmPromptBkgAlphaMax = 350;
-    public const string MainMenuTag = "MenuMain";
-    public const string TitleScene = "TitleScreen";
-    public const string MainMenuCanvasTag = "MainMenuCanvas";
     public static Vector2 TitlePositionInitial = new(2220, 510);
     public static Vector2 TitlePositionReady = new(880, 510);
     public static Vector2 TitleMoveSpeed = new(50, 0);
@@ -200,10 +185,6 @@ public static class Constants {
 
     // Terrain interaction
 
-    public const string TerrainTagName = "Terrain";
-    public const string TerrainPieceTagName = "Ground";
-    public const string StageBoundsTagName = "StageBounds";
-    public const string LandingZoneTagName = "LandingZone";
     public const float LandingPitchMin = -6;
     public const float LandingPitchMax = 3;
     public const float LandingBankMin = -5;
@@ -213,9 +194,6 @@ public static class Constants {
     public const float ScoopBankMin = -5;
     public const float ScoopBankMax = 5;
     public const float LandingTimer = 1.5f;
-    public const string GroundLayerName = "Ground";
-    public const string BuildingLayerName = "Building";
-    public const string WaterLayerName = "Water";
 
     // Gameplay
 
@@ -226,6 +204,39 @@ public static class Constants {
     public const int LandingScore = 1000;
     public const float WaterFloatForceUp = 0.12f;
     public const float WaterFloatForceDown = 1;
+
+    // Tags
+    public const string TerrainTagName = "Terrain";
+    public const string TerrainPieceTagName = "Ground";
+    public const string StageBoundsTagName = "StageBounds";
+    public const string LandingZoneTagName = "LandingZone";
+    public const string MainMenuTag = "MenuMain";
+    public const string InGameUICanvasTagName = "InGameUI";
+    public const string InGameMenuTagNam = "InGameMenu";
+    public const string ConfirmPromptMenuTagName = "Confirm";
+    public const string InfoPromptMenuTagName = "Inform";
+    public const string MainMenuCanvasTag = "MainMenuCanvas";
+    public const string PlayerTagName = "Player";
+    public const string EnemiesTagName = "Enemy";
+    public const string CameraTagName = "MainCamera";
+    public const string WaterSurfaceTagName = "Surface";
+    public const string WaterDepthsTagName = "Depths";
+    public const string FireGroupsContainerTag = "FireGroupsContainer";
+    public const string EnemyPointTagName = "RadarPointEnemy";
+    public const string GoalSphereTag = "Goal";
+
+
+    // Layers
+    public const string GroundLayerName = "Ground";
+    public const string BuildingLayerName = "Building";
+    public const string WaterLayerName = "Water";
+    public const string RadarPointLayerName = "RadarTracked";
+
+
+    // Scenes
     public const string Stage1SceneName = "Stage1";
+    public const string TitleScene = "TitleScreen";
+
+
 
 }

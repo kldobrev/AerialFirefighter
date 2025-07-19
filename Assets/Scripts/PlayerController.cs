@@ -40,8 +40,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float _stallLeanDownFactor;
     [SerializeField]
-    private float _maxDragAllowed;
-    [SerializeField]
     private Vector3 _speed;
     [SerializeField]
     private ParticleSystem _dropWaterEffect;
@@ -322,7 +320,7 @@ public class PlayerController : MonoBehaviour
             _planeBody.AddRelativeTorque(_bankInput * _rollFactor * Vector3.forward, ForceMode.Acceleration);
         }
 
-        if (_isAirbourne && _yawInput != 0f)
+        if (_yawInput != 0f && _planeSpeed > 1)
         {
             _planeBody.AddRelativeTorque(_yawInput * _yawFactor * Vector3.up, ForceMode.Acceleration);
         }
@@ -350,8 +348,8 @@ public class PlayerController : MonoBehaviour
             _planeBody.AddRelativeTorque(((_pitchInput * _pitchFactor) - (_planeBody.velocity.y * _stallLeanDownFactor * _leanDirection))
                 * Vector3.right, ForceMode.Acceleration);
         }
-        
-        if (_planeBody.drag != _planeDrag) _planeBody.drag = Mathf.Clamp(_planeDrag, 0, _maxDragAllowed);
+
+        if (_planeBody.drag != _planeDrag) _planeBody.drag = _planeDrag;
         if (_planeBody.angularDrag != _planeAngularDrag) _planeBody.angularDrag = _planeAngularDrag;
 
         _speed = _planeBody.velocity;

@@ -28,6 +28,7 @@ public abstract class MenuController : MonoBehaviour
 
     protected void Awake()
     {
+        Opened = false;
         MenuBkgRect = transform.GetComponent<RectTransform>();
         OptionsCount = OptionsHolder.childCount;
         OptionsSigns = new TextMeshProUGUI[OptionsCount];
@@ -63,6 +64,7 @@ public abstract class MenuController : MonoBehaviour
 
     public abstract void OpenMenu();
     public abstract void CloseMenu();
+
 
     protected float GetOptionsAlpha()
     {

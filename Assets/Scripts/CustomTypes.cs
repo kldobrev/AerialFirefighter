@@ -8,7 +8,7 @@ public enum GameState
     Playing,
     Pause,
     GameOver,
-    Confirmation,
+    Prompting,
     Transition
 }
 
